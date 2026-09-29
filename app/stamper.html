@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stamper · Witkowski Loyalty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/base.css">
+<style>
+body{background:var(--surface);min-height:100vh}
+main{max-width:440px;margin:0 auto;padding:24px 16px 48px;display:grid;gap:16px}
+h1{font-size:22px}
+.cam{position:relative;aspect-ratio:1;border-radius:20px;background:#15171A;overflow:hidden;display:grid;place-items:center}
+.cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cam .frame{position:absolute;inset:18%;border:3px solid rgba(255,255,255,.9);border-radius:18px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}
+.cam .start{position:relative;z-index:1;display:grid;gap:10px;justify-items:center;color:#fff;text-align:center;padding:20px}
+.cam .start p{color:rgba(255,255,255,.7);font-size:14px}
+.or{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:14px}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.code{display:flex;gap:8px}
+.code input{font:600 20px/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;text-align:center}
+.err{color:var(--danger);font-size:14px;min-height:1.4em}
+.who{text-align:center}
+.who h2{font-size:24px}
+.who p{color:var(--muted)}
+.found{display:grid;gap:14px;justify-items:center}
+.big{font-size:18px;padding:18px;white-space:normal}
+.minor{display:flex;gap:8px;width:100%}
+.minor .btn{flex:1}
+</style>
+</head>
+<body>
+<header class="appbar">
+  <a class="brand" href="../index.html"><span class="brand-mark" aria-hidden="true"></span>Stamper</a>
+  <a class="btn secondary small" href="dashboard.html">Dashboard</a>
+</header>
+
+<main>
+  <!-- step 1: find the customer -->
+  <section id="find">
+    <h1 style="margin-bottom:14px">Scan the customer's card</h1>
+    <div class="cam" id="cam">
+      <div class="start" id="cam-start">
+        <button class="btn accent" type="button" id="start">Turn on camera</button>
+        <p>Point it at the QR code on the customer's phone.</p>
+      </div>
+    </div>
+    <p class="or" style="margin:18px 0">or type the code</p>
+    <form class="code" id="code-form" autocomplete="off">
+      <input type="text" name="code" maxlength="6" placeholder="K7M2QX" aria-label="Customer code" autocapitalize="characters" spellcheck="false">
+      <button class="btn" type="submit">Find</button>
+    </form>
+    <p class="err" id="err" role="alert"></p>
+  </section>
+
+  <!-- step 2: stamp -->
+  <section id="stamp" hidden>
+    <div class="found">
+      <div class="who"><h2 id="who-name"></h2><p id="who-sub"></p></div>
+      <div id="who-pass" style="width:100%;display:grid;justify-items:center"></div>
+      <button class="btn accent block big" type="button" id="main-action"></button>
+      <div class="minor">
+        <button class="btn secondary" type="button" id="undo">Remove a stamp</button>
+        <button class="btn secondary" type="button" id="next">Next customer</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="../assets/vendor/qrcode.js"></script>
+<script src="../assets/js/store.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(() => {
+  const find = document.getElementById('find');
+  const stampView = document.getElementById('stamp');
+  const err = document.getElementById('err');
+  let customerId = null, stream = null, scanning = false;
+
+  // ---------- find ----------
+  function open(code) {
+    const c = Store.getCustomer(code);
+    if (!c) { err.textContent = `No card with code "${(code || '').toUpperCase()}". Check the letters and try again.`; return false; }
+    err.textContent = '';
+    stopCamera();
+    customerId = c.id;
+    find.hidden = true; stampView.hidden = false;
+    draw();
+    document.getElementById('main-action').focus();
+    return true;
+  }
+  document.getElementById('code-form').addEventListener('submit', e => { e.preventDefault(); open(e.target.code.value); });
+
+  // ---------- camera ----------
+  let detector = null;
+  async function startCamera() {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    } catch (e) {
+      err.textContent = 'The camera is blocked. Allow camera access in your browser, or type the code below.';
+      return;
+    }
+    const cam = document.getElementById('cam');
+    document.getElementById('cam-start').hidden = true;
+    const video = document.createElement('video');
+    video.setAttribute('playsinline', ''); video.muted = true; video.srcObject = stream;
+    const frame = document.createElement('div'); frame.className = 'frame';
+    cam.append(video, frame);
+    await video.play();
+
+    if ('BarcodeDetector' in window) {
+      try { detector = new BarcodeDetector({ formats: ['qr_code'] }); } catch (e) { detector = null; }
+    }
+    if (!detector && !window.jsQR) await loadScript('../assets/vendor/jsQR.js');
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    scanning = true;
+    const tick = async () => {
+      if (!scanning) return;
+      if (video.readyState >= 2) {
+        let text = null;
+        if (detector) {
+          const r = await detector.detect(video).catch(() => []);
+          text = r[0] && r[0].rawValue;
+        } else {
+          canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+          ctx.drawImage(video, 0, 0);
+          const r = jsQR(ctx.getImageData(0, 0, canvas.width, canvas.height).data, canvas.width, canvas.height);
+          text = r && r.data;
+        }
+        if (text && open(text.trim())) { navigator.vibrate && navigator.vibrate(40); return; }
+      }
+      requestAnimationFrame(tick);
+    };
+    tick();
+  }
+  function stopCamera() {
+    scanning = false;
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    stream = null;
+    const cam = document.getElementById('cam');
+    cam.querySelectorAll('video,.frame').forEach(n => n.remove());
+    document.getElementById('cam-start').hidden = false;
+  }
+  function loadScript(src) {
+    return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
+  }
+  document.getElementById('start').addEventListener('click', startCamera);
+
+  // ---------- stamp ----------
+  function draw(pop) {
+    const c = Store.getCustomer(customerId);
+    const card = Store.getCard(c.cardId);
+    const full = c.stamps >= card.stampsNeeded;
+    document.getElementById('who-name').textContent = c.name;
+    document.getElementById('who-sub').textContent = `${card.title} · ${c.redeemed} reward${c.redeemed === 1 ? '' : 's'} claimed so far`;
+    document.getElementById('who-pass').innerHTML = UI.renderPass(card, null, { stamps: c.stamps, pop });
+    const main = document.getElementById('main-action');
+    main.textContent = full ? `Give reward: ${card.reward}` : 'Add stamp';
+    main.dataset.mode = full ? 'redeem' : 'stamp';
+    document.getElementById('undo').disabled = c.stamps === 0;
+  }
+  document.getElementById('main-action').addEventListener('click', e => {
+    if (e.currentTarget.dataset.mode === 'redeem') {
+      Store.redeem(customerId); draw(); UI.toast('Reward given. The card starts again.');
+    } else {
+      const c = Store.stamp(customerId, 1); draw(c.stamps - 1);
+      const card = Store.getCard(c.cardId);
+      UI.toast(c.stamps >= card.stampsNeeded ? 'Card full. Give the reward!' : `Stamp added (${c.stamps}/${card.stampsNeeded})`);
+    }
+  });
+  document.getElementById('undo').addEventListener('click', () => { Store.stamp(customerId, -1); draw(); UI.toast('Stamp removed'); });
+  document.getElementById('next').addEventListener('click', () => {
+    customerId = null; stampView.hidden = true; find.hidden = false;
+    const input = document.querySelector('#code-form input'); input.value = ''; input.focus();
+  });
+
+  Store.onChange(() => { if (customerId) draw(); });
+})();
+</script>
+</body>
+</html>

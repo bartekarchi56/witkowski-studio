@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F3F4F1">
+<title>Your loyalty card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/base.css">
+<style>
+body{background:var(--surface);min-height:100vh}
+main{max-width:420px;margin:0 auto;padding:28px 16px 48px;display:grid;gap:20px;justify-items:center}
+.pass{max-width:380px}
+.box{width:100%;background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px}
+.box h1{font-size:22px;margin-bottom:6px}
+.box p{color:var(--muted);font-size:15px}
+.box form{margin-top:18px}
+.fine{font-size:13px;color:var(--muted);text-align:center;margin-top:12px}
+.wallet{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+.wallet .btn{font-size:14px;padding:12px 10px}
+.wallet-note{font-size:13px;color:var(--muted);text-align:center;width:100%}
+.history{width:100%;list-style:none;margin:0;padding:0;font-size:14px}
+.history li{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}
+.history li:last-child{border-bottom:0}
+.history span:last-child{color:var(--muted)}
+.box h2{font-size:15px;margin-bottom:6px}
+</style>
+</head>
+<body>
+<main id="app" aria-live="polite"></main>
+
+<script src="../assets/vendor/qrcode.js"></script>
+<script src="../assets/js/store.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+(() => {
+  const app = document.getElementById('app');
+  const cardId = new URLSearchParams(location.search).get('card') || '';
+  const MINE = 'wsloyalty:mine'; // which customer code belongs to this phone, per card
+
+  const mine = () => { try { return JSON.parse(localStorage.getItem(MINE)) || {}; } catch (e) { return {}; } };
+  const remember = (cid, id) => { try { const m = mine(); m[cid] = id; localStorage.setItem(MINE, JSON.stringify(m)); } catch (e) {} };
+
+  let last = null; // previous stamp count, to animate new stamps
+
+  function render() {
+    const card = Store.getCard(cardId);
+    if (!card) {
+      app.innerHTML = `<div class="box"><h1>This card link isn't working</h1>
+        <p>Ask the shop for their QR code and scan it again.</p></div>`;
+      return;
+    }
+    document.title = `${card.title} · ${card.business}`;
+    const me = Store.getCustomer(mine()[cardId]);
+
+    if (!me) {
+      app.innerHTML = `${UI.renderPass(card, null, { stamps: 0 })}
+        <div class="box">
+          <h1>Join ${UI.esc(card.business)}'s ${UI.esc(card.title.toLowerCase())}</h1>
+          <p>Get a stamp every visit. After ${card.stampsNeeded} stamps you get ${UI.esc(card.reward)}.</p>
+          <form id="join">
+            <label class="field"><span>Your first name</span>
+              <input type="text" name="name" maxlength="30" autocomplete="given-name" placeholder="So staff know it's you">
+            </label>
+            <button class="btn accent block" type="submit">Get my card</button>
+          </form>
+          <p class="fine">No app and no account. Your card is saved on this phone.</p>
+        </div>`;
+      document.getElementById('join').addEventListener('submit', e => {
+        e.preventDefault();
+        const c = Store.join(cardId, e.target.name.value);
+        remember(cardId, c.id);
+        last = 0;
+        render();
+        UI.toast('Your card is ready');
+      });
+      return;
+    }
+
+    const pop = last !== null && me.stamps > last ? me.stamps - 1 : undefined;
+    if (last !== null && me.stamps > last) UI.toast(me.stamps >= card.stampsNeeded ? 'Card full! Your reward is ready.' : 'Stamp added');
+    if (last !== null && me.stamps === 0 && last > 0 && me.history.at(-1).type === 'redeem') UI.toast('Enjoy your reward!');
+    last = me.stamps;
+
+    const left = card.stampsNeeded - me.stamps;
+    const events = me.history.slice(-5).reverse().map(h => {
+      const what = { joined: 'Joined', stamp: `+${h.n} stamp${h.n > 1 ? 's' : ''}`, unstamp: `−${h.n} stamp`, redeem: 'Reward claimed' }[h.type];
+      return `<li><span>${what}</span><span>${new Date(h.t).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}</span></li>`;
+    }).join('');
+
+    app.innerHTML = `${UI.renderPass(card, me, { pop })}
+      <p class="muted" style="text-align:center">${left > 0
+        ? `Show the code when you pay. <b style="color:var(--ink)">${left} more</b> for ${UI.esc(card.reward)}.`
+        : 'Show this card at the till to claim your reward.'}</p>
+      <div class="wallet">
+        <button class="btn secondary" type="button" disabled>Add to Apple Wallet</button>
+        <button class="btn secondary" type="button" disabled>Add to Google Wallet</button>
+      </div>
+      <p class="wallet-note">Wallet saving is coming soon. Until then, add this page to your home screen.</p>
+      <div class="box"><h2>Recent activity</h2><ul class="history">${events}</ul></div>`;
+  }
+
+  Store.onChange(render);
+  render();
+})();
+</script>
+</body>
+</html>
