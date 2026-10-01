@@ -64,16 +64,18 @@
   I18N.add({
     it: {
       'pass.collect': 'Raccogli {n} timbri: {reward}',
-      'pass.ready': 'Premio pronto. Mostra la carta alla cassa.',
+      'pass.ready': 'Premio pronto: mostralo alla cassa',
       'pass.show': 'Mostra alla cassa',
+      'pass.stamps': 'Timbri', 'pass.reward': 'Premio', 'pass.member': 'Cliente', 'pass.card': 'Carta', 'pass.tap': 'Tocca ··· per i dettagli',
       'pass.aria': '{title}: {have} timbri su {need}',
       'ago.never': 'Mai', 'ago.now': 'Adesso', 'ago.min': '{n} min fa', 'ago.h': '{n} h fa', 'ago.d': '{n} g fa',
       'copied': 'Copiato'
     },
     en: {
       'pass.collect': 'Collect {n} stamps: {reward}',
-      'pass.ready': 'Reward ready. Show this card at the till.',
+      'pass.ready': 'Reward ready: show it at the till',
       'pass.show': 'Show at the till',
+      'pass.stamps': 'Stamps', 'pass.reward': 'Reward', 'pass.member': 'Member', 'pass.card': 'Card', 'pass.tap': 'Tap ··· for details',
       'pass.aria': '{title}: {have} of {need} stamps',
       'ago.never': 'Never', 'ago.now': 'Just now', 'ago.min': '{n} min ago', 'ago.h': '{n} h ago', 'ago.d': '{n} d ago',
       'copied': 'Copied'

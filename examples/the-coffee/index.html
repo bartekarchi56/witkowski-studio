@@ -79,7 +79,7 @@
     <div class="block-head"><span class="label" data-i18n="x.l1"></span><div><h2 class="display" data-i18n="x.h1"></h2><p data-i18n="x.p1"></p></div></div>
     <div class="grid"><span></span>
       <div class="demo">
-        <div class="phone"><div class="phone-screen" id="pass"></div></div>
+        <div style="display:grid;justify-items:center;gap:14px"><div class="platform" id="plat"></div><div class="phone"><div class="phone-screen" id="pass"></div></div></div>
         <div>
           <ol class="steps-mini">
             <li><b data-i18n="x.s1"></b><span data-i18n="x.s1p"></span></li>
@@ -216,6 +216,7 @@ I18N.add({
     $('insta').src = cv.toDataURL('image/png');
     $('insta').alt = I18N.t('x.h3');
   }
+  UI.platformSwitch($('plat'), () => pass());
   I18N.switchers();
   document.addEventListener('langchange', all);
   all();

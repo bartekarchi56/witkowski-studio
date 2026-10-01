@@ -106,32 +106,69 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink)}
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:13px 20px;border-radius:999px;font-weight:600;font-size:15px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:50;max-width:calc(100% - 32px);text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
-/* ---------- the pass (customer's loyalty card) ---------- */
-.pass{--c:#fff;--t:#0B0B0C;--s:#2B32FF;width:100%;max-width:340px;border-radius:22px;background:var(--c);color:var(--t);overflow:hidden;font-family:var(--font);box-shadow:0 0 0 1.5px rgba(11,11,12,.12),0 24px 48px -28px rgba(11,11,12,.45)}
-.pass-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px 0}
-.pass-biz{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;letter-spacing:.04em;text-transform:uppercase;min-width:0}
-.pass-biz span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pass-icon{width:30px;height:30px;flex:0 0 30px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-items:center}
-.pass-icon svg{width:17px;height:17px}
-.pass-count{font:500 13px/1 var(--mono);opacity:.75;white-space:nowrap}
-.pass-title{padding:16px 18px 4px;font-size:24px;font-weight:800;font-stretch:118%;letter-spacing:-.03em;line-height:1.05}
-.pass-reward{padding:0 18px;font-size:14px;opacity:.8}
-.pass-grid{display:grid;grid-template-columns:repeat(var(--cols,5),1fr);gap:8px;padding:16px 18px 18px}
-.pass-dot{aspect-ratio:1;border-radius:50%;border:1.5px dashed currentColor;opacity:.35;display:grid;place-items:center}
-.pass-dot svg{width:48%;height:48%}
-.pass-dot.on{opacity:1;border:0;background:var(--s);color:#fff;transform:rotate(var(--r,-6deg));box-shadow:inset 0 0 0 3px var(--s),inset 0 0 0 4.5px rgba(255,255,255,.55)}
-.pass-dot.pop{animation:stamp .38s cubic-bezier(.2,1.5,.5,1)}
-@keyframes stamp{0%{transform:scale(1.9) rotate(-18deg);opacity:0}60%{opacity:1}100%{transform:scale(1) rotate(var(--r,-6deg))}}
-.pass-ready{margin:0 18px 18px;padding:11px 14px;border-radius:12px;background:var(--s);color:#fff;font-weight:700;font-size:14px}
-.pass-foot{background:#fff;color:var(--ink);padding:14px 18px;display:flex;align-items:center;gap:14px;border-top:1.5px dashed rgba(11,11,12,.2)}
-.pass-foot .qr{width:84px;height:84px;flex:0 0 84px}
-.pass-foot .qr svg{width:100%;height:100%}
-.pass-foot b{display:block;font:500 19px/1.2 var(--mono);letter-spacing:.14em}
-.pass-foot small{color:var(--muted);font-size:13px;display:block}
+/* ---------- the pass (customer's loyalty card) ----------
+   Drawn to match the real Apple Wallet "store card" and Google Wallet
+   "loyalty" layouts, so what the café sees here is what lands in the
+   customer's Wallet. */
+.pass{--c:#fff;--t:#0B0B0C;--s:#2B32FF;width:100%;max-width:340px;background:var(--c);color:var(--t);font-family:-apple-system,"SF Pro Text",var(--font);overflow:hidden;position:relative}
+.wp-dot{aspect-ratio:1;border-radius:50%;background:color-mix(in srgb,var(--t) 22%,transparent);display:grid;place-items:center;color:var(--c)}
+.wp-dot svg{width:50%;height:50%}
+.wp-dot.on{background:var(--s);color:#fff}
+.wp-dot.pop{animation:stamp .38s cubic-bezier(.2,1.5,.5,1)}
+@keyframes stamp{0%{transform:scale(1.9);opacity:0}60%{opacity:1}100%{transform:scale(1)}}
+.wp-strip{display:grid;grid-template-columns:repeat(var(--cols,5),1fr);gap:14px 22px;padding:18px 30px}
+.wp-label{display:block;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;opacity:.6}
+.wp-val{display:block;font-size:16px;font-weight:500;line-height:1.2}
+.wp-code{display:grid;justify-items:center;gap:6px;color:#000}
+.wp-code .qr{background:#fff;padding:7px;border-radius:6px;width:112px}
+.wp-code .qr svg{width:100%;height:auto}
+.wp-code small{font-size:12px;color:var(--t);opacity:.75;letter-spacing:.08em}
+.wp-ready{margin:4px 18px 0;padding:9px 12px;border-radius:8px;background:var(--s);color:#fff;font-weight:600;font-size:13px;text-align:center}
+
+/* Apple Wallet store card */
+.pass.apple{border-radius:12px;aspect-ratio:1/1.4;overflow:visible;display:flex;flex-direction:column;box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 10px 30px -10px rgba(0,0,0,.5)}
+.apple .wp-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:14px 16px 0;min-height:52px}
+.apple .wp-logo{display:flex;align-items:center;gap:8px;min-width:0;font-size:22px;font-weight:500;letter-spacing:-.01em;line-height:1.1}
+.apple .wp-logo img{max-height:44px;max-width:200px;object-fit:contain;object-position:left center}
+.apple .wp-logo svg{width:24px;height:24px;flex:0 0 24px}
+.apple .wp-logo span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.apple .wp-hf{text-align:right;flex:0 0 auto}
+.apple .wp-hf .wp-val{font-size:19px}
+.apple .wp-strip{padding:20px 30px 12px}
+.apple .wp-fields{display:flex;justify-content:space-between;gap:12px;padding:6px 16px 0}
+.apple .wp-fields > div:last-child{text-align:right}
+.apple .wp-code{margin-top:auto;padding:12px 0 10px}
+.pass.apple.compact{aspect-ratio:auto;padding-bottom:16px}
+.apple .wp-tap{font-size:11px;opacity:.55;text-align:center;padding-bottom:10px}
+
+/* Google Wallet loyalty card */
+.pass.google{border-radius:24px;box-shadow:0 1px 3px rgba(0,0,0,.25),0 10px 30px -14px rgba(0,0,0,.45);font-family:"Google Sans","Roboto",var(--font)}
+.google .wp-head{display:flex;align-items:center;gap:10px;padding:16px 18px 0;font-size:14px;font-weight:500}
+.google .wp-glogo{width:34px;height:34px;flex:0 0 34px;border-radius:50%;background:#fff;color:#000;display:grid;place-items:center;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.08)}
+.google .wp-glogo svg{width:19px;height:19px}
+.google .wp-glogo img{width:100%;height:100%;object-fit:contain}
+.google .wp-title{padding:14px 18px 0;font-size:24px;font-weight:400;line-height:1.15}
+.google .wp-fields{display:flex;gap:28px;padding:14px 18px 0}
+.google .wp-label{text-transform:none;letter-spacing:0;font-size:12px;font-weight:400;opacity:.75}
+.google .wp-code{margin:16px 18px 0;background:#fff;border-radius:16px;padding:14px}
+.google .wp-code .qr{padding:0;width:120px}
+.google .wp-code small{color:#3c4043}
+.google .wp-strip{margin-top:16px;padding:18px 28px;background:color-mix(in srgb,var(--t) 6%,var(--c))}
+.google .wp-ready{margin:12px 18px 0}
+
+/* wallet app backgrounds behind the pass */
+.phone-screen:has(.pass.apple){background:#000}
+.phone-screen:has(.pass.apple)::before{background:#1c1c1e}
+.phone-screen:has(.pass.google){background:#f1f3f4}
+
+/* iPhone / Android switch */
+.platform{display:inline-flex;border:1.5px solid currentColor;border-radius:999px;padding:2px}
+.platform button{font:600 13px/1 var(--font);padding:7px 12px;border:0;border-radius:999px;background:transparent;color:inherit;cursor:pointer}
+.platform button[aria-pressed="true"]{background:var(--ink);color:#fff}
 
 /* phone frame used to present the pass */
 .phone{width:300px;max-width:100%;border-radius:44px;background:var(--ink);padding:12px;box-shadow:0 30px 60px -30px rgba(0,0,0,.5)}
-.phone-screen{border-radius:34px;background:var(--wash);padding:44px 14px 22px;min-height:520px;display:grid;align-content:start;justify-items:center;gap:14px;position:relative}
+.phone-screen{border-radius:34px;background:var(--wash);transition:background .2s;padding:44px 14px 22px;min-height:520px;display:grid;align-content:start;justify-items:center;gap:14px;position:relative}
 .phone-screen::before{content:"";position:absolute;top:12px;left:50%;width:84px;height:22px;border-radius:12px;background:var(--ink);transform:translateX(-50%)}
 
 @media (prefers-reduced-motion:reduce){

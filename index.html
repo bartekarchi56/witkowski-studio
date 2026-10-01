@@ -73,6 +73,8 @@ section{padding:104px 0}
 .pview .poster{max-width:380px}
 .pview img{width:100%;max-width:400px;border-radius:6px}
 .pcap{font-size:14px;color:#A9A9AE;margin-top:14px;text-align:center}
+.b-platform{color:#fff}
+.b-platform button[aria-pressed="true"]{background:#fff;color:var(--ink)}
 
 /* ---------- what we do ---------- */
 .help-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
@@ -221,6 +223,7 @@ footer .lang button[aria-pressed="true"]{background:#fff;color:var(--ink)}
       </ul>
     </div>
     <div class="try">
+      <div class="platform" id="hero-platform"></div>
       <div class="phone"><div class="phone-screen" id="hero-pass"></div></div>
       <div class="try-actions">
         <button class="btn pop" type="button" id="hero-stamp"></button>
@@ -283,7 +286,7 @@ footer .lang button[aria-pressed="true"]{background:#fff;color:var(--ink)}
             <button role="tab" aria-selected="false" aria-controls="pv-insta" id="pt-insta" data-i18n="b.tInsta" tabindex="-1"></button>
           </div>
           <div class="pview" role="tabpanel" id="pv-phone" aria-labelledby="pt-phone">
-            <div><div class="phone"><div class="phone-screen" id="b-pass"></div></div><p class="pcap" data-i18n="b.cPhone"></p></div>
+            <div style="display:grid;justify-items:center;gap:16px"><div class="platform b-platform" id="b-platform"></div><div class="phone"><div class="phone-screen" id="b-pass"></div></div><p class="pcap" data-i18n="b.cPhone"></p></div>
           </div>
           <div class="pview" role="tabpanel" id="pv-poster" aria-labelledby="pt-poster" hidden>
             <div style="width:100%;max-width:380px"><div id="b-poster"></div><p class="pcap" data-i18n="b.cPoster"></p></div>
@@ -396,7 +399,7 @@ I18N.add({
     'nav.how': 'Come funziona', 'nav.try': 'Prova', 'nav.help': 'Cosa facciamo noi', 'nav.pricing': 'Prezzi',
     'nav.login': 'Accedi', 'nav.start': 'Prova gratis',
     'hero.a': 'La carta fedeltà che nessuno', 'hero.b': 'perde.',
-    'hero.lede': 'Una carta a timbri sul telefono dei tuoi clienti. Senza app e senza cartoncini. E non sei da solo: la disegniamo con te, la stampiamo e ti diamo i post per farla conoscere.',
+    'hero.lede': 'Una carta a timbri nel Wallet dei tuoi clienti, su iPhone e Android. Senza app e senza cartoncini. E non sei da solo: la disegniamo con te, la stampiamo e ti diamo i post per farla conoscere.',
     'hero.cta1': 'Crea la tua carta', 'hero.cta2': 'Come funziona',
     'hero.f1': 'Pronta in 10 minuti', 'hero.f2': 'Nessuna app per i clienti', 'hero.f3': '30 giorni gratis',
     'hero.stamp': 'Metti un timbro', 'hero.redeem': 'Dai il premio', 'hero.reset': 'Ricomincia',
@@ -412,10 +415,10 @@ I18N.add({
     'b.name': 'Nome del locale', 'b.namePh': 'Es. Bar Centrale', 'b.type': 'Che tipo di locale è?', 'b.reward': 'Il premio', 'b.stamps': 'Timbri per il premio',
     'b.go': 'Crea questa carta', 'b.note': 'Gratis per 30 giorni. Non serve la carta di credito.',
     'b.tPhone': 'Sul telefono', 'b.tPoster': 'Poster per la cassa', 'b.tInsta': 'Post Instagram',
-    'b.cPhone': 'La carta del cliente, sempre in tasca.', 'b.cPoster': 'Formato A5. Te lo spediamo stampato, oppure lo stampi tu.', 'b.cInsta': 'Pronto da pubblicare. Lo scarichi con un tocco.',
+    'b.cPhone': 'Nel Wallet del cliente, accanto ai biglietti e alle carte d\'imbarco.', 'b.cPoster': 'Formato A5. Te lo spediamo stampato, oppure lo stampi tu.', 'b.cInsta': 'Pronto da pubblicare. Lo scarichi con un tocco.',
     'h.label': 'Cosa facciamo noi', 'h.title': 'Non serve essere grafici. Né esperti di marketing.',
     'h.lede': 'Gli altri ti danno uno strumento e ti lasciano da solo. Con Timbro hai qualcuno che ti aiuta, dall\'idea al primo cliente.',
-    'h.1': 'Disegniamo la carta con te', 'h.1p': 'Con il tuo logo e i tuoi colori. Scegli tu il premio, al resto pensiamo noi.',
+    'h.1': 'Disegniamo la carta con te', 'h.1p': 'Con il tuo logo e i tuoi colori, per Apple Wallet e Google Wallet. Scegli tu il premio, al resto pensiamo noi.',
     'h.2': 'Il kit stampato, su carta vera', 'h.2p': 'Poster per la cassa, adesivo per la vetrina e cartellini per i tavoli. Arrivano pronti da appendere.',
     'h.3': 'Post e messaggi già scritti', 'h.3p': 'Instagram, storie, WhatsApp e Google. Copi, incolli, pubblichi.',
     'h.4': 'Un piano di lancio di 7 giorni', 'h.4p': 'Cosa fare ogni giorno della prima settimana. L\'obiettivo: 30 iscritti.',
@@ -444,7 +447,7 @@ I18N.add({
     'nav.how': 'How it works', 'nav.try': 'Try it', 'nav.help': 'What we do', 'nav.pricing': 'Pricing',
     'nav.login': 'Log in', 'nav.start': 'Try it free',
     'hero.a': 'The loyalty card nobody', 'hero.b': 'loses.',
-    'hero.lede': 'A stamp card on your customers\' phones. No app, no paper cards. And you\'re not on your own: we design it with you, print it and hand you the posts to promote it.',
+    'hero.lede': 'A stamp card in your customers\' Wallet, on iPhone and Android. No app, no paper cards. And you\'re not on your own: we design it with you, print it and hand you the posts to promote it.',
     'hero.cta1': 'Create your card', 'hero.cta2': 'How it works',
     'hero.f1': 'Ready in 10 minutes', 'hero.f2': 'No app for customers', 'hero.f3': '30 days free',
     'hero.stamp': 'Add a stamp', 'hero.redeem': 'Give the reward', 'hero.reset': 'Start over',
@@ -460,10 +463,10 @@ I18N.add({
     'b.name': 'Name of your place', 'b.namePh': 'E.g. Corner Café', 'b.type': 'What kind of place is it?', 'b.reward': 'The reward', 'b.stamps': 'Stamps for the reward',
     'b.go': 'Create this card', 'b.note': 'Free for 30 days. No credit card needed.',
     'b.tPhone': 'On the phone', 'b.tPoster': 'Poster for the till', 'b.tInsta': 'Instagram post',
-    'b.cPhone': 'Your customer\'s card, always in their pocket.', 'b.cPoster': 'A5 size. We post it to you printed, or you print it yourself.', 'b.cInsta': 'Ready to publish. Download it in one tap.',
+    'b.cPhone': 'In your customer\'s Wallet, next to their tickets and boarding passes.', 'b.cPoster': 'A5 size. We post it to you printed, or you print it yourself.', 'b.cInsta': 'Ready to publish. Download it in one tap.',
     'h.label': 'What we do for you', 'h.title': 'You don\'t need to be a designer. Or a marketer.',
     'h.lede': 'Other services hand you a tool and leave you to it. With Timbro you get someone who helps, from the idea to your first customer.',
-    'h.1': 'We design the card with you', 'h.1p': 'With your logo and colours. You choose the reward, we handle the rest.',
+    'h.1': 'We design the card with you', 'h.1p': 'With your logo and colours, for Apple Wallet and Google Wallet. You choose the reward, we handle the rest.',
     'h.2': 'A printed kit, on real paper', 'h.2p': 'Poster for the till, window sticker and table cards. They arrive ready to put up.',
     'h.3': 'Posts and messages, already written', 'h.3p': 'Instagram, stories, WhatsApp and Google. Copy, paste, publish.',
     'h.4': 'A 7-day launch plan', 'h.4p': 'What to do each day of the first week. The goal: 30 members.',
@@ -628,6 +631,8 @@ I18N.add({
   const bar = new URLSearchParams(location.search).get('bar');
   if (bar) { form.name.value = bar.slice(0, 28); if (!location.hash) location.hash = '#prova'; }
 
+  UI.platformSwitch(document.getElementById('hero-platform'), () => { hero(); builder(); });
+  UI.platformSwitch(document.getElementById('b-platform'), () => { hero(); builder(); });
   I18N.switchers();
   document.addEventListener('langchange', all);
   all();

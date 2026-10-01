@@ -68,8 +68,8 @@ All data access goes through `assets/js/store.js`, so moving to a real server me
    - `staff` (id, business_id, name, login)
 2. **Accounts.** Owner sign-up and login; staff logins created by the owner.
 3. **Swap `store.js`** for API calls (same function names).
-4. **Google Wallet.** Easiest wallet to start with: no certificate costs, and a JWT "Save" link is enough.
-5. **Apple Wallet.** Pass Type ID certificate, `.pkpass` signing on the server, and the PassKit web service endpoints for updates.
+4. **Wallet passes.** Done in `wallet/`: signed `.pkpass` (Apple) and JWT save links (Google). Needs your Apple Developer account and Google Wallet issuer ID; see `wallet/README.md`.
+5. **Live updates in Wallet.** Apple PassKit web service endpoints + APNs push after each stamp; Google: PATCH the loyalty object after each stamp.
 6. **Payments.** Stripe Billing with the three plans and a 30-day trial; enforce plan limits (locations, cards, staff).
 7. **Legal.** Privacy policy and GDPR basics (you store customer names and visit history).
 

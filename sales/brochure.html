@@ -54,14 +54,16 @@ body{background:var(--wash)}
 .why li::before{content:"";position:absolute;left:0;top:1.6mm;width:2mm;height:2mm;border-radius:50%;background:var(--pop)}
 
 /* example */
-.ex{display:grid;grid-template-columns:70mm 1fr;gap:6mm;margin-top:6mm;align-items:start}
-.ex .card-wrap{zoom:.76}
+.ex{display:grid;grid-template-columns:58mm 1fr;gap:8mm;margin-top:6mm;align-items:end}
+.ex .card-wrap{zoom:.64}
+.do-wrap{margin-top:6mm}
+.do{display:grid;grid-template-columns:1fr 1fr;column-gap:6mm}
 .ex .cap{font:500 6.5pt/1.3 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:2.5mm;text-align:center}
 .do{list-style:none;margin:0;padding:0;border-top:.4mm solid var(--ink)}
 .do li{padding:2.6mm 0;border-bottom:.3mm solid var(--line)}
 .do b{display:block;font-size:9.5pt}
 .do span{color:var(--ink-2);font-size:8.5pt;line-height:1.35;display:block;margin-top:.5mm}
-.mini-poster{width:43mm;margin:6mm auto 0;transform:rotate(-2.5deg)}
+.mini-poster{width:44mm;margin:0 auto;transform:rotate(-2.5deg)}
 .mini-poster .poster{box-shadow:0 0 0 .3mm #D5D5D3,0 3mm 6mm -3mm rgba(0,0,0,.35)}
 .start{margin:5mm 0 6mm;display:grid;grid-template-columns:repeat(3,1fr);gap:3mm;counter-reset:st}
 .start div{counter-increment:st;border-top:.4mm solid var(--ink);padding-top:2.5mm;font-size:8.5pt;line-height:1.35}
@@ -150,7 +152,7 @@ const COPY = {
     whyH: 'Perché conviene a un bar',
     why: ['Il cartoncino si perde. Il telefono no.', 'Il cliente vede quanti timbri mancano, e torna per finirli.', 'Sai chi sono i tuoi abituali e ogni quanto tornano.', 'Niente cartoncini da ristampare, niente timbri da comprare.'],
     exLbl: 'La vostra carta', exH: 'Ecco la carta di {cafe}.', exHGeneric: 'Un esempio: The Coffee, Milano.',
-    exCap: 'Sul telefono del cliente',
+    exCap: 'Nel Wallet del cliente',
     doLbl: 'Cosa facciamo noi',
     do: [['La disegniamo con voi', 'Logo, colori, premio.'], ['Il kit stampato', 'Poster per la cassa, adesivo vetrina, cartellini.'], ['Post e messaggi pronti', 'Instagram, WhatsApp, Google.'], ['Piano di lancio di 7 giorni', 'Cosa fare ogni giorno.'], ['Parla inglese ai turisti', 'Utile a Milano.']],
     kit: 'Il kit stampato arriva pronto da appendere.', posterCap: 'Il poster A5 per la cassa',
@@ -172,7 +174,7 @@ const COPY = {
     whyH: 'Why it works for a café',
     why: ['Paper cards get lost. Phones don\'t.', 'Customers see how many stamps are left, and come back to finish.', 'You know who your regulars are and how often they come.', 'No cards to reprint, no rubber stamps to buy.'],
     exLbl: 'Your card', exH: 'Here\'s the card for {cafe}.', exHGeneric: 'An example: The Coffee, Milan.',
-    exCap: 'On your customer\'s phone',
+    exCap: 'In your customer\'s Wallet',
     doLbl: 'What we do for you',
     do: [['We design it with you', 'Logo, colours, reward.'], ['The printed kit', 'Till poster, window sticker, table cards.'], ['Ready-made posts', 'Instagram, WhatsApp, Google.'], ['A 7-day launch plan', 'What to do each day.'], ['Italian and English', 'For locals and tourists.']],
     kit: 'The printed kit arrives ready to put up.', posterCap: 'The A5 poster for your till',
@@ -240,10 +242,10 @@ const COPY = {
       <p class="lbl">${esc(L.exLbl)}</p>
       <h2 class="h">${esc(cafe ? L.exH.replace('{cafe}', cafe) : L.exHGeneric)}</h2>
       <div class="ex">
-        <div><div class="card-wrap">${pass}</div><p class="cap">${esc(L.exCap)}</p>
-          <div class="mini-poster">${MARKETING.poster(card, { lang, url: site })}</div><p class="cap" style="margin-top:4mm">${esc(L.posterCap)}</p></div>
-        <div><p class="lbl" style="margin:0 0 2mm">${esc(L.doLbl)}</p><ul class="do">${L.do.map(([b, s]) => `<li><b>${esc(b)}</b><span>${esc(s)}</span></li>`).join('')}</ul></div>
+        <div><div class="card-wrap">${pass}</div><p class="cap">${esc(L.exCap)}</p></div>
+        <div><div class="mini-poster">${MARKETING.poster(card, { lang, url: site })}</div><p class="cap" style="margin-top:4mm">${esc(L.posterCap)}</p></div>
       </div>
+      <div class="do-wrap"><p class="lbl" style="margin:0 0 2mm">${esc(L.doLbl)}</p><ul class="do">${L.do.map(([b, s]) => `<li><b>${esc(b)}</b><span>${esc(s)}</span></li>`).join('')}</ul></div>
       <div class="kitline"><i></i><b>${esc(L.kit)}</b></div>
       <span class="pg-num">3</span>
     </section>`;

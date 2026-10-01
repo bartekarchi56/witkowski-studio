@@ -1,6 +1,6 @@
 # Timbro
 
-Digital stamp cards for cafés, bakeries and shops, with help on the design and marketing. Customers scan a QR code to get the card on their phone, and staff stamp it with their phone's camera. Everything is in Italian and English.
+Digital stamp cards for cafés, bakeries and shops, with help on the design and marketing. Customers scan a QR code and save the card in Apple Wallet or Google Wallet, and staff stamp it with their phone's camera. Everything is in Italian and English.
 
 *Timbro* is a working name (Italian for "stamp"). To rename it, change `brand` in `assets/js/config.js` and the word "Timbro" in the HTML files.
 
@@ -17,6 +17,7 @@ Digital stamp cards for cafés, bakeries and shops, with help on the design and 
 | **Brochure generator** (personalised per café) | You, before a visit | `sales/brochure.html` |
 | **Sales kit**: in-person script, emails in IT/EN/ES/FR/DE, schedule | You | `sales/outreach.html` |
 | **Ready-to-print PDFs** | Print shop or home printer | `print/` |
+| **Wallet server**: real Apple Wallet `.pkpass` and Google Wallet passes | Deployed once, used by every card | `wallet/` ([setup](wallet/README.md)) |
 
 ### Print files (`print/`)
 
@@ -48,7 +49,7 @@ Open http://localhost:8080. The stamper camera needs `localhost` or HTTPS.
 
 ## Status
 
-Working prototype. Data is saved in the browser only, so the dashboard, customer card and stamper share data only on the same device. Apple/Google Wallet and reminder messages are marked "coming soon". See [docs/HOW-IT-WORKS.md](docs/HOW-IT-WORKS.md) for how the service works and the roadmap to launch (server, wallets, payments).
+Working prototype. Data is saved in the browser only, so the dashboard, customer card and stamper share data only on the same device. The cards are drawn exactly like Apple Wallet and Google Wallet passes, and `wallet/` creates the real ones; it switches on once you add your Apple and Google accounts (see `wallet/README.md`). Live stamp updates inside Wallet and reminder messages need the database. See [docs/HOW-IT-WORKS.md](docs/HOW-IT-WORKS.md) for how the service works and the roadmap to launch (server, wallets, payments).
 
 ## Editing
 

@@ -170,7 +170,7 @@ I18N.add({
     const full = c.stamps >= card.stampsNeeded;
     $('who-name').textContent = c.name;
     $('who-sub').textContent = t('s.sub', { title, n: c.redeemed });
-    $('who-pass').innerHTML = UI.renderPass(card, null, { stamps: c.stamps, pop });
+    $('who-pass').innerHTML = UI.renderPass(card, { ...c, stamps: c.stamps }, { pop, compact: true });
     $('main-action').textContent = full ? t('s.give', { reward }) : t('s.add');
     $('main-action').dataset.mode = full ? 'redeem' : 'stamp';
     $('undo').disabled = c.stamps === 0;

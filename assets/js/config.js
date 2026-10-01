@@ -10,6 +10,10 @@ window.CONFIG = {
   // before printing anything (e.g. https://timbro.it/).
   siteUrl: 'https://bartekarchi56.github.io/witkowski-studio/',
 
+  // Address of the wallet server (wallet/server.js) once it is deployed,
+  // e.g. 'https://wallet.timbro.it'. Empty = "Add to Wallet" stays switched off.
+  walletApi: '',
+
   contact: {
     name: 'Bartek Witkowski',
     phone: '',            // e.g. '+39 333 123 4567' (also used for WhatsApp)

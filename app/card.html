@@ -18,8 +18,12 @@ main{max-width:420px;margin:0 auto;padding:16px 16px 48px;display:grid;gap:18px;
 .fine{font-size:14px;color:var(--muted);text-align:center;margin-top:12px}
 .left{text-align:center;color:var(--ink-2)}
 .left b{color:var(--pop)}
-.wallet{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
-.wallet .btn{font-size:14px;padding:12px 10px;white-space:normal}
+.wallet{display:grid;gap:10px;width:100%;justify-items:center}
+.wallet form{width:100%}
+.wbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#000;color:#fff;border:0;border-radius:12px;padding:14px 18px;font:600 16px/1 -apple-system,var(--font);cursor:pointer}
+.wbtn[disabled]{opacity:.35;cursor:not-allowed}
+.wbtn svg{width:22px;height:22px}
+.other{font-size:14px}
 .note{font-size:13px;color:var(--muted);text-align:center}
 .history{list-style:none;margin:0;padding:0;font-size:15px}
 .history li{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1.5px solid var(--line)}
@@ -75,6 +79,23 @@ I18N.add({
   const words = card => ({ title: (I18N.lang === 'en' && card.titleEn) || card.title, reward: (I18N.lang === 'en' && card.rewardEn) || card.reward });
   let last = null; // previous stamp count, to animate new stamps
 
+  // "Add to Wallet" buttons. They post the card to the wallet server
+  // (CONFIG.walletApi, see wallet/README.md), which answers with a signed
+  // .pkpass file (iPhone) or a redirect to Google's save page (Android).
+  const WALLET_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18M16 14.5h2"/></svg>';
+  function walletButtons(card, me) {
+    const mineFirst = UI.getPlatform() === 'google' ? ['google', 'apple'] : ['apple', 'google'];
+    const data = UI.esc(JSON.stringify({ card, customer: { id: me.id, name: me.name, stamps: me.stamps } }));
+    const one = (kind, main) => {
+      const label = t(kind === 'apple' ? 'c.apple' : 'c.google');
+      if (!CONFIG.walletApi) return main ? `<button class="wbtn" type="button" disabled>${WALLET_ICON}${label}</button>` : '';
+      return main
+        ? `<form method="post" action="${UI.esc(CONFIG.walletApi.replace(/\/$/, ''))}/${kind}"><input type="hidden" name="data" value="${data}"><button class="wbtn" type="submit">${WALLET_ICON}${label}</button></form>`
+        : `<form method="post" action="${UI.esc(CONFIG.walletApi.replace(/\/$/, ''))}/${kind}"><input type="hidden" name="data" value="${data}"><button class="link other" type="submit">${label}</button></form>`;
+    };
+    return one(mineFirst[0], true) + one(mineFirst[1], false);
+  }
+
   function render(animate = true) {
     const card = Store.getCard(cardId);
     if (!card) {
@@ -126,11 +147,9 @@ I18N.add({
 
     app.innerHTML = `${UI.renderPass(card, me, { pop })}
       <p class="left">${left > 0 ? t('c.left', { n: left, reward: UI.esc(w.reward) }) : t('c.claim')}</p>
-      <div class="wallet">
-        <button class="btn line" type="button" disabled>${t('c.apple')}</button>
-        <button class="btn line" type="button" disabled>${t('c.google')}</button>
+      <div class="wallet">${walletButtons(card, me)}
       </div>
-      <p class="note">${t('c.walletNote')}</p>
+      ${CONFIG.walletApi ? '' : `<p class="note">${t('c.walletNote')}</p>`}
       <div class="box"><h2>${t('c.activity')}</h2><ul class="history">${events}</ul></div>
       <p class="by">${t('c.by')} <i></i><b>${UI.esc(CONFIG.brand)}</b></p>`;
   }
