@@ -1,36 +1,60 @@
-# Witkowski Loyalty
+# Timbro
 
-Digital stamp cards for cafés, salons and shops. Customers scan a QR code to get a card on their phone; staff stamp it with their phone's camera.
+Digital stamp cards for cafés, bakeries and shops, with help on the design and marketing. Customers scan a QR code to get the card on their phone, and staff stamp it with their phone's camera. Everything is in Italian and English.
 
-## Pages
+*Timbro* is a working name (Italian for "stamp"). To rename it, change `brand` in `assets/js/config.js` and the word "Timbro" in the HTML files.
+
+## What's here
 
 | Page | For | File |
 |---|---|---|
-| Landing page with pricing | Businesses deciding to sign up | `index.html` |
-| Dashboard | Business owner: design cards, get the QR code, see customers | `app/dashboard.html` |
-| Customer card | Customers: join and show their card at the till | `app/card.html?card=<id>` |
-| Stamper | Staff: scan, stamp, give rewards | `app/stamper.html` |
+| Website with live builder and pricing | Café owners deciding to sign up | `index.html` |
+| Dashboard: card, print, promote, customers | The café owner | `app/dashboard.html` |
+| Customer card | Customers, on their phone | `app/card.html?card=<id>` |
+| Stamper | Staff at the till | `app/stamper.html` |
+| Printable counter poster (A5/A4) | The café | `app/poster.html?card=<id>` |
+| **Example product for The Coffee, Milan** | Showing the owner | `examples/the-coffee/` |
+| **Brochure generator** (personalised per café) | You, before a visit | `sales/brochure.html` |
+| **Sales kit**: in-person script, emails in IT/EN/ES/FR/DE, schedule | You | `sales/outreach.html` |
+| **Ready-to-print PDFs** | Print shop or home printer | `print/` |
 
-## Run it
+### Print files (`print/`)
 
-No build step. Serve the folder with any static server, for example:
+- `brochure-the-coffee-it.pdf`, `brochure-the-coffee-en.pdf`: A5, 4 pages, personalised for The Coffee. For a print shop: "pieghevole A4 → A5, carta 170 g opaca".
+- `brochure-the-coffee-it-a4-da-piegare.pdf`: the same on 2 A4 sheets for a home printer. Print double-sided, "flip on short edge", then fold.
+- `brochure-generale-it.pdf`, `brochure-general-en.pdf`: no café name, for leaving anywhere.
+- `poster-the-coffee-a5.pdf`: the counter poster for The Coffee.
+
+To make a brochure for another café, open `sales/brochure.html`, type the café's name and your phone/email, then press "Stampa / Salva PDF".
+
+## Before printing or sending anything
+
+1. **Put the site online** (e.g. GitHub Pages or Netlify) and set `siteUrl` in `assets/js/config.js`. Every printed QR code points there; the current value is a guess.
+2. **Fill in `contact`** (phone, email) in `assets/js/config.js`, or type them into the brochure page before printing.
+3. **Check the prices and plans** in `config.js`: €19 / €35 / €69 a month, 30 days free, yearly = 10 months. These are placeholders.
+4. Regenerate the PDFs after any change (open the brochure page and save as PDF).
+
+## Run it locally
+
+No build step:
 
 ```
 npx http-server -p 8080
 ```
 
-Then open http://localhost:8080. The camera in the stamper needs `localhost` or HTTPS.
+Open http://localhost:8080. The stamper camera needs `localhost` or HTTPS.
 
-**Try the whole flow:** Dashboard → Share → "Open as a customer" → join → Stamper → type the 6-letter code → Add stamp.
+**Try the whole flow:** website → type a café name → "Crea questa carta" → Stampa → "Apri la carta come un cliente" → join → Stamper → type the 6-letter code → Aggiungi un timbro.
 
 ## Status
 
-This is a working prototype. Data is saved in the browser only, so all screens must be used in the same browser. See [docs/HOW-IT-WORKS.md](docs/HOW-IT-WORKS.md) for how the service works and the roadmap to launch (server, Apple/Google Wallet, payments).
+Working prototype. Data is saved in the browser only, so the dashboard, customer card and stamper share data only on the same device. Apple/Google Wallet and reminder messages are marked "coming soon". See [docs/HOW-IT-WORKS.md](docs/HOW-IT-WORKS.md) for how the service works and the roadmap to launch (server, wallets, payments).
 
 ## Editing
 
-- Prices and plan limits: the `plans` list at the bottom of `index.html`.
-- Colours and fonts: the variables at the top of `assets/css/base.css`.
-- Card icons and colours offered to businesses: `ICONS` and `COLORS` in `app/dashboard.html`.
+- Name, contact, prices, plans, starter templates: `assets/js/config.js`
+- Colours and fonts: top of `assets/css/base.css` (one colour only: `--pop`, the ink blue)
+- Ready-made posts, messages and the launch plan: `assets/js/marketing.js`
+- Sales emails and the in-person script: `sales/outreach.html`
 
-Third-party code in `assets/vendor/`: [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) (MIT) and [jsQR](https://github.com/cozmo/jsQR) (Apache-2.0).
+Fonts (Archivo, Spline Sans Mono) are self-hosted under the SIL Open Font License. Third-party code in `assets/vendor/`: [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) (MIT) and [jsQR](https://github.com/cozmo/jsQR) (Apache-2.0).

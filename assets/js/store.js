@@ -7,7 +7,7 @@
  * real server (see docs/HOW-IT-WORKS.md) does not touch the UI code.
  */
 (function () {
-  const KEY = 'wsloyalty:v1';
+  const KEY = 'timbro:v1';
   let memory = null; // fallback when localStorage is blocked
 
   function load() {
@@ -23,19 +23,25 @@
     try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) { /* memory only */ }
   }
 
+  // Every fresh browser starts with the example card for The Coffee, so a
+  // QR code on the brochure opens a working card on any phone.
   function seed() {
     const db = { cards: {}, customers: {} };
-    const card = {
-      id: 'demo',
-      business: 'Corner Coffee',
-      title: 'Coffee card',
-      reward: 'Free coffee of your choice',
+    db.cards['the-coffee'] = {
+      id: 'the-coffee',
+      business: 'The Coffee',
+      city: 'Milano',
+      type: 'caffe',
+      title: 'Carta caffè',
+      reward: 'un caffè gratis',
+      titleEn: 'Coffee card',
+      rewardEn: 'a free coffee',
       stampsNeeded: 10,
-      color: '#16804F',
-      icon: '☕',
+      color: '#FFFFFF',
+      ink: '#2B32FF',
+      icon: 'cup',
       createdAt: Date.now()
     };
-    db.cards[card.id] = card;
     save(db);
     return db;
   }
@@ -57,6 +63,7 @@
     saveCard(card) {
       const db = load();
       if (!card.id) { card.id = code(6).toLowerCase(); card.createdAt = Date.now(); }
+      card.updatedAt = Date.now();
       db.cards[card.id] = { ...db.cards[card.id], ...card };
       save(db);
       return db.cards[card.id];

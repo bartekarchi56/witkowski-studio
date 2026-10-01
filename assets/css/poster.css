@@ -1,0 +1,27 @@
+/* Counter poster. Sized in container units so the same markup works as a
+   small preview on screen and as a full A5 sheet in print. */
+/* .poster is the size container; .poster-in holds the padding so that
+   cqw inside always means "percent of the poster's width". */
+.poster{container-type:inline-size;width:100%;aspect-ratio:148/210;background:#fff;color:#0B0B0C;font-family:var(--font);box-shadow:0 0 0 1.5px var(--line);overflow:hidden;position:relative}
+.poster-in{position:absolute;inset:0;display:flex;flex-direction:column;padding:7cqw 7.5cqw 6cqw}
+.poster-top{display:flex;justify-content:space-between;align-items:center;gap:3cqw;font-size:3.4cqw}
+.poster-biz{display:flex;align-items:center;gap:2cqw;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.poster-biz svg{width:5.4cqw;height:5.4cqw}
+.poster-tag{font:500 2.8cqw/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;border:.35cqw solid currentColor;border-radius:99px;padding:1.4cqw 2.4cqw}
+.poster-h{font-size:10.4cqw;font-weight:800;font-stretch:125%;letter-spacing:-.04em;line-height:.98;margin-top:9cqw}
+.poster-h em{font-style:normal;color:var(--s)}
+.poster-en{font-size:3.6cqw;color:#55555A;margin-top:2.6cqw}
+.poster-dots{display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:1.6cqw;margin:6cqw 0 0;max-width:80%}
+.poster-dots i{aspect-ratio:1;border-radius:50%;border:.4cqw dashed #B5B5B8}
+.poster-dots i.on{background:var(--s);border:0}
+.poster-scan{display:grid;grid-template-columns:38% 1fr;gap:5cqw;align-items:center;margin-top:auto;padding-top:6cqw}
+.poster-qr{border:.5cqw solid #0B0B0C;border-radius:3cqw;padding:2.2cqw}
+.poster-qr svg{width:100%;height:auto}
+.poster-scan ol{list-style:none;margin:0;padding:0;counter-reset:p;display:grid;gap:2.8cqw}
+.poster-scan li{counter-increment:p;padding-left:7.5cqw;position:relative;font-size:3.5cqw;line-height:1.2}
+.poster-scan li::before{content:counter(p);position:absolute;left:0;top:-.2cqw;width:5cqw;height:5cqw;border-radius:50%;background:#0B0B0C;color:#fff;font:700 2.8cqw/5cqw var(--font);text-align:center}
+.poster-scan li b{display:block;font-weight:700}
+.poster-scan li span{color:#6B6B70;font-size:3cqw}
+.poster-foot{display:flex;justify-content:space-between;align-items:center;gap:3cqw;border-top:.35cqw solid #0B0B0C;margin-top:6cqw;padding-top:3cqw;font-size:3cqw;font-weight:600}
+.poster-brand{display:flex;align-items:center;gap:1.4cqw;font-weight:800;font-stretch:125%}
+.poster-brand i{width:3.4cqw;height:3.4cqw;border-radius:50%;background:var(--pop)}

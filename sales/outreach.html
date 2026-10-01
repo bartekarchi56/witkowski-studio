@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kit vendita · Timbro</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+<style>
+main{max-width:1080px;margin:0 auto;padding:40px 24px 80px}
+h1{font-size:clamp(34px,4.6vw,56px)}
+.intro{font-size:19px;color:var(--ink-2);max-width:38em;margin:16px 0 32px}
+.who{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:20px;border:1.5px solid var(--ink);border-radius:16px;position:sticky;top:0;background:#fff;z-index:5}
+.who .field{margin:0}
+.who .field > span{font-size:13px}
+.who input{min-height:42px;padding:8px 10px;font-size:15px}
+section{margin-top:72px}
+section > h2{font-size:clamp(26px,3vw,36px);margin-bottom:10px}
+section > .sub{color:var(--ink-2);max-width:40em;margin-bottom:26px}
+.two{display:grid;grid-template-columns:1.3fr .7fr;gap:32px;align-items:start}
+.script{list-style:none;margin:0;padding:0;counter-reset:s;border-top:1.5px solid var(--ink)}
+.script li{counter-increment:s;display:grid;grid-template-columns:44px 1fr;gap:14px;padding:18px 0;border-bottom:1.5px solid var(--line)}
+.script li::before{content:counter(s);width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font:500 14px/1 var(--mono)}
+.script b{display:block;font-size:15px;margin-bottom:4px}
+.script q{display:block;font-size:17px;quotes:"«" "»"}
+.script .tr{display:block;color:var(--muted);font-size:14px;margin-top:4px}
+.card-ready{border:1.5px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:12px;justify-items:start;position:sticky;top:130px}
+.card-ready .qr{width:160px}
+.card-ready .qr svg{width:100%;height:auto}
+.when{list-style:none;margin:0;padding:0}
+.when li{display:flex;gap:10px;padding:8px 0;border-bottom:1.5px solid var(--line);font-size:15px}
+.when li:last-child{border-bottom:0}
+.when .y,.when .n{flex:0 0 22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700}
+.when .y{background:var(--pop);color:#fff}
+.when .n{border:1.5px solid var(--ink)}
+.obj{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.obj article{border:1.5px solid var(--line);border-radius:14px;padding:18px}
+.obj h3{font-size:16px;margin-bottom:6px}
+.obj p{color:var(--ink-2);font-size:15px}
+.obj .tr{color:var(--muted);font-size:14px;margin-top:6px}
+.langs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.langs button{font:600 14px/1 var(--font);padding:10px 14px;border:1.5px solid var(--ink);border-radius:999px;background:#fff;cursor:pointer}
+.langs button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.tpls{display:grid;gap:14px}
+.tpl{border:1.5px solid var(--line);border-radius:16px;padding:20px}
+.tpl header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.tpl h3{font-size:17px}
+.tpl .when-send{font:500 12px/1 var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-top:4px}
+.tpl .acts{display:flex;gap:6px}
+.tpl .subj{font-weight:700;margin-bottom:8px}
+.tpl pre{white-space:pre-wrap;font:400 15px/1.55 var(--font);margin:0;color:var(--ink-2)}
+.cadence{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.cadence li{border-top:3px solid var(--ink);padding-top:12px}
+.cadence li:first-child{border-color:var(--pop)}
+.cadence b{display:block;font:500 13px/1 var(--mono);text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.goals{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+.goals div{background:var(--wash);border-radius:14px;padding:18px}
+.goals b{display:block;font-size:30px;font-weight:800;font-stretch:112%}
+.legal{margin-top:24px}
+@media (max-width:900px){
+  .who{grid-template-columns:1fr 1fr;position:static}
+  .two,.obj{grid-template-columns:1fr}
+  .card-ready{position:static}
+  .cadence,.goals{grid-template-columns:1fr 1fr}
+}
+@media (max-width:560px){ main{padding:24px 16px 56px} .cadence,.goals{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<header class="appbar">
+  <a class="brand" href="../index.html"><span class="brand-mark" aria-hidden="true"></span>Timbro</a>
+  <div class="right"><div class="lang"></div><a class="btn line small" href="brochure.html" data-i18n="o.brochure"></a></div>
+</header>
+<main>
+  <span class="label" data-i18n="o.label"></span>
+  <h1 class="display" data-i18n="o.title"></h1>
+  <p class="intro" data-i18n="o.intro"></p>
+
+  <form class="who" id="who" autocomplete="off">
+    <label class="field"><span data-i18n="o.me"></span><input type="text" name="me"></label>
+    <label class="field"><span data-i18n="o.cafe"></span><input type="text" name="cafe"></label>
+    <label class="field"><span data-i18n="o.city"></span><input type="text" name="city"></label>
+    <label class="field"><span data-i18n="o.phone"></span><input type="tel" name="phone"></label>
+    <label class="field"><span data-i18n="o.email"></span><input type="email" name="email"></label>
+  </form>
+
+  <!-- IN PERSON -->
+  <section>
+    <h2 class="display" data-i18n="o.visitT"></h2>
+    <p class="sub" data-i18n="o.visitSub"></p>
+    <div class="two">
+      <ol class="script" id="script"></ol>
+      <aside class="card-ready">
+        <span class="label" data-i18n="o.readyL"></span>
+        <p data-i18n="o.readyP"></p>
+        <div class="qr" id="ready-qr"></div>
+        <a class="btn pop small" id="ready-link" target="_blank" rel="noopener" data-i18n="o.readyBtn"></a>
+        <a class="link" id="brochure-link" target="_blank" rel="noopener" data-i18n="o.brochureFor"></a>
+        <h3 style="font-size:16px;margin-top:10px" data-i18n="o.whenT"></h3>
+        <ul class="when" id="when"></ul>
+      </aside>
+    </div>
+    <h3 style="font-size:22px;margin:40px 0 14px" data-i18n="o.objT"></h3>
+    <div class="obj" id="obj"></div>
+  </section>
+
+  <!-- MESSAGES -->
+  <section>
+    <h2 class="display" data-i18n="o.msgT"></h2>
+    <p class="sub" data-i18n="o.msgSub"></p>
+    <div class="langs" role="group" data-i18n-attr="aria-label:o.msgLang" id="mlangs"></div>
+    <div class="tpls" id="tpls"></div>
+    <p class="help legal"><span data-i18n-html="o.legal"></span></p>
+  </section>
+
+  <!-- RHYTHM -->
+  <section>
+    <h2 class="display" data-i18n="o.rhythmT"></h2>
+    <p class="sub" data-i18n="o.rhythmSub"></p>
+    <ol class="cadence" id="cadence"></ol>
+    <div class="goals" id="goals"></div>
+  </section>
+</main>
+
+<script src="../assets/vendor/qrcode.js"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/i18n.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+I18N.add({
+  it: {
+    'o.brochure': 'Brochure', 'o.label': 'Kit vendita', 'o.title': 'Trovare i primi clienti.',
+    'o.intro': 'Tutto quello che serve per andare nei bar, scrivere email e messaggi. Compila i campi qui sotto: i testi si aggiornano con i nomi giusti.',
+    'o.me': 'Il tuo nome', 'o.cafe': 'Nome del locale', 'o.city': 'Città', 'o.phone': 'Il tuo telefono', 'o.email': 'La tua email',
+    'o.visitT': 'Al bancone', 'o.visitSub': 'A Milano il modo migliore è andare di persona. Cinque passi, circa cinque minuti. Il testo è in italiano: è quello da dire.',
+    'o.readyL': 'Prima di entrare', 'o.readyP': 'Apri sul telefono la carta già fatta con il loro nome. Il titolare la vede subito, sul suo telefono.',
+    'o.readyBtn': 'Apri la loro carta', 'o.brochureFor': 'Stampa la brochure per questo locale',
+    'o.whenT': 'Quando andare', 'o.objT': 'Se ti dicono…',
+    'o.msgT': 'Email e messaggi', 'o.msgSub': 'Per i locali fuori Milano o all\'estero. Scegli la lingua del locale. Il link porta alla loro carta, già pronta.',
+    'o.msgLang': 'Lingua del messaggio', 'o.copy': 'Copia', 'o.openMail': 'Apri nell\'email',
+    'o.legal': '<span><b>Prima di mandare email a freddo.</b> In Italia e in molti paesi UE le email commerciali non richieste di solito richiedono un consenso, anche verso le aziende. Più sicuro: andare di persona, telefonare al numero pubblico del locale, o scrivere prima per chiedere se possiamo mandare informazioni. Scrivi sempre chi sei e come smettere di ricevere messaggi. Non è una consulenza legale: verifica le regole del paese.</span>',
+    'o.rhythmT': 'Il ritmo', 'o.rhythmSub': 'Quasi nessuno dice sì alla prima visita. Il secondo contatto è quello che conta.',
+    'o.goal1': 'bar da visitare ogni giorno: un obiettivo semplice', 'o.goal2': 'contatti per ogni locale: la visita e il richiamo', 'o.goal3': 'di prova gratis: chiedi solo di provare, non un contratto'
+  },
+  en: {
+    'o.brochure': 'Brochure', 'o.label': 'Sales kit', 'o.title': 'Finding your first customers.',
+    'o.intro': 'Everything you need to visit cafés and send emails and messages. Fill in the fields below: every text updates with the right names.',
+    'o.me': 'Your name', 'o.cafe': 'Name of the café', 'o.city': 'City', 'o.phone': 'Your phone', 'o.email': 'Your email',
+    'o.visitT': 'At the counter', 'o.visitSub': 'In Milan the best way is in person. Five steps, about five minutes. The script stays in Italian because that\'s what you say; the English is below each line.',
+    'o.readyL': 'Before you walk in', 'o.readyP': 'Open the card already made with their name on your phone. The owner sees it straight away, on their own phone.',
+    'o.readyBtn': 'Open their card', 'o.brochureFor': 'Print the brochure for this café',
+    'o.whenT': 'When to go', 'o.objT': 'If they say…',
+    'o.msgT': 'Emails and messages', 'o.msgSub': 'For cafés outside Milan or abroad. Pick the café\'s language. The link opens their card, already made.',
+    'o.msgLang': 'Message language', 'o.copy': 'Copy', 'o.openMail': 'Open in email',
+    'o.legal': '<span><b>Before sending cold emails.</b> In Italy and many EU countries, unsolicited marketing emails usually need prior consent, even to businesses. Safer: visit in person, call the café\'s public number, or write first to ask if you may send information. Always say who you are and how to stop receiving messages. This isn\'t legal advice: check the rules in each country.</span>',
+    'o.rhythmT': 'The rhythm', 'o.rhythmSub': 'Almost nobody says yes on the first visit. The second contact is the one that counts.',
+    'o.goal1': 'cafés to visit each day: a simple target', 'o.goal2': 'contacts per café: the visit and the follow-up', 'o.goal3': 'free trial: only ask them to try it, not to sign up'
+  }
+});
+
+// What to say in person (Italian), with an English line for reference.
+const SCRIPT = [
+  { it: ['Saluta e chiedi del titolare', 'Buongiorno! Posso rubarle un minuto? Sono {me}, aiuto i bar della zona a passare alla carta fedeltà sul telefono. È lei che decide queste cose?'],
+    en: ['Say hello and ask for the owner', 'Good morning! Could I have a minute? I\'m {me}, I help local cafés move their loyalty card onto the phone. Are you the one who decides these things?'] },
+  { it: ['Mostra la loro carta', 'Guardi, ho già preparato la carta di {cafe}. Il cliente inquadra il QR alla cassa e la carta è sul telefono. Niente app.'],
+    en: ['Show their card', 'Look, I\'ve already made the card for {cafe}. Customers scan the QR at the till and the card is on their phone. No app.'] },
+  { it: ['Fagliela provare', 'Provi lei: inquadri qui con il telefono. Ecco, ha appena ricevuto il primo timbro.'],
+    en: ['Let them try it', 'Try it yourself: scan here with your phone. There, you\'ve just got your first stamp.'] },
+  { it: ['Lascia la brochure', 'Le lascio questa: c\'è tutto, come funziona e i prezzi. Il primo mese è gratis, e la carta e il poster li prepariamo noi.'],
+    en: ['Leave the brochure', 'Let me leave you this: it has everything, how it works and the prices. The first month is free, and we make the card and the poster.'] },
+  { it: ['Fissa il prossimo passo', 'Ripasso giovedì pomeriggio per sentire cosa ne pensa? Oppure le scrivo su WhatsApp, mi lascia un numero?'],
+    en: ['Set the next step', 'Can I come back Thursday afternoon to hear what you think? Or I can message you on WhatsApp, could you leave me a number?'] }
+];
+const WHEN = {
+  it: [['y', 'Martedì–giovedì, 15:00–17:30: il momento più tranquillo.'], ['y', 'Metà mattina, 10:30–11:30, dopo la colazione.'], ['n', 'Mai 7:30–10:00 e 12:30–14:30: c\'è la fila.'], ['n', 'Evita sabato e domenica.']],
+  en: [['y', 'Tuesday to Thursday, 3–5:30 pm: the quietest time.'], ['y', 'Mid-morning, 10:30–11:30, after breakfast.'], ['n', 'Never 7:30–10 am or 12:30–2:30 pm: there\'s a queue.'], ['n', 'Avoid Saturdays and Sundays.']]
+};
+const OBJ = [
+  { it: ['«Abbiamo già i cartoncini.»', 'Perfetto, può tenerli per chi li preferisce. Con il telefono però nessuno li perde, e lei vede chi torna e quanto spesso.'],
+    en: ['"We already have paper cards."', 'Great, keep them for people who prefer them. On the phone nobody loses them, and you see who comes back and how often.'] },
+  { it: ['«I miei clienti sono anziani.»', 'Il barista fa tutto: inquadra lui il QR. E chi vuole il cartoncino può continuare a usarlo.'],
+    en: ['"My customers are older."', 'Staff do everything: they scan the QR. And anyone who wants the paper card can keep using it.'] },
+  { it: ['«Non ho tempo.»', 'Ci pensiamo noi: carta, poster e post li prepariamo noi. A lei resta solo appendere il poster.'],
+    en: ['"I don\'t have time."', 'We handle it: we make the card, the poster and the posts. All you do is put the poster up.'] },
+  { it: ['«Quanto costa?»', 'Da {price} al mese, e il primo mese è gratis. Meno di un caffè al giorno.'],
+    en: ['"How much is it?"', 'From {price} a month, and the first month is free. Less than a coffee a day.'] },
+  { it: ['«Devo pensarci.»', 'Certo. Le lascio la brochure e ripasso giovedì. Intanto la carta di prova resta lì da guardare.'],
+    en: ['"I need to think about it."', 'Of course. I\'ll leave the brochure and come back Thursday. The example card stays there to look at.'] },
+  { it: ['«Serve un\'app?»', 'No, né per lei né per i clienti. Basta il telefono che ha già.'],
+    en: ['"Do I need an app?"', 'No, not you and not your customers. The phone you already have is enough.'] }
+];
+
+// Emails and messages. {link} opens the café's own card on the website.
+const TPL = {
+  it: { name: 'Italiano', items: [
+    { t: 'Prima email', w: 'Giorno 0', subj: 'Una carta fedeltà per {cafe}, già pronta', body:
+`Buongiorno,
+
+sono {me} di {brand}. Aiutiamo bar e caffè a sostituire i cartoncini fedeltà con una carta a timbri sul telefono dei clienti: niente app da scaricare, il cliente inquadra un QR alla cassa e la carta è sua.
+
+Ho già preparato un esempio con il nome di {cafe}, lo vede qui:
+{link}
+
+Pensiamo a tutto noi: la carta, il poster per la cassa e i post per Instagram. Costa da {price} al mese e il primo mese è gratis.
+
+Se le interessa, glielo mostro in 10 minuti, di persona o al telefono, quando le è comodo.
+
+Un saluto,
+{me}
+{phone}
+
+Se non vuole ricevere altri messaggi, basta rispondere "no grazie".` },
+    { t: 'Email di richiamo', w: 'Giorno 4', subj: 'Re: Una carta fedeltà per {cafe}, già pronta', body:
+`Buongiorno,
+
+le riscrivo per la carta fedeltà di {cafe}. L'esempio è ancora qui:
+{link}
+
+Bastano 10 minuti per vederla funzionare. Le va bene se la chiamo questa settimana?
+
+Grazie,
+{me}
+{phone}` },
+    { t: 'Messaggio breve (Instagram o WhatsApp)', w: 'Giorno 0', body:
+`Ciao! Sono {me} di {brand}. Ho preparato una carta fedeltà digitale per {cafe}: sta sul telefono dei clienti, senza app. Ecco come sarebbe: {link}
+Ve la faccio vedere dal vivo? Ci vogliono 10 minuti.` },
+    { t: 'Dopo la visita (WhatsApp)', w: 'Stesso giorno', body:
+`Buongiorno, sono {me} di {brand}. Grazie per i minuti di oggi da {cafe}! Le lascio qui la vostra carta: {link}
+Il primo mese è gratis: se vuole partiamo già questa settimana. Buona giornata!` }
+  ]},
+  en: { name: 'English', items: [
+    { t: 'First email', w: 'Day 0', subj: 'A loyalty card for {cafe}, ready to go', body:
+`Hi,
+
+I'm {me} from {brand}. We help cafés replace paper loyalty cards with a stamp card on their customers' phones: no app to download, customers scan a QR code at the till and the card is theirs.
+
+I've already made an example with {cafe}'s name. You can see it here:
+{link}
+
+We handle everything: the card, the poster for the till and the Instagram posts. It costs from {price} a month and the first month is free.
+
+If you're interested, I can show you how it works in 10 minutes, in person or on a call, whenever suits you.
+
+Best,
+{me}
+{phone}
+
+If you'd rather not hear from me again, just reply "no thanks".` },
+    { t: 'Follow-up email', w: 'Day 4', subj: 'Re: A loyalty card for {cafe}, ready to go', body:
+`Hi,
+
+Just following up on the loyalty card for {cafe}. The example is still here:
+{link}
+
+It only takes 10 minutes to see it working. Would a quick call this week work for you?
+
+Thanks,
+{me}
+{phone}` },
+    { t: 'Short message (Instagram or WhatsApp)', w: 'Day 0', body:
+`Hi! I'm {me} from {brand}. I've made a digital loyalty card for {cafe}: it lives on your customers' phones, no app needed. Here's how it would look: {link}
+Can I show you how it works? It takes 10 minutes.` },
+    { t: 'After a visit (WhatsApp)', w: 'Same day', body:
+`Hi, it's {me} from {brand}. Thanks for your time at {cafe} today! Here's your card: {link}
+The first month is free, so we can start this week if you like. Have a great day!` }
+  ]},
+  es: { name: 'Español', items: [
+    { t: 'Primer email', w: 'Día 0', subj: 'Una tarjeta de fidelidad para {cafe}, ya lista', body:
+`Hola:
+
+Soy {me}, de {brand}. Ayudamos a cafeterías a cambiar las tarjetas de sellos de papel por una tarjeta en el móvil de sus clientes: sin descargar ninguna app, el cliente escanea un QR en la caja y la tarjeta es suya.
+
+Ya he preparado un ejemplo con el nombre de {cafe}. Puede verlo aquí:
+{link}
+
+Nos encargamos de todo: la tarjeta, el cartel para la caja y las publicaciones de Instagram. Cuesta desde {price} al mes y el primer mes es gratis.
+
+Si le interesa, se lo enseño en 10 minutos, en persona o por teléfono, cuando le venga bien.
+
+Un saludo,
+{me}
+{phone}
+
+Si prefiere no recibir más mensajes, responda "no, gracias".` },
+    { t: 'Email de seguimiento', w: 'Día 4', subj: 'Re: Una tarjeta de fidelidad para {cafe}, ya lista', body:
+`Hola:
+
+Le escribo de nuevo por la tarjeta de fidelidad de {cafe}. El ejemplo sigue aquí:
+{link}
+
+Bastan 10 minutos para verla funcionar. ¿Le parece bien si le llamo esta semana?
+
+Gracias,
+{me}
+{phone}` },
+    { t: 'Mensaje corto (Instagram o WhatsApp)', w: 'Día 0', body:
+`¡Hola! Soy {me}, de {brand}. He preparado una tarjeta de fidelidad digital para {cafe}: va en el móvil de los clientes, sin app. Así quedaría: {link}
+¿Se la enseño? Son 10 minutos.` },
+    { t: 'Después de la visita (WhatsApp)', w: 'El mismo día', body:
+`Hola, soy {me}, de {brand}. ¡Gracias por su tiempo hoy en {cafe}! Aquí tiene su tarjeta: {link}
+El primer mes es gratis: si quiere, empezamos esta misma semana. ¡Buen día!` }
+  ]},
+  fr: { name: 'Français', items: [
+    { t: 'Premier e-mail', w: 'Jour 0', subj: 'Une carte de fidélité pour {cafe}, déjà prête', body:
+`Bonjour,
+
+Je suis {me}, de {brand}. Nous aidons les cafés à remplacer les cartes de fidélité en papier par une carte à tampons sur le téléphone de leurs clients : aucune application à télécharger, le client scanne un QR code à la caisse et la carte est à lui.
+
+J'ai déjà préparé un exemple au nom de {cafe}. Vous pouvez le voir ici :
+{link}
+
+Nous nous occupons de tout : la carte, l'affiche pour la caisse et les publications Instagram. À partir de {price} par mois, et le premier mois est offert.
+
+Si cela vous intéresse, je vous le montre en 10 minutes, sur place ou par téléphone, quand cela vous convient.
+
+Bien cordialement,
+{me}
+{phone}
+
+Si vous préférez ne plus recevoir de messages, répondez simplement « non merci ».` },
+    { t: 'E-mail de relance', w: 'Jour 4', subj: 'Re : Une carte de fidélité pour {cafe}, déjà prête', body:
+`Bonjour,
+
+Je reviens vers vous au sujet de la carte de fidélité de {cafe}. L'exemple est toujours ici :
+{link}
+
+Il suffit de 10 minutes pour la voir fonctionner. Puis-je vous appeler cette semaine ?
+
+Merci,
+{me}
+{phone}` },
+    { t: 'Message court (Instagram ou WhatsApp)', w: 'Jour 0', body:
+`Bonjour ! Je suis {me}, de {brand}. J'ai préparé une carte de fidélité numérique pour {cafe} : elle est sur le téléphone des clients, sans application. Voici à quoi elle ressemblerait : {link}
+Je peux vous la montrer ? Cela prend 10 minutes.` },
+    { t: 'Après la visite (WhatsApp)', w: 'Le jour même', body:
+`Bonjour, c'est {me}, de {brand}. Merci pour votre temps aujourd'hui chez {cafe} ! Voici votre carte : {link}
+Le premier mois est offert : nous pouvons commencer dès cette semaine. Bonne journée !` }
+  ]},
+  de: { name: 'Deutsch', items: [
+    { t: 'Erste E-Mail', w: 'Tag 0', subj: 'Eine Treuekarte für {cafe}, schon fertig', body:
+`Guten Tag,
+
+ich bin {me} von {brand}. Wir helfen Cafés, Stempelkarten aus Papier durch eine Stempelkarte auf dem Handy ihrer Gäste zu ersetzen: keine App nötig, der Gast scannt einen QR-Code an der Kasse und hat die Karte.
+
+Ich habe schon ein Beispiel mit dem Namen {cafe} vorbereitet. Hier können Sie es ansehen:
+{link}
+
+Wir kümmern uns um alles: die Karte, das Plakat für die Kasse und die Instagram-Beiträge. Ab {price} im Monat, der erste Monat ist kostenlos.
+
+Wenn Sie Interesse haben, zeige ich es Ihnen gern in 10 Minuten, vor Ort oder am Telefon, wann es Ihnen passt.
+
+Viele Grüße
+{me}
+{phone}
+
+Wenn Sie keine weiteren Nachrichten möchten, antworten Sie einfach „nein danke“.` },
+    { t: 'Nachfass-E-Mail', w: 'Tag 4', subj: 'Re: Eine Treuekarte für {cafe}, schon fertig', body:
+`Guten Tag,
+
+ich melde mich noch einmal wegen der Treuekarte für {cafe}. Das Beispiel ist weiterhin hier:
+{link}
+
+In 10 Minuten sehen Sie, wie es funktioniert. Darf ich Sie diese Woche kurz anrufen?
+
+Danke und viele Grüße
+{me}
+{phone}` },
+    { t: 'Kurze Nachricht (Instagram oder WhatsApp)', w: 'Tag 0', body:
+`Hallo! Ich bin {me} von {brand}. Ich habe eine digitale Treuekarte für {cafe} vorbereitet: Sie ist auf dem Handy der Gäste, ohne App. So würde sie aussehen: {link}
+Darf ich sie Ihnen zeigen? Es dauert 10 Minuten.` },
+    { t: 'Nach dem Besuch (WhatsApp)', w: 'Am selben Tag', body:
+`Hallo, hier ist {me} von {brand}. Danke für Ihre Zeit heute im {cafe}! Hier ist Ihre Karte: {link}
+Der erste Monat ist kostenlos, wir können also gleich diese Woche starten. Einen schönen Tag noch!` }
+  ]}
+};
+const CADENCE = {
+  it: [['Giorno 0', 'Visita, oppure prima email o messaggio.'], ['Giorno 0', 'Dopo la visita: messaggio WhatsApp con il link alla loro carta.'], ['Giorno 4', 'Email o messaggio di richiamo. Breve.'], ['Giorno 7–10', 'Seconda visita, il pomeriggio. Poi basta: chiudi con gentilezza.']],
+  en: [['Day 0', 'Visit, or first email or message.'], ['Day 0', 'After a visit: WhatsApp message with the link to their card.'], ['Day 4', 'Follow-up email or message. Keep it short.'], ['Day 7–10', 'Second visit, in the afternoon. Then stop: close politely.']]
+};
+
+(() => {
+  const $ = id => document.getElementById(id);
+  const form = $('who');
+  const KEY = 'timbro:outreach';
+  let mlang = 'it';
+  const saved = (() => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } })();
+  form.me.value = saved.me ?? CONFIG.contact.name;
+  form.cafe.value = saved.cafe ?? 'The Coffee';
+  form.city.value = saved.city ?? CONFIG.contact.city;
+  form.phone.value = saved.phone ?? CONFIG.contact.phone;
+  form.email.value = saved.email ?? CONFIG.contact.email;
+
+  const vals = () => {
+    const o = Object.fromEntries(new FormData(form));
+    const fmt = new Intl.NumberFormat(mlang === 'en' ? 'en-IE' : mlang + '-' + mlang.toUpperCase(), { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+    return { ...o, me: o.me || '…', cafe: o.cafe || '…', brand: CONFIG.brand, price: fmt.format(CONFIG.plans[0].month),
+      link: UI.publicUrl('?bar=' + encodeURIComponent(o.cafe || '') + '&lang=' + (mlang === 'it' ? 'it' : 'en') + '#prova') };
+  };
+  const fill = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => v[k] ?? '').replace(/\n{3,}/g, '\n\n').trim();
+
+  function render() {
+    const o = Object.fromEntries(new FormData(form));
+    try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {}
+    const ui = I18N.lang, v = vals();
+    const vIt = { ...v, price: new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(CONFIG.plans[0].month) };
+
+    $('script').innerHTML = SCRIPT.map(s => `<li><div><b>${UI.esc(s[ui][0])}</b><q lang="it">${UI.esc(fill(s.it[1], vIt))}</q>${ui === 'en' ? `<span class="tr">${UI.esc(fill(s.en[1], vIt))}</span>` : ''}</div></li>`).join('');
+    $('obj').innerHTML = OBJ.map(s => `<article><h3>${UI.esc(s.it[0])}</h3><p lang="it">${UI.esc(fill(s.it[1], vIt))}</p>${ui === 'en' ? `<p class="tr">${UI.esc(s.en[0])} ${UI.esc(fill(s.en[1], vIt))}</p>` : ''}</article>`).join('');
+    $('when').innerHTML = WHEN[ui].map(([k, t]) => `<li><span class="${k}" aria-hidden="true">${k === 'y' ? '✓' : '×'}</span>${UI.esc(t)}</li>`).join('');
+
+    $('ready-link').href = new URL('../index.html?bar=' + encodeURIComponent(o.cafe || '') + '#prova', location.href).href;
+    $('ready-qr').innerHTML = UI.qrSvg(v.link.replace(/lang=\w+/, 'lang=it'));
+    $('brochure-link').href = 'brochure.html?cafe=' + encodeURIComponent(o.cafe || '');
+
+    $('mlangs').innerHTML = Object.entries(TPL).map(([k, x]) => `<button type="button" data-l="${k}" lang="${k}" aria-pressed="${k === mlang}">${x.name}</button>`).join('');
+    $('tpls').innerHTML = TPL[mlang].items.map((tp, i) => `
+      <article class="tpl" lang="${mlang}">
+        <header><div><h3>${UI.esc(tp.t)}</h3><p class="when-send">${UI.esc(tp.w)}</p></div>
+          <div class="acts">${tp.subj ? `<a class="btn line small" href="mailto:?subject=${encodeURIComponent(fill(tp.subj, v))}&body=${encodeURIComponent(fill(tp.body, v))}">${I18N.t('o.openMail')}</a>` : ''}
+          <button class="btn small" type="button" data-copy="${i}">${I18N.t('o.copy')}</button></div></header>
+        ${tp.subj ? `<p class="subj">${UI.esc(fill(tp.subj, v))}</p>` : ''}
+        <pre>${UI.esc(fill(tp.body, v))}</pre>
+      </article>`).join('');
+
+    $('cadence').innerHTML = CADENCE[ui].map(([d, t]) => `<li><b>${UI.esc(d)}</b>${UI.esc(t)}</li>`).join('');
+    $('goals').innerHTML = [['10', 'o.goal1'], ['2', 'o.goal2'], [ui === 'it' ? CONFIG.trialDays + ' giorni' : CONFIG.trialDays + ' days', 'o.goal3']].map(([n, k]) => `<div><b>${n}</b>${I18N.t(k)}</div>`).join('');
+  }
+
+  form.addEventListener('input', render);
+  $('mlangs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { mlang = b.dataset.l; render(); } });
+  $('tpls').addEventListener('click', e => {
+    const b = e.target.closest('[data-copy]'); if (!b) return;
+    const tp = TPL[mlang].items[+b.dataset.copy], v = vals();
+    UI.copy((tp.subj ? fill(tp.subj, v) + '\n\n' : '') + fill(tp.body, v));
+  });
+  I18N.switchers();
+  document.addEventListener('langchange', render);
+  I18N.apply();
+  render();
+})();
+</script>
+</body>
+</html>

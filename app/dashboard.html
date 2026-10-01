@@ -1,160 +1,229 @@
 <!doctype html>
-<html lang="en">
+<html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dashboard · Witkowski Loyalty</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<title>Timbro · Area locale</title>
 <link rel="stylesheet" href="../assets/css/base.css">
+<link rel="stylesheet" href="../assets/css/poster.css">
 <style>
-body{background:var(--surface)}
-main{max-width:1080px;margin:0 auto;padding:28px 24px 64px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px}
-.top h1{font-size:26px}
+main{max-width:1120px;margin:0 auto;padding:24px 24px 72px}
+.example{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:14px 18px;border-radius:14px;background:var(--pop-wash);margin-bottom:22px;font-size:15px}
+.example[hidden]{display:none}
+.example b{color:var(--pop)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
 .card-pick{display:flex;gap:8px;align-items:center}
-.card-pick select{width:auto;min-width:180px}
+.card-pick select{width:auto;min-width:220px;font-weight:600}
+.tabs{margin-bottom:28px}
 [role=tabpanel][hidden]{display:none}
+h2.sec{font-size:26px;font-stretch:112%;font-weight:800;margin-bottom:8px}
+.sec-sub{color:var(--ink-2);margin-bottom:22px;max-width:40em}
 
-.design{display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start}
-.preview{position:sticky;top:88px;display:grid;justify-items:center;gap:14px;padding:32px 20px}
-.preview .label{justify-self:start}
+/* design */
+.design{display:grid;grid-template-columns:1fr 340px;gap:28px;align-items:start}
+.preview{position:sticky;top:84px;display:grid;justify-items:center;gap:10px}
+.preview .phone{width:320px}
+.preview .phone-screen{min-height:430px}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.icons{display:flex;gap:6px;flex-wrap:wrap}
-.icons input{position:absolute;opacity:0;pointer-events:none}
-.icons label{width:42px;height:42px;display:grid;place-items:center;border-radius:10px;border:1px solid var(--line);font-size:20px;cursor:pointer;background:#fff}
-.icons input:checked + label{border:2px solid var(--ink);background:var(--surface)}
-.icons input:focus-visible + label{outline:3px solid var(--accent);outline-offset:2px}
-.form-actions{display:flex;gap:10px;align-items:center;margin-top:8px}
-.saved{font-size:14px;color:var(--muted)}
-fieldset{border:0;padding:0;margin:0 0 16px}
-legend{font-size:14px;font-weight:500;margin-bottom:6px;padding:0}
+fieldset{border:0;padding:0;margin:0 0 20px}
+legend{font-size:15px;font-weight:600;margin-bottom:8px;padding:0}
+.icons label{padding:9px}
+.icons label svg{width:20px;height:20px}
+.stepper{display:inline-flex;justify-self:start;align-items:center;border:1.5px solid var(--line);border-radius:999px}
+.stepper button{width:46px;height:46px;border:0;background:transparent;font:600 22px/1 var(--font);cursor:pointer;border-radius:999px;color:var(--ink)}
+.stepper button:hover{background:var(--wash)}
+.stepper output{min-width:42px;text-align:center;font:500 17px var(--mono)}
+details.en{border:1.5px solid var(--line);border-radius:12px;padding:0 16px;margin-bottom:20px}
+details.en summary{cursor:pointer;padding:14px 0;font-weight:600;font-size:15px}
+details.en[open]{padding-bottom:4px}
+.actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.status{font-size:14px;color:var(--muted)}
+.templates{margin-bottom:22px;padding-bottom:22px;border-bottom:1.5px solid var(--line)}
 
-.share{display:grid;grid-template-columns:auto 1fr;gap:32px;align-items:center}
-.share .qrbox{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}
-.share canvas{width:240px;height:240px}
-.share h2{font-size:22px;margin-bottom:8px}
-.linkrow{display:flex;gap:8px;margin:18px 0}
+/* print */
+.print{display:grid;grid-template-columns:340px 1fr;gap:40px;align-items:start}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}
+.linkrow{display:flex;gap:8px;margin:8px 0 20px}
 .linkrow input{font:500 14px var(--mono)}
-.share-actions{display:flex;gap:8px;flex-wrap:wrap}
-.tip{margin-top:24px;padding:14px 16px;border-radius:12px;background:var(--accent-soft);color:var(--accent-ink);font-size:14px}
+.where{list-style:none;margin:0 0 20px;padding:0}
+.where li{padding:10px 0 10px 30px;border-bottom:1.5px solid var(--line);position:relative}
+.where li::before{content:"";position:absolute;left:0;top:15px;width:14px;height:14px;border-radius:50%;background:var(--pop)}
 
+/* promote */
+.promote{display:grid;grid-template-columns:360px 1fr;gap:40px;align-items:start}
+.insta img{width:100%;border-radius:8px;box-shadow:0 0 0 1.5px var(--line)}
+.insta .btns{margin:14px 0 0}
+.msgs{display:grid;gap:12px}
+.msg{border:1.5px solid var(--line);border-radius:14px;padding:16px 18px}
+.msg header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.msg h3{font-size:15px;font-weight:700;letter-spacing:0}
+.msg p{white-space:pre-line;color:var(--ink-2);font-size:15px}
+.plan-list{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink)}
+.plan-list li{border-bottom:1.5px solid var(--line)}
+.plan-list label{display:grid;grid-template-columns:24px 80px 1fr;gap:12px;align-items:start;padding:14px 0;cursor:pointer}
+.plan-list input{width:20px;height:20px;accent-color:var(--pop);margin:2px 0 0}
+.plan-list .day{font:500 13px/1.6 var(--mono);color:var(--muted);text-transform:uppercase}
+.plan-list input:checked ~ span:last-child{text-decoration:line-through;color:var(--muted)}
+.subhead{font-size:20px;font-weight:800;font-stretch:112%;margin:40px 0 14px}
+
+/* customers */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
-.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
-.stat b{display:block;font-size:30px;font-weight:700;letter-spacing:-.03em}
+.stat{border:1.5px solid var(--line);border-radius:14px;padding:18px}
+.stat b{display:block;font-size:34px;font-weight:800;font-stretch:112%;letter-spacing:-.03em}
 .stat span{font-size:14px;color:var(--muted)}
 table{width:100%;border-collapse:collapse;font-size:15px}
-th,td{text-align:left;padding:13px 12px;border-bottom:1px solid var(--line)}
-th{font:500 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+th,td{text-align:left;padding:13px 12px;border-bottom:1.5px solid var(--line)}
+th{font:500 12px/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 tr:last-child td{border-bottom:0}
-td code{font:500 13px var(--mono);background:var(--surface);padding:3px 6px;border-radius:6px}
+td code{font:500 13px var(--mono);background:var(--wash);padding:3px 7px;border-radius:6px}
 .bar{display:flex;align-items:center;gap:10px}
-.bar i{flex:1;max-width:120px;height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden}
-.bar i::after{content:"";display:block;height:100%;width:var(--w);background:var(--accent)}
-.ready{color:#7A5A00;background:#FFF3C4;font-size:12px;font-weight:600;padding:3px 8px;border-radius:999px}
-.empty{text-align:center;padding:48px 20px}
-.empty h2{font-size:20px;margin-bottom:6px}
+.bar i{flex:1;max-width:120px;height:6px;border-radius:3px;background:var(--wash);overflow:hidden}
+.bar i::after{content:"";display:block;height:100%;width:var(--w);background:var(--pop)}
+.ready{color:#fff;background:var(--pop);font-size:12px;font-weight:700;padding:4px 9px;border-radius:999px}
+.empty{text-align:center;padding:56px 20px}
+.empty h3{font-size:20px;margin-bottom:6px}
 .empty p{color:var(--muted);margin-bottom:18px}
-.table-wrap{overflow-x:auto;padding:8px 12px}
+.table-wrap{overflow-x:auto;border:1.5px solid var(--line);border-radius:14px;padding:4px 10px}
 
-@media (max-width:860px){
-  .design{grid-template-columns:1fr}
+@media (max-width:960px){
+  .design,.print,.promote{grid-template-columns:1fr}
   .preview{position:static;order:-1}
-  .share{grid-template-columns:1fr;justify-items:start}
   .stats{grid-template-columns:1fr 1fr}
+  .print > :first-child,.insta{max-width:360px}
 }
 @media (max-width:560px){
-  main{padding:20px 16px 48px}
-  .appbar{padding:12px 16px}
+  main{padding:16px 16px 56px}
+  .appbar{padding:10px 16px}
   .appbar .hide-sm{display:none}
   .row{grid-template-columns:1fr}
-  .tabs{width:100%}
-  .tabs button{flex:1}
-}
-@media print{
-  body{background:#fff}
-  .appbar,.top,.tabs,#tab-design,#tab-customers,.linkrow,.share-actions,.tip{display:none!important}
-  #tab-share{display:block!important}
-  .share{grid-template-columns:1fr;justify-items:center;text-align:center;padding-top:40px}
-  .share canvas{width:420px;height:420px}
-  .share .qrbox{border:0}
-  .share h2{font-size:36px}
+  .card-pick{width:100%}
+  .card-pick select{flex:1;min-width:0}
+  .preview .phone{width:290px}
 }
 </style>
 </head>
 <body>
 <header class="appbar">
-  <a class="brand" href="../index.html"><span class="brand-mark" aria-hidden="true"></span><span class="hide-sm">Witkowski Loyalty</span></a>
-  <a class="btn secondary small" href="stamper.html">Open stamper</a>
+  <a class="brand" href="../index.html"><span class="brand-mark" aria-hidden="true"></span>Timbro</a>
+  <div class="right">
+    <div class="lang"></div>
+    <a class="btn small" href="stamper.html"><span class="hide-sm" data-i18n="d.openStamper"></span><span aria-hidden="true">→</span></a>
+  </div>
 </header>
 
 <main>
+  <div class="example" id="example" hidden>
+    <span data-i18n-html="d.example"></span>
+    <button class="btn pop small" type="button" id="example-new" data-i18n="d.createOwn"></button>
+  </div>
+
   <div class="top">
     <div class="card-pick">
-      <label class="label" for="card-select">Card</label>
+      <label class="sr-only" for="card-select" data-i18n="d.card"></label>
       <select id="card-select"></select>
-      <button class="btn secondary small" id="new-card" type="button">New card</button>
-    </div>
-    <div class="tabs" role="tablist" aria-label="Sections">
-      <button role="tab" id="t-design" aria-controls="tab-design" data-tab="design">Design</button>
-      <button role="tab" id="t-share" aria-controls="tab-share" data-tab="share">Share</button>
-      <button role="tab" id="t-customers" aria-controls="tab-customers" data-tab="customers">Customers</button>
+      <button class="btn line small" id="new-card" type="button" data-i18n="d.newCard"></button>
     </div>
   </div>
 
-  <!-- DESIGN -->
+  <div class="tabs" role="tablist" data-i18n-attr="aria-label:d.sections">
+    <button role="tab" id="t-design" aria-controls="tab-design" data-tab="design" data-i18n="d.tDesign"></button>
+    <button role="tab" id="t-print" aria-controls="tab-print" data-tab="print" data-i18n="d.tPrint"></button>
+    <button role="tab" id="t-promote" aria-controls="tab-promote" data-tab="promote" data-i18n="d.tPromote"></button>
+    <button role="tab" id="t-customers" aria-controls="tab-customers" data-tab="customers" data-i18n="d.tCustomers"></button>
+  </div>
+
+  <!-- CARD DESIGN -->
   <section role="tabpanel" id="tab-design" aria-labelledby="t-design">
     <div class="design">
       <form class="panel" id="card-form" autocomplete="off">
-        <div class="row">
-          <label class="field"><span>Business name</span><input type="text" name="business" maxlength="30" required></label>
-          <label class="field"><span>Card name</span><input type="text" name="title" maxlength="28" required></label>
-        </div>
-        <div class="row">
-          <label class="field"><span>Stamps to get the reward</span>
-            <select name="stampsNeeded"></select>
-          </label>
-          <label class="field"><span>Reward</span><input type="text" name="reward" maxlength="40" required>
-            <small>What the customer gets, e.g. "free coffee"</small></label>
-        </div>
-        <fieldset>
-          <legend>Icon</legend>
-          <div class="icons" id="icons"></div>
+        <fieldset class="templates">
+          <legend data-i18n="d.start"></legend>
+          <div class="chips" id="templates"></div>
         </fieldset>
-        <fieldset>
-          <legend>Colour</legend>
-          <div class="swatches" id="swatches"></div>
-        </fieldset>
-        <div class="form-actions">
-          <button class="btn" type="submit">Save card</button>
-          <span class="saved" id="saved" aria-live="polite"></span>
+        <div class="row">
+          <label class="field"><span data-i18n="d.business"></span><input type="text" name="business" maxlength="28" required></label>
+          <label class="field"><span data-i18n="d.title"></span><input type="text" name="title" maxlength="26" required></label>
         </div>
+        <div class="row">
+          <label class="field"><span data-i18n="d.reward"></span><input type="text" name="reward" maxlength="40" required><small data-i18n="d.rewardHint"></small></label>
+          <div class="field"><span id="st-l" data-i18n="d.stamps"></span>
+            <div class="stepper" role="group" aria-labelledby="st-l">
+              <button type="button" data-step="-1" aria-label="−1">−</button>
+              <output id="stamps-out">10</output>
+              <button type="button" data-step="1" aria-label="+1">+</button>
+            </div>
+          </div>
+        </div>
+        <fieldset><legend data-i18n="d.icon"></legend><div class="chips icons" id="icons"></div></fieldset>
+        <fieldset><legend data-i18n="d.color"></legend><div class="swatches" id="colors"></div></fieldset>
+        <fieldset><legend data-i18n="d.ink"></legend><div class="swatches" id="inks"></div></fieldset>
+        <details class="en">
+          <summary data-i18n="d.enTitle"></summary>
+          <p class="muted" style="font-size:14px;margin-bottom:14px" data-i18n="d.enHint"></p>
+          <div class="row">
+            <label class="field"><span data-i18n="d.titleEn"></span><input type="text" name="titleEn" maxlength="26" placeholder="Coffee card"></label>
+            <label class="field"><span data-i18n="d.rewardEn"></span><input type="text" name="rewardEn" maxlength="40" placeholder="a free coffee"></label>
+          </div>
+        </details>
+        <div class="actions">
+          <button class="btn pop" type="submit" data-i18n="d.save"></button>
+          <span class="status" id="status" aria-live="polite"></span>
+        </div>
+        <p class="help" style="margin-top:22px" data-i18n-html="d.helpDesign"></p>
       </form>
-      <div class="panel preview">
-        <span class="label">Live preview</span>
-        <div id="preview" style="width:100%;display:grid;justify-items:center"></div>
+      <div class="preview">
+        <span class="label" data-i18n="d.preview"></span>
+        <div class="phone"><div class="phone-screen" id="preview"></div></div>
       </div>
     </div>
   </section>
 
-  <!-- SHARE -->
-  <section role="tabpanel" id="tab-share" aria-labelledby="t-share" hidden>
-    <div class="panel share">
-      <div class="qrbox" id="qrbox"></div>
+  <!-- PRINT -->
+  <section role="tabpanel" id="tab-print" aria-labelledby="t-print" hidden>
+    <div class="print">
+      <div id="poster-preview"></div>
       <div>
-        <h2 id="share-title">Scan to join</h2>
-        <p class="muted">Customers scan this code with their phone camera to get your card. Put it by the till, on tables or on your receipt.</p>
+        <h2 class="sec" data-i18n="d.pTitle"></h2>
+        <p class="sec-sub" data-i18n="d.pSub"></p>
+        <div class="btns">
+          <a class="btn pop" id="print-poster" target="_blank" rel="noopener" data-i18n="d.pPrint"></a>
+          <a class="btn line" id="print-poster-en" target="_blank" rel="noopener" data-i18n="d.pPrintEn"></a>
+          <button class="btn line" type="button" id="download-qr" data-i18n="d.pQr"></button>
+        </div>
+        <h3 class="subhead" style="margin-top:28px" data-i18n="d.pWhere"></h3>
+        <ul class="where">
+          <li data-i18n="d.pW1"></li>
+          <li data-i18n="d.pW2"></li>
+          <li data-i18n="d.pW3"></li>
+        </ul>
+        <span class="label" data-i18n="d.pLink"></span>
         <div class="linkrow">
-          <input type="text" id="join-link" readonly aria-label="Join link">
-          <button class="btn secondary small" id="copy" type="button">Copy link</button>
+          <input type="text" id="join-link" readonly data-i18n-attr="aria-label:d.pLink">
+          <button class="btn line small" type="button" id="copy-link" data-i18n="d.copy"></button>
         </div>
-        <div class="share-actions">
-          <button class="btn" id="print" type="button">Print QR poster</button>
-          <button class="btn secondary" id="download" type="button">Download QR image</button>
-          <a class="btn secondary" id="open-join" target="_blank" rel="noopener">Open as a customer</a>
+        <p class="help"><span data-i18n-html="d.pTest"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROMOTE -->
+  <section role="tabpanel" id="tab-promote" aria-labelledby="t-promote" hidden>
+    <div class="promote">
+      <div class="insta">
+        <h2 class="sec" data-i18n="d.mInsta"></h2>
+        <p class="sec-sub" data-i18n="d.mInstaSub"></p>
+        <img id="insta" alt="">
+        <div class="btns">
+          <button class="btn pop" type="button" id="dl-insta" data-i18n="d.mDownload"></button>
+          <div class="lang" id="insta-lang" style="align-self:center" role="group"></div>
         </div>
-        <p class="tip">Testing? Open the link as a customer in a new tab, then stamp that card from the stamper. The dashboard updates by itself.</p>
+      </div>
+      <div>
+        <h2 class="sec" data-i18n="d.mMsgs"></h2>
+        <p class="sec-sub" data-i18n="d.mMsgsSub"></p>
+        <div class="msgs" id="msgs"></div>
+        <h3 class="subhead" data-i18n="d.mPlan"></h3>
+        <ul class="plan-list" id="plan"></ul>
       </div>
     </div>
   </section>
@@ -162,164 +231,266 @@ td code{font:500 13px var(--mono);background:var(--surface);padding:3px 6px;bord
   <!-- CUSTOMERS -->
   <section role="tabpanel" id="tab-customers" aria-labelledby="t-customers" hidden>
     <div class="stats" id="stats"></div>
-    <div class="panel" style="padding:0" id="customers"></div>
+    <div id="customers"></div>
   </section>
 </main>
 
 <script src="../assets/vendor/qrcode.js"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/i18n.js"></script>
 <script src="../assets/js/store.js"></script>
 <script src="../assets/js/ui.js"></script>
+<script src="../assets/js/marketing.js"></script>
 <script>
-(() => {
-  const ICONS = ['☕', '🥐', '🍕', '🍦', '✂️', '💅', '🌸', '🧋', '🥗', '🐾', '🛍️', '⭐'];
-  const COLORS = ['#16804F', '#1F4FD8', '#6B3FD4', '#C2255C', '#D9480F', '#B08900', '#15171A', '#F1EDE4'];
-  const form = document.getElementById('card-form');
-  const select = document.getElementById('card-select');
-  let current = null;
+I18N.add({
+  it: {
+    'd.openStamper': 'Apri il timbratore', 'd.example': 'Stai guardando <b>l\'esempio di The Coffee</b>. Prova tutto, poi crea la carta del tuo locale.',
+    'd.createOwn': 'Crea la mia carta', 'd.card': 'Carta', 'd.newCard': 'Nuova carta', 'd.sections': 'Sezioni',
+    'd.tDesign': 'La carta', 'd.tPrint': 'Stampa', 'd.tPromote': 'Promuovi', 'd.tCustomers': 'Clienti',
+    'd.start': 'Parti da un modello', 'd.business': 'Nome del locale', 'd.title': 'Nome della carta',
+    'd.reward': 'Premio', 'd.rewardHint': 'Cosa riceve il cliente, es. "un caffè gratis"', 'd.stamps': 'Timbri per il premio',
+    'd.icon': 'Icona', 'd.color': 'Colore della carta', 'd.ink': 'Colore del timbro',
+    'd.enTitle': 'In inglese, per i turisti (facoltativo)', 'd.enHint': 'Chi ha il telefono in inglese vedrà questi testi.',
+    'd.titleEn': 'Nome della carta in inglese', 'd.rewardEn': 'Premio in inglese',
+    'd.save': 'Salva la carta', 'd.saved': 'Carta salvata. I clienti vedono subito la modifica.', 'd.unsaved': 'Modifiche non salvate',
+    'd.created': 'Carta creata. Controlla i dettagli e salva.',
+    'd.helpDesign': '<span><b>Vuoi che la disegniamo noi?</b> Con il piano Plus prepariamo la carta con il tuo logo e i tuoi colori, e ti spediamo il kit stampato.</span>',
+    'd.preview': 'Come la vede il cliente',
+    'd.pTitle': 'Il poster per la cassa', 'd.pSub': 'È il modo in cui i clienti si iscrivono: inquadrano il QR e la carta è sul loro telefono. Formato A5, in italiano con le frasi in inglese per i turisti.',
+    'd.pPrint': 'Stampa il poster', 'd.pPrintEn': 'Versione solo inglese', 'd.pQr': 'Scarica solo il QR',
+    'd.pWhere': 'Dove metterlo', 'd.pW1': 'Accanto alla cassa, all\'altezza degli occhi. È lì che si aspetta.', 'd.pW2': 'Sui tavoli, con il cartellino piegato a metà.', 'd.pW3': 'In vetrina, così lo vede anche chi passa.',
+    'd.pLink': 'Link per iscriversi', 'd.copy': 'Copia',
+    'd.pTest': 'Vuoi provarla? <a class="link" id="try-link" target="_blank" rel="noopener">Apri la carta come un cliente</a>, poi timbrala dal timbratore. Questa pagina si aggiorna da sola.',
+    'd.mInsta': 'Post per Instagram', 'd.mInstaSub': 'Formato 4:5, il migliore per il feed. Scaricalo e pubblicalo con la didascalia qui a fianco.',
+    'd.mDownload': 'Scarica il post', 'd.mMsgs': 'Testi pronti', 'd.mMsgsSub': 'Già scritti con il nome del tuo locale e il tuo premio. Tocca "Copia" e incolla dove vuoi.',
+    'd.mPlan': 'Piano di lancio: la prima settimana',
+    'd.statMembers': 'Iscritti', 'd.statActive': 'Visti questa settimana', 'd.statStamps': 'Timbri dati', 'd.statRewards': 'Premi dati',
+    'd.cName': 'Nome', 'd.cCode': 'Codice', 'd.cStamps': 'Timbri', 'd.cRewards': 'Premi', 'd.cLast': 'Ultima visita', 'd.cReady': 'Premio pronto',
+    'd.emptyT': 'Ancora nessun iscritto', 'd.emptyP': 'Stampa il poster e mettilo alla cassa: i primi clienti arriveranno qui.', 'd.emptyB': 'Stampa il poster',
+    'd.newTitle': 'Nuova carta'
+  },
+  en: {
+    'd.openStamper': 'Open the stamper', 'd.example': 'You\'re looking at <b>the example for The Coffee</b>. Try everything, then create the card for your place.',
+    'd.createOwn': 'Create my card', 'd.card': 'Card', 'd.newCard': 'New card', 'd.sections': 'Sections',
+    'd.tDesign': 'The card', 'd.tPrint': 'Print', 'd.tPromote': 'Promote', 'd.tCustomers': 'Customers',
+    'd.start': 'Start from a template', 'd.business': 'Name of your place', 'd.title': 'Card name',
+    'd.reward': 'Reward', 'd.rewardHint': 'What the customer gets, e.g. "a free coffee"', 'd.stamps': 'Stamps for the reward',
+    'd.icon': 'Icon', 'd.color': 'Card colour', 'd.ink': 'Stamp colour',
+    'd.enTitle': 'Second language for tourists (optional)', 'd.enHint': 'Customers whose phone is in English see these texts.',
+    'd.titleEn': 'Card name in English', 'd.rewardEn': 'Reward in English',
+    'd.save': 'Save card', 'd.saved': 'Card saved. Customers see the change straight away.', 'd.unsaved': 'Unsaved changes',
+    'd.created': 'Card created. Check the details and save.',
+    'd.helpDesign': '<span><b>Want us to design it?</b> On the Plus plan we make the card with your logo and colours, and post you the printed kit.</span>',
+    'd.preview': 'What your customer sees',
+    'd.pTitle': 'The poster for your till', 'd.pSub': 'This is how customers join: they scan the QR code and the card is on their phone. A5 size, in Italian with English lines for tourists.',
+    'd.pPrint': 'Print the poster', 'd.pPrintEn': 'English-only version', 'd.pQr': 'Download the QR code only',
+    'd.pWhere': 'Where to put it', 'd.pW1': 'Next to the till, at eye level. That\'s where people wait.', 'd.pW2': 'On the tables, as a folded card.', 'd.pW3': 'In the window, so passers-by see it too.',
+    'd.pLink': 'Link to join', 'd.copy': 'Copy',
+    'd.pTest': 'Want to try it? <a class="link" id="try-link" target="_blank" rel="noopener">Open the card as a customer</a>, then stamp it from the stamper. This page updates by itself.',
+    'd.mInsta': 'Instagram post', 'd.mInstaSub': '4:5 format, the best size for the feed. Download it and post it with the caption next to it.',
+    'd.mDownload': 'Download the post', 'd.mMsgs': 'Ready-made texts', 'd.mMsgsSub': 'Already written with your name and your reward. Tap "Copy" and paste them anywhere.',
+    'd.mPlan': 'Launch plan: your first week',
+    'd.statMembers': 'Members', 'd.statActive': 'Seen this week', 'd.statStamps': 'Stamps given', 'd.statRewards': 'Rewards given',
+    'd.cName': 'Name', 'd.cCode': 'Code', 'd.cStamps': 'Stamps', 'd.cRewards': 'Rewards', 'd.cLast': 'Last visit', 'd.cReady': 'Reward ready',
+    'd.emptyT': 'No members yet', 'd.emptyP': 'Print the poster and put it by the till: your first customers will show up here.', 'd.emptyB': 'Print the poster',
+    'd.newTitle': 'New card'
+  }
+});
 
-  // build form controls
-  form.stampsNeeded.innerHTML = Array.from({ length: 13 }, (_, i) => i + 3).map(n => `<option value="${n}">${n} stamps</option>`).join('');
-  document.getElementById('icons').innerHTML = ICONS.map((ic, i) =>
-    `<input type="radio" name="icon" id="ic${i}" value="${ic}"><label for="ic${i}" title="${ic}">${ic}</label>`).join('');
-  document.getElementById('swatches').innerHTML = COLORS.map((c, i) =>
-    `<input type="radio" name="color" id="co${i}" value="${c}"><label for="co${i}" style="background:${c}" title="${c}"><span class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">${c}</span></label>`).join('');
+(() => {
+  const COLORS = ['#FFFFFF', '#0B0B0C', '#F3EEE4', '#4A2E21', '#1F3D2B', '#6B1E2B', '#1B2A4A'];
+  const INKS = ['#2B32FF', '#0B0B0C', '#D6261C', '#B07D12'];
+  const ICON_NAMES = { it: { cup: 'Tazza', cake: 'Dolce', glass: 'Calice', cone: 'Cono', pizza: 'Pizza', scissors: 'Forbici', leaf: 'Foglia', heart: 'Cuore', star: 'Stella' },
+                       en: { cup: 'Cup', cake: 'Cake', glass: 'Glass', cone: 'Cone', pizza: 'Pizza', scissors: 'Scissors', leaf: 'Leaf', heart: 'Heart', star: 'Star' } };
+  const $ = id => document.getElementById(id);
+  const form = $('card-form');
+  let current = null, stamps = 10, dirty = false, instaLang = I18N.lang;
+
+  // ---------- build controls ----------
+  function controls() {
+    $('templates').innerHTML = CONFIG.templates.map(tp =>
+      `<input type="radio" name="tpl" id="tp-${tp.id}" value="${tp.id}"><label for="tp-${tp.id}">${UI.icon(tp.icon)}${UI.esc(I18N.pick(tp).type)}</label>`).join('');
+    $('icons').innerHTML = UI.ICONS.map(ic =>
+      `<input type="radio" name="icon" id="ic-${ic}" value="${ic}"><label for="ic-${ic}" title="${ICON_NAMES[I18N.lang][ic]}">${UI.icon(ic)}<span class="sr-only">${ICON_NAMES[I18N.lang][ic]}</span></label>`).join('');
+    $('colors').innerHTML = COLORS.map((c, i) => `<input type="radio" name="color" id="co${i}" value="${c}"><label for="co${i}" style="background:${c}"><span class="sr-only">${c}</span></label>`).join('');
+    $('inks').innerHTML = INKS.map((c, i) => `<input type="radio" name="ink" id="in${i}" value="${c}"><label for="in${i}" style="background:${c}"><span class="sr-only">${c}</span></label>`).join('');
+  }
 
   function readForm() {
     const f = new FormData(form);
-    return {
-      ...current,
-      business: f.get('business').trim() || 'Your business',
-      title: f.get('title').trim() || 'Loyalty card',
-      reward: f.get('reward').trim() || 'a reward',
-      stampsNeeded: +f.get('stampsNeeded'),
-      icon: f.get('icon'),
-      color: f.get('color')
-    };
+    const v = k => (f.get(k) || '').trim();
+    return { ...current, business: v('business') || 'Il tuo locale', title: v('title') || 'Carta fedeltà', reward: v('reward') || 'un premio',
+      titleEn: v('titleEn'), rewardEn: v('rewardEn'), stampsNeeded: stamps,
+      icon: f.get('icon') || 'cup', color: f.get('color') || '#FFFFFF', ink: f.get('ink') || '#2B32FF', type: f.get('tpl') || current.type };
   }
+  const check = (name, value) => { const el = form.querySelector(`input[name=${name}][value="${value}"]`) || form.querySelector(`input[name=${name}]`); if (el) el.checked = true; };
   function fillForm(c) {
-    form.business.value = c.business;
-    form.title.value = c.title;
-    form.reward.value = c.reward;
-    form.stampsNeeded.value = c.stampsNeeded;
-    const ic = form.querySelector(`input[name=icon][value="${c.icon}"]`) || form.querySelector('input[name=icon]');
-    ic.checked = true;
-    const co = form.querySelector(`input[name=color][value="${c.color}"]`) || form.querySelector('input[name=color]');
-    co.checked = true;
+    ['business', 'title', 'reward', 'titleEn', 'rewardEn'].forEach(k => form[k].value = c[k] || '');
+    stamps = c.stampsNeeded;
+    check('icon', c.icon); check('color', c.color); check('ink', c.ink || '#2B32FF');
+    form.querySelectorAll('input[name=tpl]').forEach(r => r.checked = r.value === c.type);
+    $('stamps-out').textContent = stamps;
   }
   function preview() {
     const c = readForm();
-    document.getElementById('preview').innerHTML = UI.renderPass(c, null, { stamps: Math.min(3, c.stampsNeeded) });
+    $('preview').innerHTML = UI.renderPass(c, null, { stamps: Math.min(3, c.stampsNeeded) });
+    $('stamps-out').textContent = stamps;
   }
+  function markDirty() { dirty = true; $('status').textContent = I18N.t('d.unsaved'); preview(); }
 
-  function fillSelect() {
-    select.innerHTML = Store.listCards().map(c => `<option value="${c.id}">${UI.esc(c.title)} · ${UI.esc(c.business)}</option>`).join('');
-    select.value = current.id;
-  }
-
-  function loadCard(id) {
-    current = Store.getCard(id) || Store.listCards()[0];
-    fillSelect();
-    fillForm(current);
-    preview();
-    document.getElementById('saved').textContent = '';
-    renderShare();
-    renderCustomers();
-  }
-
-  form.addEventListener('input', () => { preview(); document.getElementById('saved').textContent = 'Unsaved changes'; });
+  form.addEventListener('input', e => { if (e.target.name !== 'tpl') markDirty(); });
+  form.addEventListener('change', e => {
+    if (e.target.name !== 'tpl') return;
+    // A template fills in everything except the business name.
+    const tp = CONFIG.templates.find(x => x.id === e.target.value), main = I18N.pick(tp);
+    form.title.value = main.title; form.reward.value = main.reward;
+    form.titleEn.value = I18N.lang === 'it' ? tp.en.title : ''; form.rewardEn.value = I18N.lang === 'it' ? tp.en.reward : '';
+    stamps = tp.stamps; check('icon', tp.icon); check('color', tp.color);
+    markDirty();
+  });
+  form.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => { stamps = Math.max(3, Math.min(15, stamps + +b.dataset.step)); markDirty(); }));
   form.addEventListener('submit', e => {
     e.preventDefault();
     current = Store.saveCard(readForm());
-    fillSelect();
-    renderShare();
-    document.getElementById('saved').textContent = '';
-    UI.toast('Card saved. Customers see the change straight away.');
-  });
-  select.addEventListener('change', () => loadCard(select.value));
-  document.getElementById('new-card').addEventListener('click', () => {
-    const base = current || {};
-    const c = Store.saveCard({ business: base.business || 'Your business', title: 'New card', reward: 'a free treat', stampsNeeded: 10, icon: '⭐', color: '#1F4FD8' });
-    loadCard(c.id);
-    showTab('design');
-    form.title.focus();
-    form.title.select();
+    dirty = false; $('status').textContent = '';
+    fillSelect(); renderPrint(); renderPromote();
+    UI.toast(I18N.t('d.saved'));
   });
 
-  // ---- share ----
-  function renderShare() {
-    const url = UI.joinUrl(current.id);
-    const box = document.getElementById('qrbox');
-    box.innerHTML = '';
-    box.appendChild(UI.qrCanvas(url, 480));
-    document.getElementById('share-title').textContent = `Scan to join ${current.business}'s ${current.title.toLowerCase()}`;
-    document.getElementById('join-link').value = url;
-    document.getElementById('open-join').href = url;
+  // ---------- cards ----------
+  function fillSelect() {
+    $('card-select').innerHTML = Store.listCards().map(c => `<option value="${c.id}">${UI.esc(c.business)} · ${UI.esc(c.title)}</option>`).join('');
+    $('card-select').value = current.id;
+    $('example').hidden = current.id !== 'the-coffee';
   }
-  document.getElementById('copy').addEventListener('click', async () => {
-    const input = document.getElementById('join-link');
-    try { await navigator.clipboard.writeText(input.value); } catch (e) { input.select(); document.execCommand('copy'); }
-    UI.toast('Link copied');
-  });
-  document.getElementById('download').addEventListener('click', () => {
+  function loadCard(id) {
+    current = Store.getCard(id) || Store.listCards()[0];
+    fillSelect(); fillForm(current); preview();
+    dirty = false; $('status').textContent = '';
+    renderPrint(); renderPromote(); renderCustomers();
+    history.replaceState(null, '', `?card=${current.id}${location.hash}`);
+  }
+  $('card-select').addEventListener('change', e => loadCard(e.target.value));
+
+  function createCard(opts = {}) {
+    const tp = CONFIG.templates.find(x => x.id === opts.type) || CONFIG.templates[0];
+    const lang = opts.lang || I18N.lang, main = tp[lang] || tp.en;
+    const reward = opts.reward || main.reward;
+    const card = Store.saveCard({
+      business: opts.name || (current && current.id !== 'the-coffee' ? current.business : I18N.t('d.business')),
+      type: tp.id, title: main.title, reward, stampsNeeded: +opts.stamps || tp.stamps,
+      titleEn: lang === 'it' ? tp.en.title : '', rewardEn: lang === 'it' && reward === tp.it.reward ? tp.en.reward : '',
+      icon: tp.icon, color: tp.color, ink: '#2B32FF'
+    });
+    loadCard(card.id);
+    showTab('design');
+    UI.toast(I18N.t('d.created'));
+    form.business.focus(); form.business.select();
+  }
+  $('new-card').addEventListener('click', () => createCard());
+  $('example-new').addEventListener('click', () => createCard());
+
+  // ---------- print ----------
+  function renderPrint() {
+    const url = UI.publicJoinUrl(current.id);
+    $('poster-preview').innerHTML = MARKETING.poster(current);
+    $('join-link').value = url;
+    $('print-poster').href = `poster.html?card=${current.id}&lang=it`;
+    $('print-poster-en').href = `poster.html?card=${current.id}&lang=en`;
+    const tl = $('try-link'); if (tl) tl.href = UI.joinUrl(current.id);
+  }
+  $('copy-link').addEventListener('click', () => UI.copy($('join-link').value));
+  $('download-qr').addEventListener('click', () => {
     const a = document.createElement('a');
-    a.href = UI.qrCanvas(UI.joinUrl(current.id), 1200).toDataURL('image/png');
-    a.download = `${current.title.replace(/\W+/g, '-').toLowerCase()}-qr.png`;
+    a.href = UI.qrCanvas(UI.publicJoinUrl(current.id), 1200).toDataURL('image/png');
+    a.download = `${current.business.replace(/\W+/g, '-').toLowerCase()}-qr.png`;
     a.click();
   });
-  document.getElementById('print').addEventListener('click', () => window.print());
 
-  // ---- customers ----
+  // ---------- promote ----------
+  let instaUrl = '';
+  async function renderPromote() {
+    const cv = await MARKETING.instagram(current, instaLang);
+    instaUrl = cv.toDataURL('image/png');
+    $('insta').src = instaUrl;
+    $('insta').alt = I18N.t('d.mInsta') + ': ' + current.business;
+    document.querySelectorAll('#insta-lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === instaLang)));
+    $('msgs').innerHTML = MARKETING.copy(current, I18N.lang).map((m, i) => `
+      <article class="msg"><header><h3>${UI.esc(m.label)}</h3><button class="btn line small" type="button" data-copy="${i}">${I18N.t('d.copy')}</button></header><p>${UI.esc(m.text)}</p></article>`).join('');
+    const done = planState();
+    $('plan').innerHTML = MARKETING.plan(I18N.lang).map(([day, task], i) => `
+      <li><label><input type="checkbox" data-plan="${i}" ${done[i] ? 'checked' : ''}><span class="day">${UI.esc(day)}</span><span>${UI.esc(task)}</span></label></li>`).join('');
+  }
+  $('insta-lang').innerHTML = ['it', 'en'].map(l => `<button type="button" data-lang="${l}">${l.toUpperCase()}</button>`).join('');
+  $('insta-lang').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { instaLang = b.dataset.lang; renderPromote(); } });
+  $('dl-insta').addEventListener('click', () => { const a = document.createElement('a'); a.href = instaUrl; a.download = `${current.business.replace(/\W+/g, '-').toLowerCase()}-instagram-${instaLang}.png`; a.click(); });
+  $('msgs').addEventListener('click', e => { const b = e.target.closest('[data-copy]'); if (b) UI.copy(MARKETING.copy(current, I18N.lang)[+b.dataset.copy].text); });
+  const PKEY = () => 'timbro:plan:' + current.id;
+  function planState() { try { return JSON.parse(localStorage.getItem(PKEY())) || {}; } catch (e) { return {}; } }
+  $('plan').addEventListener('change', e => {
+    const s = planState(); s[e.target.dataset.plan] = e.target.checked;
+    try { localStorage.setItem(PKEY(), JSON.stringify(s)); } catch (err) {}
+  });
+
+  // ---------- customers ----------
   function renderCustomers() {
     const s = Store.stats(current.id);
-    document.getElementById('stats').innerHTML = [
-      [s.members, 'Members'], [s.active, 'Visited this week'], [s.stamps, 'Stamps given'], [s.redeemed, 'Rewards claimed']
-    ].map(([n, l]) => `<div class="stat"><b>${n}</b><span>${l}</span></div>`).join('');
-
+    $('stats').innerHTML = [[s.members, 'd.statMembers'], [s.active, 'd.statActive'], [s.stamps, 'd.statStamps'], [s.redeemed, 'd.statRewards']]
+      .map(([n, l]) => `<div class="stat"><b>${n}</b><span>${I18N.t(l)}</span></div>`).join('');
     const list = Store.listCustomers(current.id);
-    const box = document.getElementById('customers');
     if (!list.length) {
-      box.innerHTML = `<div class="empty"><h2>No customers yet</h2><p>Share your QR code and your first customer will appear here.</p>
-        <button class="btn" type="button" data-go="share">Get your QR code</button></div>`;
+      $('customers').innerHTML = `<div class="panel empty"><h3>${I18N.t('d.emptyT')}</h3><p>${I18N.t('d.emptyP')}</p><button class="btn pop" type="button" data-go="print">${I18N.t('d.emptyB')}</button></div>`;
       return;
     }
     const need = current.stampsNeeded;
-    box.innerHTML = `<div class="table-wrap"><table>
-      <thead><tr><th>Name</th><th>Code</th><th>Stamps</th><th>Rewards</th><th>Last visit</th></tr></thead>
-      <tbody>${list.map(c => `<tr>
-        <td>${UI.esc(c.name)}</td>
-        <td><code>${c.id}</code></td>
-        <td>${c.stamps >= need ? '<span class="ready">Reward ready</span>'
-          : `<span class="bar"><i style="--w:${(c.stamps / need) * 100}%"></i>${c.stamps}/${need}</span>`}</td>
-        <td>${c.redeemed}</td>
-        <td class="muted">${UI.timeAgo(c.lastVisit || c.joinedAt)}</td>
-      </tr>`).join('')}</tbody></table></div>`;
+    $('customers').innerHTML = `<div class="table-wrap"><table>
+      <thead><tr><th>${I18N.t('d.cName')}</th><th>${I18N.t('d.cCode')}</th><th>${I18N.t('d.cStamps')}</th><th>${I18N.t('d.cRewards')}</th><th>${I18N.t('d.cLast')}</th></tr></thead>
+      <tbody>${list.map(c => `<tr><td>${UI.esc(c.name)}</td><td><code>${c.id}</code></td>
+        <td>${c.stamps >= need ? `<span class="ready">${I18N.t('d.cReady')}</span>` : `<span class="bar"><i style="--w:${(c.stamps / need) * 100}%"></i>${c.stamps}/${need}</span>`}</td>
+        <td>${c.redeemed}</td><td class="muted">${UI.timeAgo(c.lastVisit || c.joinedAt)}</td></tr>`).join('')}</tbody></table></div>`;
   }
-  document.addEventListener('click', e => { const t = e.target.closest('[data-go]'); if (t) showTab(t.dataset.go); });
+  document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g) showTab(g.dataset.go); });
 
-  // ---- tabs ----
+  // ---------- tabs ----------
   const tabs = [...document.querySelectorAll('[role=tab]')];
   function showTab(name) {
-    tabs.forEach(t => {
-      const on = t.dataset.tab === name;
-      t.setAttribute('aria-selected', String(on));
-      t.tabIndex = on ? 0 : -1;
-      document.getElementById('tab-' + t.dataset.tab).hidden = !on;
+    tabs.forEach(tb => {
+      const on = tb.dataset.tab === name;
+      tb.setAttribute('aria-selected', String(on)); tb.tabIndex = on ? 0 : -1;
+      $('tab-' + tb.dataset.tab).hidden = !on;
     });
-    history.replaceState(null, '', '#' + name);
+    history.replaceState(null, '', location.search + '#' + name);
   }
-  tabs.forEach((t, i) => {
-    t.addEventListener('click', () => showTab(t.dataset.tab));
-    t.addEventListener('keydown', e => {
+  tabs.forEach((tb, i) => {
+    tb.addEventListener('click', () => showTab(tb.dataset.tab));
+    tb.addEventListener('keydown', e => {
       const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-      if (!d) return;
-      const n = tabs[(i + d + tabs.length) % tabs.length];
-      n.focus(); showTab(n.dataset.tab);
+      if (d) { const n = tabs[(i + d + tabs.length) % tabs.length]; n.focus(); showTab(n.dataset.tab); }
     });
   });
 
+  // ---------- start ----------
+  I18N.switchers();
+  document.addEventListener('langchange', () => {
+    const keep = readForm();
+    controls(); fillForm(keep); preview();
+    if (dirty) $('status').textContent = I18N.t('d.unsaved');
+    instaLang = I18N.lang;
+    renderPrint(); renderPromote(); renderCustomers();
+  });
   Store.onChange(() => { current = Store.getCard(current.id) || current; renderCustomers(); });
-  loadCard(new URLSearchParams(location.search).get('card'));
-  showTab(['design', 'share', 'customers'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'design');
+
+  I18N.apply();
+  controls();
+  const q = new URLSearchParams(location.search);
+  const startTab = ['design', 'print', 'promote', 'customers'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'design';
+  if (q.get('new')) {
+    current = Store.getCard('the-coffee');
+    createCard({ name: q.get('name'), type: q.get('type'), reward: q.get('reward'), stamps: q.get('stamps'), lang: q.get('lang') });
+  } else {
+    loadCard(q.get('card'));
+    showTab(startTab);
+  }
 })();
 </script>
 </body>

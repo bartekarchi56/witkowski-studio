@@ -29,16 +29,31 @@ The flow is always the same:
 | **Multiple locations and cards** | A business has many locations and many card designs. Plans limit how many. |
 | **Data export** | CSV download of the customer list. |
 
+## What Timbro does differently
+
+Loopy and similar tools hand the business a tool and leave it there. Timbro adds the help a small café actually needs:
+
+| Help | Where |
+|---|---|
+| Starter templates by type of business (café, bakery, aperitivo, gelato, pizzeria, hair, beauty) | Website builder, dashboard "La carta" |
+| A counter poster generated from the card, A5/A4, Italian with English lines | Dashboard "Stampa", `app/poster.html` |
+| An Instagram post image (4:5) generated from the card | Dashboard "Promuovi" |
+| Ready-made texts: Instagram caption, story, WhatsApp to regulars, what staff say at the till, reminder, Google post | Dashboard "Promuovi" |
+| A 7-day launch plan with a checklist | Dashboard "Promuovi" |
+| Card text in a second language for tourists | Dashboard "La carta" |
+| Printed kit and design done for you (Plus plan) | A service you deliver, not software |
+
 ## What this repo does today
 
 A working prototype, with no server:
 
-- Landing page with a live sample card, how it works, features, pricing and FAQ (`index.html`).
-- Dashboard: design cards with live preview, several cards per business, QR code, copy link, download QR image, print poster, customer list and stats.
-- Customer card page: join with a first name, card with QR code and short code, live updates when stamped, recent activity.
+- Bilingual website (IT/EN) with a live builder: type a café's name and see its card, poster and Instagram post.
+- Dashboard: design cards, print the poster, download the QR and Instagram post, copy ready-made texts, launch checklist, customers and stats.
+- Customer card page: join with a first name, card with QR and short code, live updates, English for tourists.
 - Stamper: camera QR scanning (built-in `BarcodeDetector` where available, `jsQR` otherwise) or typed code, add and remove stamps, give reward.
+- Sales material: brochure generator (personalised per café), outreach kit, print-ready PDFs, and a full example for The Coffee.
 
-**Limitation:** data is stored in the browser (`localStorage`). The three screens only share data **on the same device and browser**. It's fine for demos and design testing, but not for real shops yet.
+**Limitation:** data is stored in the browser (`localStorage`). The screens only share data **on the same device and browser**. Every fresh browser starts with The Coffee's example card, so the QR codes on printed material open a working card on any phone.
 
 All data access goes through `assets/js/store.js`, so moving to a real server means rewriting that one file.
 
@@ -55,7 +70,7 @@ All data access goes through `assets/js/store.js`, so moving to a real server me
 3. **Swap `store.js`** for API calls (same function names).
 4. **Google Wallet.** Easiest wallet to start with: no certificate costs, and a JWT "Save" link is enough.
 5. **Apple Wallet.** Pass Type ID certificate, `.pkpass` signing on the server, and the PassKit web service endpoints for updates.
-6. **Payments.** Stripe Billing with the three plans and a 14-day trial; enforce plan limits (locations, cards, staff).
+6. **Payments.** Stripe Billing with the three plans and a 30-day trial; enforce plan limits (locations, cards, staff).
 7. **Legal.** Privacy policy and GDPR basics (you store customer names and visit history).
 
 ## Security notes for the real version

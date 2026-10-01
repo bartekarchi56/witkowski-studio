@@ -1,314 +1,636 @@
 <!doctype html>
-<html lang="en">
+<html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Witkowski Loyalty · Digital stamp cards</title>
-<meta name="description" content="Digital stamp cards for cafés, salons and shops. Customers scan a QR code, staff stamp with their phone. No app to download, no paper cards to lose.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<title>Timbro · La carta fedeltà digitale per il tuo bar</title>
+<meta name="description" content="Carte fedeltà a timbri sul telefono dei tuoi clienti. Senza app. Ti aiutiamo a disegnarla, stamparla e farla conoscere.">
 <link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/poster.css">
 <style>
-.nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0}
-.nav ul{display:flex;gap:28px;list-style:none;margin:0;padding:0;font-size:15px;font-weight:500}
-.nav ul a{text-decoration:none;color:var(--muted)}
-.nav ul a:hover{color:var(--ink)}
-.nav .actions{display:flex;gap:8px}
+/* ---------- nav ---------- */
+.nav{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:saturate(1.2) blur(8px);border-bottom:1.5px solid var(--ink)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px;height:68px}
+.nav ul{display:flex;gap:26px;list-style:none;margin:0;padding:0;font-size:15px;font-weight:600}
+.nav ul a{text-decoration:none}
+.nav ul a:hover{text-decoration:underline;text-underline-offset:4px}
+.nav .right{display:flex;align-items:center;gap:10px}
 
-section{padding:88px 0}
-.section-head{max-width:620px;margin-bottom:44px}
-.section-head h2{font-size:clamp(28px,3.4vw,40px);font-weight:700;margin-top:12px}
-.section-head p{color:var(--muted);font-size:18px;margin-top:14px}
+section{padding:104px 0}
+.head{max-width:720px;margin-bottom:48px}
+.head h2{font-size:clamp(32px,4.4vw,56px);margin-top:14px}
+.head p{font-size:19px;color:var(--ink-2);margin-top:18px;max-width:36em}
 
-/* hero */
-.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:64px;align-items:center;padding:56px 0 32px}
-.hero h1{font-size:clamp(40px,5.4vw,64px);font-weight:700;letter-spacing:-.04em;line-height:1.02}
-.hero h1 span{color:var(--accent)}
-.hero .lede{font-size:19px;color:var(--muted);max-width:32em;margin:22px 0 32px}
+/* ---------- hero ---------- */
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:56px;align-items:center;padding-block:72px 96px}
+.hero h1{font-size:clamp(42px,6.4vw,88px);line-height:.96}
+.hero h1 .last{white-space:nowrap;position:relative}
+.ink-stamp{display:inline-block;width:.95em;height:.95em;vertical-align:-.12em;margin-left:.12em;color:var(--pop);transform:rotate(-14deg)}
+.ink-stamp.go{animation:inkin .5s cubic-bezier(.2,1.4,.5,1) .25s both}
+@keyframes inkin{0%{transform:scale(2.2) rotate(-40deg);opacity:0}55%{opacity:1}100%{transform:scale(1) rotate(-14deg)}}
+.hero .lede{font-size:20px;color:var(--ink-2);max-width:31em;margin:28px 0 34px}
 .hero .ctas{display:flex;gap:10px;flex-wrap:wrap}
-.hero .facts{display:flex;gap:24px;flex-wrap:wrap;margin-top:36px;padding:0;list-style:none;font-size:14px;color:var(--muted)}
-.hero .facts li{display:flex;align-items:center;gap:8px}
-.hero .facts li::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent)}
-.demo{background:var(--surface);border-radius:28px;padding:36px 28px 28px;display:grid;justify-items:center;gap:18px}
-.demo .pass{max-width:320px}
-.demo-controls{display:flex;gap:8px;align-items:center}
-.demo-hint{font-size:14px;color:var(--muted);text-align:center;min-height:1.5em}
+.facts{display:flex;flex-wrap:wrap;gap:10px 28px;margin:40px 0 0;padding:28px 0 0;list-style:none;border-top:1.5px solid var(--ink);font-weight:600;font-size:15px}
+.facts li{display:flex;align-items:center;gap:8px}
+.facts li::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--pop)}
+.try{display:grid;justify-items:center;gap:16px}
+.try .phone-screen{min-height:0;padding-bottom:30px}
+.pview .phone-screen{min-height:440px}
+.try-actions{display:flex;gap:8px}
+.try-hint{font-size:15px;color:var(--muted);text-align:center;min-height:1.5em}
 
-/* how it works */
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;list-style:none;margin:0;padding:0;counter-reset:s}
-.step{background:var(--surface);border-radius:20px;padding:28px;counter-increment:s}
-.step::before{content:counter(s);display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#fff;font:600 14px/1 var(--mono);margin-bottom:40px}
-.step h3{font-size:20px;margin-bottom:8px}
-.step p{color:var(--muted)}
-.step .who{display:inline-block;margin-top:18px;font-size:13px;font-weight:500;padding:5px 10px;border-radius:999px;background:#fff}
+/* ---------- steps ---------- */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink);counter-reset:s}
+.step{padding:32px 32px 8px 0;counter-increment:s}
+.step + .step{padding-left:32px;border-left:1.5px solid var(--line)}
+.step::before{content:counter(s);display:grid;place-items:center;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--ink);font:500 16px/1 var(--mono);margin-bottom:28px}
+.step h3{font-size:24px;font-stretch:112%;font-weight:800}
+.step p{color:var(--ink-2);margin-top:10px}
+.step .who{display:inline-block;margin-top:18px;font:500 12px/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 
-/* features */
-.features{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:20px;overflow:hidden}
-.feature{background:#fff;padding:28px}
-.feature h3{font-size:17px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.feature p{color:var(--muted);margin-top:8px;font-size:15px}
-.soon{font:500 11px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:4px 7px;border-radius:6px;background:var(--surface);color:var(--muted)}
+/* ---------- builder (signature) ---------- */
+.builder{background:var(--ink);color:#fff}
+.builder .label{color:#A9A9AE}
+.builder .head p{color:#C9C9CD}
+.bgrid{display:grid;grid-template-columns:400px 1fr;gap:48px;align-items:start}
+.bform .field > span{color:#fff}
+.bform input[type=text]{background:#1A1A1D;border-color:#3A3A3F;color:#fff;font-size:18px}
+.bform input[type=text]:focus{border-color:#fff}
+.bform .chips label{background:transparent;border-color:#3A3A3F;color:#fff}
+.bform .chips label:hover{border-color:#fff}
+.bform .chips input:checked + label{background:#fff;color:var(--ink);border-color:#fff}
+.stepper{display:inline-flex;justify-self:start;align-items:center;border:1.5px solid #3A3A3F;border-radius:999px}
+.stepper button{width:48px;height:48px;border:0;background:transparent;color:#fff;font:600 22px/1 var(--font);cursor:pointer;border-radius:999px}
+.stepper button:hover{background:#1A1A1D}
+.stepper output{min-width:48px;text-align:center;font:500 18px var(--mono)}
+.bform .btn{margin-top:8px}
+.bnote{font-size:14px;color:#A9A9AE;margin-top:14px}
+.ptabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.ptabs button{font:600 15px/1 var(--font);padding:11px 16px;border-radius:999px;border:1.5px solid #3A3A3F;background:transparent;color:#fff;cursor:pointer}
+.ptabs button[aria-selected="true"]{background:#fff;color:var(--ink);border-color:#fff}
+.pview{background:#1A1A1D;border-radius:24px;min-height:600px;display:grid;place-items:center;padding:32px}
+.pview[hidden]{display:none}
+.pview .poster{max-width:380px}
+.pview img{width:100%;max-width:400px;border-radius:6px}
+.pcap{font-size:14px;color:#A9A9AE;margin-top:14px;text-align:center}
 
-/* pricing */
-.pricing-top{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:32px}
-.pricing-top .section-head{margin-bottom:0}
-.bill{display:inline-flex;background:var(--surface);padding:4px;border-radius:12px}
-.bill button{font:500 14px/1 var(--font);padding:10px 16px;border:0;border-radius:9px;background:transparent;color:var(--muted);cursor:pointer}
-.bill button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
-.bill em{font-style:normal;color:var(--accent);font-weight:600;margin-left:4px}
+/* ---------- what we do ---------- */
+.help-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.dolist{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink)}
+.dolist li{display:grid;grid-template-columns:28px 1fr;gap:14px;padding:22px 0;border-bottom:1.5px solid var(--line)}
+.dolist li::before{content:"";width:20px;height:20px;margin-top:3px;border-radius:50%;border:2px solid var(--ink)}
+.dolist li.paper::before{background:var(--pop);border-color:var(--pop)}
+.dolist h3{font-size:19px;font-weight:700;letter-spacing:-.01em}
+.dolist p{color:var(--ink-2);margin-top:4px;font-size:16px}
+.kit{margin:0;padding:20px 0 0}
+.kit-art{position:relative;max-width:460px}
+.kit .poster{max-width:300px;transform:rotate(-2deg);box-shadow:0 0 0 1.5px var(--line),0 30px 50px -30px rgba(0,0,0,.4)}
+.sticker{position:absolute;right:0;top:46%;width:180px;height:180px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;text-align:center;transform:rotate(10deg);padding:34px;font-weight:800;font-stretch:110%;font-size:16px;line-height:1.1;box-shadow:0 20px 40px -20px rgba(0,0,0,.5)}
+.sticker small{display:block;font:500 11px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#A9A9AE;margin-top:8px;font-stretch:100%}
+.sticker::before{content:"";position:absolute;inset:8px;border-radius:50%;border:1.5px dashed rgba(255,255,255,.4)}
+.kit-cap{margin-top:32px;font-size:15px;color:var(--muted);max-width:28em}
+
+/* ---------- pricing ---------- */
+.pricing{background:var(--wash)}
+.ptop{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:40px}
+.ptop .head{margin-bottom:0}
+.bill{display:inline-flex;border:1.5px solid var(--ink);border-radius:999px;padding:3px;background:#fff}
+.bill button{font:600 15px/1 var(--font);padding:11px 18px;border:0;border-radius:999px;background:transparent;color:var(--ink);cursor:pointer}
+.bill button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.bill em{font-style:normal;font:500 12px/1 var(--mono);margin-left:6px;color:var(--pop)}
+.bill button[aria-pressed="true"] em{color:#fff;opacity:.8}
 .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.plan{border:1px solid var(--line);border-radius:20px;padding:28px;display:flex;flex-direction:column}
-.plan.pop{border:2px solid var(--accent);position:relative}
-.plan.pop::before{content:"Most popular";position:absolute;top:-12px;left:24px;background:var(--accent);color:#fff;font:600 12px/1 var(--font);padding:6px 10px;border-radius:999px}
-.plan h3{font-size:20px}
-.plan .for{color:var(--muted);font-size:15px;margin-top:4px}
-.plan .price{margin:22px 0 4px;display:flex;align-items:baseline;gap:6px}
-.plan .price b{font-size:44px;font-weight:700;letter-spacing:-.04em}
+.plan{background:#fff;border:1.5px solid var(--ink);border-radius:20px;padding:30px;display:flex;flex-direction:column;position:relative}
+.plan.popular{box-shadow:0 0 0 2px var(--pop);border-color:var(--pop)}
+.plan .badge{position:absolute;top:-13px;left:26px;background:var(--pop);color:#fff;font:600 13px/1 var(--font);padding:7px 12px;border-radius:999px}
+.plan h3{font-size:26px;font-stretch:118%;font-weight:800}
+.plan .for{color:var(--ink-2);margin-top:6px}
+.plan .price{display:flex;align-items:baseline;gap:8px;margin-top:26px}
+.plan .price b{font-size:52px;font-weight:800;font-stretch:112%;letter-spacing:-.04em;line-height:1}
 .plan .price span{color:var(--muted)}
-.plan .billed{font-size:13px;color:var(--muted);min-height:1.5em;margin-bottom:22px}
-.plan .limits{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:12px;margin-bottom:22px}
-.plan .limits div{padding:12px 6px;text-align:center}
-.plan .limits div + div{border-left:1px solid var(--line)}
-.plan .limits b{display:block;font-size:20px}
-.plan .limits span{font-size:12px;color:var(--muted)}
-.plan ul{list-style:none;margin:0 0 26px;padding:0;flex:1;font-size:15px}
-.plan li{padding:6px 0 6px 26px;position:relative}
-.plan li::before{content:"";position:absolute;left:0;top:10px;width:14px;height:8px;border-left:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(-45deg)}
-.all-plans{margin-top:20px;text-align:center;color:var(--muted);font-size:15px}
+.plan .billed{font-size:14px;color:var(--muted);min-height:1.5em;margin:8px 0 22px}
+.limits{display:grid;grid-template-columns:repeat(3,1fr);border:1.5px solid var(--line);border-radius:12px;margin-bottom:22px}
+.limits div{padding:12px 4px;text-align:center}
+.limits div + div{border-left:1.5px solid var(--line)}
+.limits b{display:block;font-size:22px;font-weight:800}
+.limits span{font-size:13px;color:var(--muted)}
+.plan ul{list-style:none;margin:0 0 28px;padding:0;flex:1}
+.plan li{padding:7px 0 7px 28px;position:relative;font-size:16px}
+.plan li::before{content:"";position:absolute;left:2px;top:12px;width:13px;height:7px;border-left:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(-45deg)}
+.all{margin-top:24px;text-align:center;color:var(--ink-2)}
 
-/* faq */
-.faq{display:grid;grid-template-columns:1fr 1.5fr;gap:64px}
-details{border-bottom:1px solid var(--line)}
-details:first-child{border-top:1px solid var(--line)}
-summary{list-style:none;cursor:pointer;padding:20px 0;font-weight:600;font-size:17px;display:flex;justify-content:space-between;gap:16px}
+/* ---------- faq ---------- */
+.faq{display:grid;grid-template-columns:.8fr 1.2fr;gap:64px}
+details{border-bottom:1.5px solid var(--line)}
+details:first-child{border-top:1.5px solid var(--ink)}
+summary{list-style:none;cursor:pointer;padding:22px 0;font-weight:700;font-size:19px;display:flex;justify-content:space-between;gap:16px;align-items:center}
 summary::-webkit-details-marker{display:none}
-summary::after{content:"+";font:400 22px/1 var(--font);color:var(--muted)}
-details[open] summary::after{content:"–"}
-details p{color:var(--muted);padding:0 0 20px;max-width:40em}
+summary::after{content:"";flex:0 0 26px;height:26px;border-radius:50%;border:1.5px solid var(--ink);background:linear-gradient(var(--ink),var(--ink)) center/10px 1.5px no-repeat,linear-gradient(var(--ink),var(--ink)) center/1.5px 10px no-repeat}
+details[open] summary::after{background:var(--pop) linear-gradient(#fff,#fff) center/10px 1.5px no-repeat;border-color:var(--pop)}
+details p{color:var(--ink-2);padding:0 0 22px;max-width:40em}
 
-.cta{background:var(--ink);color:#fff;border-radius:28px;padding:64px 48px;text-align:center;margin-bottom:48px}
-.cta h2{font-size:clamp(28px,3.6vw,44px)}
-.cta p{color:rgba(255,255,255,.7);margin:14px auto 30px;max-width:32em;font-size:18px}
-.cta .btn{background:#fff;color:var(--ink);border-color:#fff}
-footer{border-top:1px solid var(--line);padding:28px 0 40px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:14px;color:var(--muted)}
+/* ---------- visit ---------- */
+.visit{border-top:1.5px solid var(--ink);padding:88px 0}
+.visit .wrap{display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:end}
+.visit h2{font-size:clamp(36px,5.4vw,72px)}
+.visit p{font-size:19px;color:var(--ink-2);margin-top:18px;max-width:30em}
+.visit .ctas{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+footer{background:var(--ink);color:#fff;padding:40px 0}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;font-size:14px}
+footer a{color:#fff;text-decoration:none;opacity:.8}
+footer a:hover{opacity:1;text-decoration:underline}
+footer nav{display:flex;gap:20px;flex-wrap:wrap}
+footer .lang{border-color:#fff}
+footer .lang button{color:#fff}
+footer .lang button[aria-pressed="true"]{background:#fff;color:var(--ink)}
 
-@media (max-width:900px){
-  .hero,.faq{grid-template-columns:1fr;gap:40px}
-  .steps,.plans{grid-template-columns:1fr}
-  .features{grid-template-columns:1fr 1fr}
+/* ---------- responsive ---------- */
+@media (max-width:1020px){
   .nav ul{display:none}
-  .plans{max-width:440px;margin:0 auto}
+  .bgrid{grid-template-columns:1fr}
+  .help-grid{grid-template-columns:1fr}
+  .kit{max-width:420px}
+}
+@media (max-width:900px){
+  .hero,.faq,.visit .wrap{grid-template-columns:1fr}
+  .visit .ctas{justify-content:flex-start}
+  .steps{grid-template-columns:1fr}
+  .step,.step + .step{padding:28px 0;border-left:0;border-bottom:1.5px solid var(--line)}
+  .step::before{margin-bottom:18px}
+  .plans{grid-template-columns:1fr;max-width:460px;margin:0 auto}
 }
 @media (max-width:560px){
   .wrap{padding:0 16px}
-  section{padding:64px 0}
-  .hero{padding:24px 0 56px}
-  .features{grid-template-columns:1fr}
-  .nav .actions .secondary{display:none}
-  .demo{padding:24px 16px 20px}
-  .cta{padding:44px 20px}
-  .step::before{margin-bottom:20px}
+  section{padding:72px 0}
+  .hero{padding-block:40px 64px;gap:40px}
+  .pview .phone-screen{min-height:0;padding-bottom:28px}
+  .hero .lede{font-size:18px}
+  .nav .right .login{display:none}
+  .nav .wrap{height:60px;gap:10px}
+  .nav .btn.small{padding:9px 13px}
+  .pview{padding:16px;min-height:0}
+  .sticker{width:140px;height:140px;font-size:13px;padding:26px}
+  .plan{padding:24px}
 }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <nav class="nav" aria-label="Main">
-    <a class="brand" href="#"><span class="brand-mark" aria-hidden="true"></span>Witkowski Loyalty</a>
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Timbro"><span class="brand-mark" aria-hidden="true"></span>Timbro</a>
     <ul>
-      <li><a href="#how">How it works</a></li>
-      <li><a href="#features">Features</a></li>
-      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#come" data-i18n="nav.how"></a></li>
+      <li><a href="#prova" data-i18n="nav.try"></a></li>
+      <li><a href="#aiuto" data-i18n="nav.help"></a></li>
+      <li><a href="#prezzi" data-i18n="nav.pricing"></a></li>
       <li><a href="#faq">FAQ</a></li>
     </ul>
-    <div class="actions">
-      <a class="btn secondary small" href="app/stamper.html">Staff login</a>
-      <a class="btn small" href="app/dashboard.html">Create your card</a>
+    <div class="right">
+      <div class="lang"></div>
+      <a class="btn line small login" href="app/dashboard.html" data-i18n="nav.login"></a>
+      <a class="btn pop small" href="#prova" data-i18n="nav.start"></a>
     </div>
-  </nav>
+  </div>
+</header>
 
-  <header class="hero">
+<main id="top">
+  <!-- HERO -->
+  <div class="wrap hero">
     <div>
-      <h1>Stamp cards that live in your customers' <span>phones.</span></h1>
-      <p class="lede">Design a loyalty card, put a QR code by the till, and stamp it from your phone. Customers don't download anything, and nobody loses their card again.</p>
+      <h1 class="display"><span data-i18n="hero.a"></span> <span class="last"><span data-i18n="hero.b"></span><svg class="ink-stamp go" viewBox="0 0 100 100" aria-hidden="true">
+        <defs>
+          <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter>
+          <path id="ring" d="M50 50m-37 0a37 37 0 1 1 74 0a37 37 0 1 1-74 0"/>
+        </defs>
+        <g filter="url(#rough)" fill="none" stroke="currentColor">
+          <circle cx="50" cy="50" r="47" stroke-width="4"/>
+          <circle cx="50" cy="50" r="29" stroke-width="2"/>
+          <text font-family="Spline Sans Mono, monospace" font-size="9.5" font-weight="500" fill="currentColor" stroke="none"><textPath textLength="226" lengthAdjust="spacing" href="#ring">TIMBRO · MILANO · TIMBRO · MILANO ·</textPath></text>
+          <path transform="translate(35 35) scale(1.25)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 9h12v4.5A5.5 5.5 0 0 1 10.5 19h-1A5.5 5.5 0 0 1 4 13.5zM16 10.5h1.5a2.5 2.5 0 0 1 0 5H16M8 3.5c-.8 1 .8 2 0 3M12 3.5c-.8 1 .8 2 0 3"/>
+        </g>
+      </svg></span></h1>
+      <p class="lede" data-i18n="hero.lede"></p>
       <div class="ctas">
-        <a class="btn accent" href="app/dashboard.html">Create your card, free</a>
-        <a class="btn secondary" href="#how">See how it works</a>
+        <a class="btn pop" href="#prova" data-i18n="hero.cta1"></a>
+        <a class="btn line" href="#come" data-i18n="hero.cta2"></a>
       </div>
       <ul class="facts">
-        <li>Ready in 10 minutes</li>
-        <li>No app for customers</li>
-        <li>Free for 14 days</li>
+        <li data-i18n="hero.f1"></li>
+        <li data-i18n="hero.f2"></li>
+        <li data-i18n="hero.f3"></li>
       </ul>
     </div>
-
-    <div class="demo" aria-label="Try it: a sample stamp card">
-      <div id="demo-pass"></div>
-      <div class="demo-controls">
-        <button class="btn accent" id="demo-stamp" type="button">Give a stamp</button>
-        <button class="btn secondary" id="demo-reset" type="button">Start over</button>
+    <div class="try">
+      <div class="phone"><div class="phone-screen" id="hero-pass"></div></div>
+      <div class="try-actions">
+        <button class="btn pop" type="button" id="hero-stamp"></button>
+        <button class="btn line" type="button" id="hero-reset" data-i18n="hero.reset"></button>
       </div>
-      <p class="demo-hint" id="demo-hint" aria-live="polite">This is what your customer sees. Try stamping it.</p>
-    </div>
-  </header>
-</div>
-
-<section id="how" style="background:#fff">
-  <div class="wrap">
-    <div class="section-head">
-      <span class="label">How it works</span>
-      <h2>Three steps, and you're running</h2>
-      <p>Everything happens with a QR code and a phone. No card printer, no special till.</p>
-    </div>
-    <ol class="steps">
-      <li class="step">
-        <h3>Design your card</h3>
-        <p>Pick a colour and an icon, choose how many stamps it takes, and write the reward.</p>
-        <span class="who">You, once</span>
-      </li>
-      <li class="step">
-        <h3>Customers scan to join</h3>
-        <p>Print your QR code or share the link. One scan and the card is on their phone.</p>
-        <span class="who">Your customer, 10 seconds</span>
-      </li>
-      <li class="step">
-        <h3>Stamp at the till</h3>
-        <p>Staff scan the customer's card with their phone and tap once. Full card? Hand over the reward.</p>
-        <span class="who">Your staff, every visit</span>
-      </li>
-    </ol>
-  </div>
-</section>
-
-<section id="features" style="padding-top:0">
-  <div class="wrap">
-    <div class="section-head">
-      <span class="label">Features</span>
-      <h2>Everything a paper card does, without the paper</h2>
-    </div>
-    <div class="features">
-      <div class="feature"><h3>No app to download</h3><p>Customers open a link and their card is there. Works on any phone.</p></div>
-      <div class="feature"><h3>Stamper for staff</h3><p>Staff use their phone's camera to scan and stamp. Each person gets their own login.</p></div>
-      <div class="feature"><h3>See who comes back</h3><p>Members, stamps given and rewards claimed, for each card you run.</p></div>
-      <div class="feature"><h3>Your brand, your reward</h3><p>Your colour, your icon, your number of stamps. Change it any time.</p></div>
-      <div class="feature"><h3>Apple Wallet &amp; Google Wallet <span class="soon">Coming soon</span></h3><p>Save the card next to boarding passes and tickets.</p></div>
-      <div class="feature"><h3>Reminder messages <span class="soon">Coming soon</span></h3><p>A nudge on the lock screen when a customer is one stamp away.</p></div>
+      <p class="try-hint" id="hero-hint" aria-live="polite"></p>
     </div>
   </div>
-</section>
 
-<section id="pricing" style="background:var(--surface)">
-  <div class="wrap">
-    <div class="pricing-top">
-      <div class="section-head">
-        <span class="label">Pricing</span>
-        <h2>One price. Every feature.</h2>
-        <p>Plans only differ in how many locations, cards and staff you need.</p>
+  <!-- HOW -->
+  <section id="come" style="padding-top:0">
+    <div class="wrap">
+      <div class="head">
+        <span class="label" data-i18n="how.label"></span>
+        <h2 class="display" data-i18n="how.title"></h2>
       </div>
-      <div class="bill" role="group" aria-label="Billing period">
-        <button type="button" data-bill="month" aria-pressed="true">Monthly</button>
-        <button type="button" data-bill="year" aria-pressed="false">Yearly <em>−20%</em></button>
+      <ol class="steps">
+        <li class="step"><h3 data-i18n="how.s1"></h3><p data-i18n="how.s1p"></p><span class="who" data-i18n="how.s1w"></span></li>
+        <li class="step"><h3 data-i18n="how.s2"></h3><p data-i18n="how.s2p"></p><span class="who" data-i18n="how.s2w"></span></li>
+        <li class="step"><h3 data-i18n="how.s3"></h3><p data-i18n="how.s3p"></p><span class="who" data-i18n="how.s3w"></span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- BUILDER -->
+  <section id="prova" class="builder">
+    <div class="wrap">
+      <div class="head">
+        <span class="label" data-i18n="b.label"></span>
+        <h2 class="display" data-i18n="b.title"></h2>
+        <p data-i18n="b.lede"></p>
+      </div>
+      <div class="bgrid">
+        <form class="bform" id="bform" autocomplete="off">
+          <label class="field"><span data-i18n="b.name"></span>
+            <input type="text" name="name" maxlength="28" value="The Coffee" data-i18n-attr="placeholder:b.namePh">
+          </label>
+          <fieldset class="field" style="border:0;padding:0;margin:0 0 18px">
+            <legend style="font-weight:600;font-size:15px;margin-bottom:8px;padding:0" data-i18n="b.type"></legend>
+            <div class="chips" id="types"></div>
+          </fieldset>
+          <label class="field"><span data-i18n="b.reward"></span>
+            <input type="text" name="reward" maxlength="40">
+          </label>
+          <div class="field">
+            <span id="stamps-l" data-i18n="b.stamps"></span>
+            <div class="stepper" role="group" aria-labelledby="stamps-l">
+              <button type="button" data-step="-1" aria-label="−1">−</button>
+              <output id="stamps" aria-live="polite">10</output>
+              <button type="button" data-step="1" aria-label="+1">+</button>
+            </div>
+          </div>
+          <a class="btn pop block" id="b-go" href="app/dashboard.html" data-i18n="b.go"></a>
+          <p class="bnote" data-i18n="b.note"></p>
+        </form>
+        <div>
+          <div class="ptabs" role="tablist" aria-label="Preview">
+            <button role="tab" aria-selected="true" aria-controls="pv-phone" id="pt-phone" data-i18n="b.tPhone"></button>
+            <button role="tab" aria-selected="false" aria-controls="pv-poster" id="pt-poster" data-i18n="b.tPoster" tabindex="-1"></button>
+            <button role="tab" aria-selected="false" aria-controls="pv-insta" id="pt-insta" data-i18n="b.tInsta" tabindex="-1"></button>
+          </div>
+          <div class="pview" role="tabpanel" id="pv-phone" aria-labelledby="pt-phone">
+            <div><div class="phone"><div class="phone-screen" id="b-pass"></div></div><p class="pcap" data-i18n="b.cPhone"></p></div>
+          </div>
+          <div class="pview" role="tabpanel" id="pv-poster" aria-labelledby="pt-poster" hidden>
+            <div style="width:100%;max-width:380px"><div id="b-poster"></div><p class="pcap" data-i18n="b.cPoster"></p></div>
+          </div>
+          <div class="pview" role="tabpanel" id="pv-insta" aria-labelledby="pt-insta" hidden>
+            <div style="width:100%;max-width:400px"><img id="b-insta" alt=""><p class="pcap" data-i18n="b.cInsta"></p></div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="plans" id="plans"></div>
-    <p class="all-plans">All plans: unlimited customers, unlimited stamps, 14-day free trial. Change plan any time.</p>
-  </div>
-</section>
+  </section>
 
-<section id="faq">
-  <div class="wrap faq">
-    <div class="section-head">
-      <span class="label">FAQ</span>
-      <h2>Questions before you start</h2>
+  <!-- WHAT WE DO -->
+  <section id="aiuto">
+    <div class="wrap help-grid">
+      <div>
+        <div class="head" style="margin-bottom:36px">
+          <span class="label" data-i18n="h.label"></span>
+          <h2 class="display" data-i18n="h.title"></h2>
+          <p data-i18n="h.lede"></p>
+        </div>
+        <ul class="dolist">
+          <li><div><h3 data-i18n="h.1"></h3><p data-i18n="h.1p"></p></div></li>
+          <li class="paper"><div><h3 data-i18n="h.2"></h3><p data-i18n="h.2p"></p></div></li>
+          <li><div><h3 data-i18n="h.3"></h3><p data-i18n="h.3p"></p></div></li>
+          <li><div><h3 data-i18n="h.4"></h3><p data-i18n="h.4p"></p></div></li>
+          <li><div><h3 data-i18n="h.5"></h3><p data-i18n="h.5p"></p></div></li>
+          <li><div><h3 data-i18n="h.6"></h3><p data-i18n="h.6p"></p></div></li>
+        </ul>
+      </div>
+      <figure class="kit">
+        <div class="kit-art">
+          <div id="kit-poster"></div>
+          <div class="sticker" aria-hidden="true"><div><span data-i18n="h.sticker"></span><small data-i18n="h.stickerSub"></small></div></div>
+        </div>
+        <figcaption class="kit-cap" data-i18n="h.kitCap"></figcaption>
+      </figure>
     </div>
-    <div>
-      <details open><summary>Do my customers need to download an app?</summary><p>No. They scan your QR code and the card opens in their phone's browser. They can add it to their home screen in one tap.</p></details>
-      <details><summary>How do my staff give stamps?</summary><p>They open the stamper on their phone, point the camera at the customer's card and tap "Add stamp". If the camera isn't handy, they can type the 6-letter code under the QR.</p></details>
-      <details><summary>What happens when a card is full?</summary><p>The card shows "Reward ready". Staff tap "Give reward", the customer gets their treat and the card starts again from zero.</p></details>
-      <details><summary>Can I run more than one card?</summary><p>Yes. For example a coffee card and a lunch card. The number of cards depends on your plan.</p></details>
-      <details><summary>Can I change or cancel my plan?</summary><p>Yes, any time from your dashboard. Your customers keep their stamps.</p></details>
-    </div>
-  </div>
-</section>
+  </section>
 
-<div class="wrap">
-  <div class="cta">
-    <h2>Your regulars already come back.<br>Start rewarding them.</h2>
-    <p>Design your card now. It takes about ten minutes and you'll have a QR code to print today.</p>
-    <a class="btn" href="app/dashboard.html">Create your card</a>
+  <!-- PRICING -->
+  <section id="prezzi" class="pricing">
+    <div class="wrap">
+      <div class="ptop">
+        <div class="head">
+          <span class="label" data-i18n="p.label"></span>
+          <h2 class="display" data-i18n="p.title"></h2>
+          <p data-i18n="p.lede"></p>
+        </div>
+        <div class="bill" role="group" data-i18n-attr="aria-label:p.billing">
+          <button type="button" data-bill="month" aria-pressed="true" data-i18n="p.monthly"></button>
+          <button type="button" data-bill="year" aria-pressed="false"><span data-i18n="p.yearly"></span><em data-i18n="p.save"></em></button>
+        </div>
+      </div>
+      <div class="plans" id="plans"></div>
+      <p class="all" data-i18n="p.all"></p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="wrap faq">
+      <div class="head">
+        <span class="label">FAQ</span>
+        <h2 class="display" data-i18n="f.title"></h2>
+      </div>
+      <div>
+        <details open><summary data-i18n="f.q1"></summary><p data-i18n="f.a1"></p></details>
+        <details><summary data-i18n="f.q2"></summary><p data-i18n="f.a2"></p></details>
+        <details><summary data-i18n="f.q3"></summary><p data-i18n="f.a3"></p></details>
+        <details><summary data-i18n="f.q4"></summary><p data-i18n="f.a4"></p></details>
+        <details><summary data-i18n="f.q5"></summary><p data-i18n="f.a5"></p></details>
+        <details><summary data-i18n="f.q6"></summary><p data-i18n="f.a6"></p></details>
+      </div>
+    </div>
+  </section>
+
+  <div class="visit">
+    <div class="wrap">
+      <div>
+        <h2 class="display" data-i18n="v.title"></h2>
+        <p data-i18n="v.lede"></p>
+      </div>
+      <div class="ctas" id="contact"></div>
+    </div>
   </div>
-  <footer>
-    <span>© Witkowski Studio</span>
-    <span>Prices exclude VAT.</span>
-  </footer>
-</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="brand" href="#top" style="color:#fff;opacity:1"><span class="brand-mark" aria-hidden="true"></span>Timbro</a>
+    <nav>
+      <a href="app/dashboard.html" data-i18n="ft.dash"></a>
+      <a href="app/stamper.html" data-i18n="ft.stamper"></a>
+      <a href="examples/the-coffee/" data-i18n="ft.example"></a>
+    </nav>
+    <div class="lang"></div>
+  </div>
+</footer>
 
 <script src="assets/vendor/qrcode.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/store.js"></script>
 <script src="assets/js/ui.js"></script>
+<script src="assets/js/marketing.js"></script>
 <script>
-// ---- Hero demo: a sample card you can stamp ----
-(() => {
-  const card = { business: 'Corner Coffee', title: 'Coffee card', reward: 'free coffee', stampsNeeded: 8, color: '#16804F', icon: '☕' };
-  const el = document.getElementById('demo-pass');
-  const hint = document.getElementById('demo-hint');
-  const btn = document.getElementById('demo-stamp');
-  let n = 3;
-  function draw(pop) {
-    el.innerHTML = UI.renderPass(card, null, { stamps: n, pop });
-    btn.textContent = n >= card.stampsNeeded ? 'Give reward' : 'Give a stamp';
+I18N.add({
+  it: {
+    'nav.how': 'Come funziona', 'nav.try': 'Prova', 'nav.help': 'Cosa facciamo noi', 'nav.pricing': 'Prezzi',
+    'nav.login': 'Accedi', 'nav.start': 'Prova gratis',
+    'hero.a': 'La carta fedeltà che nessuno', 'hero.b': 'perde.',
+    'hero.lede': 'Una carta a timbri sul telefono dei tuoi clienti. Senza app e senza cartoncini. E non sei da solo: la disegniamo con te, la stampiamo e ti diamo i post per farla conoscere.',
+    'hero.cta1': 'Crea la tua carta', 'hero.cta2': 'Come funziona',
+    'hero.f1': 'Pronta in 10 minuti', 'hero.f2': 'Nessuna app per i clienti', 'hero.f3': '30 giorni gratis',
+    'hero.stamp': 'Metti un timbro', 'hero.redeem': 'Dai il premio', 'hero.reset': 'Ricomincia',
+    'hero.h0': 'Questa è la carta di un cliente. Prova a timbrarla.',
+    'hero.hLeft': 'Ancora {n} per il premio.', 'hero.hFull': 'Carta piena: il cliente vede "Premio pronto".',
+    'hero.hDone': 'Premio dato. La carta riparte da zero, e il cliente torna.',
+    'how.label': 'Come funziona', 'how.title': 'Tre passi e sei pronto.',
+    'how.s1': 'Crea la carta', 'how.s1p': 'Nome, premio, numero di timbri. Ti guidiamo passo passo, oppure la disegniamo noi per te.', 'how.s1w': 'Tu, una volta',
+    'how.s2': 'Il cliente inquadra il QR', 'how.s2p': 'Il poster alla cassa fa il lavoro. In 10 secondi la carta è sul suo telefono.', 'how.s2w': 'Il cliente, 10 secondi',
+    'how.s3': 'Timbri dal telefono', 'how.s3p': 'Il barista inquadra la carta del cliente e tocca una volta. Carta piena? Si offre il premio.', 'how.s3w': 'Il barista, a ogni visita',
+    'b.label': 'Prova con il tuo locale', 'b.title': 'Scrivi il nome. Ecco la tua carta.',
+    'b.lede': 'Così la vedranno i tuoi clienti: sul telefono, alla cassa e su Instagram. Cambia quello che vuoi, si aggiorna subito.',
+    'b.name': 'Nome del locale', 'b.namePh': 'Es. Bar Centrale', 'b.type': 'Che tipo di locale è?', 'b.reward': 'Il premio', 'b.stamps': 'Timbri per il premio',
+    'b.go': 'Crea questa carta', 'b.note': 'Gratis per 30 giorni. Non serve la carta di credito.',
+    'b.tPhone': 'Sul telefono', 'b.tPoster': 'Poster per la cassa', 'b.tInsta': 'Post Instagram',
+    'b.cPhone': 'La carta del cliente, sempre in tasca.', 'b.cPoster': 'Formato A5. Te lo spediamo stampato, oppure lo stampi tu.', 'b.cInsta': 'Pronto da pubblicare. Lo scarichi con un tocco.',
+    'h.label': 'Cosa facciamo noi', 'h.title': 'Non serve essere grafici. Né esperti di marketing.',
+    'h.lede': 'Gli altri ti danno uno strumento e ti lasciano da solo. Con Timbro hai qualcuno che ti aiuta, dall\'idea al primo cliente.',
+    'h.1': 'Disegniamo la carta con te', 'h.1p': 'Con il tuo logo e i tuoi colori. Scegli tu il premio, al resto pensiamo noi.',
+    'h.2': 'Il kit stampato, su carta vera', 'h.2p': 'Poster per la cassa, adesivo per la vetrina e cartellini per i tavoli. Arrivano pronti da appendere.',
+    'h.3': 'Post e messaggi già scritti', 'h.3p': 'Instagram, storie, WhatsApp e Google. Copi, incolli, pubblichi.',
+    'h.4': 'Un piano di lancio di 7 giorni', 'h.4p': 'Cosa fare ogni giorno della prima settimana. L\'obiettivo: 30 iscritti.',
+    'h.5': 'La carta parla inglese ai turisti', 'h.5p': 'Chi ha il telefono in inglese vede la carta in inglese. Utile a Milano.',
+    'h.6': 'Una persona vera su WhatsApp', 'h.6p': 'Rispondiamo in italiano. A Milano passiamo anche di persona.',
+    'h.sticker': 'Qui la carta fedeltà è digitale', 'h.stickerSub': 'Adesivo vetrina',
+    'h.kitCap': 'Il kit stampato per The Coffee, Milano: poster A5 per la cassa e adesivo per la vetrina.',
+    'p.label': 'Prezzi', 'p.title': 'Un abbonamento. Tutto incluso.', 'p.lede': 'I piani cambiano solo per quante sedi hai e quanto aiuto vuoi da noi.',
+    'p.billing': 'Periodo di pagamento', 'p.monthly': 'Mensile', 'p.yearly': 'Annuale', 'p.save': '2 mesi gratis',
+    'p.month': '/ mese', 'p.year': '/ anno', 'p.billedM': 'Pagamento mensile', 'p.billedY': 'Pari a {x} al mese',
+    'p.loc': 'sedi', 'p.loc1': 'sede', 'p.cards': 'carte', 'p.cards1': 'carta', 'p.staff': 'baristi',
+    'p.popular': 'Il più scelto', 'p.cta': 'Prova 30 giorni gratis',
+    'p.all': 'Tutti i piani: clienti illimitati, timbri illimitati, carta in italiano e inglese. Prezzi IVA esclusa.',
+    'f.title': 'Le domande che ci fanno al bancone',
+    'f.q1': 'I miei clienti devono scaricare un\'app?', 'f.a1': 'No. Inquadrano il QR e la carta si apre sul telefono. Con un tocco la aggiungono alla schermata Home.',
+    'f.q2': 'Devo comprare qualcosa per la cassa?', 'f.a2': 'No. Basta il telefono o il tablet che hai già. Il barista apre il timbratore e inquadra la carta del cliente.',
+    'f.q3': 'E chi non ha lo smartphone?', 'f.a3': 'Puoi continuare a usare i cartoncini per chi li preferisce. Timbro non ti obbliga a scegliere.',
+    'f.q4': 'Cosa succede quando la carta è piena?', 'f.a4': 'La carta mostra "Premio pronto". Il barista tocca "Dai il premio" e la carta riparte da zero.',
+    'f.q5': 'Posso smettere quando voglio?', 'f.a5': 'Sì. L\'abbonamento è mensile: se smetti, non paghi il mese dopo.',
+    'f.q6': 'Funziona anche fuori Milano?', 'f.a6': 'Sì, ovunque. La carta funziona in italiano e in inglese. A Milano possiamo anche passare di persona.',
+    'v.title': 'Sei a Milano? Passiamo noi.', 'v.lede': 'Ti mostriamo Timbro al bancone in 10 minuti, con la carta del tuo locale già pronta.',
+    'v.wa': 'Scrivici su WhatsApp', 'v.mail': 'Scrivici una email', 'v.start': 'Crea la tua carta',
+    'ft.dash': 'Area locale', 'ft.stamper': 'Timbratore per baristi', 'ft.example': 'Esempio: The Coffee'
+  },
+  en: {
+    'nav.how': 'How it works', 'nav.try': 'Try it', 'nav.help': 'What we do', 'nav.pricing': 'Pricing',
+    'nav.login': 'Log in', 'nav.start': 'Try it free',
+    'hero.a': 'The loyalty card nobody', 'hero.b': 'loses.',
+    'hero.lede': 'A stamp card on your customers\' phones. No app, no paper cards. And you\'re not on your own: we design it with you, print it and hand you the posts to promote it.',
+    'hero.cta1': 'Create your card', 'hero.cta2': 'How it works',
+    'hero.f1': 'Ready in 10 minutes', 'hero.f2': 'No app for customers', 'hero.f3': '30 days free',
+    'hero.stamp': 'Add a stamp', 'hero.redeem': 'Give the reward', 'hero.reset': 'Start over',
+    'hero.h0': 'This is a customer\'s card. Try stamping it.',
+    'hero.hLeft': '{n} more to the reward.', 'hero.hFull': 'Full card: the customer sees "Reward ready".',
+    'hero.hDone': 'Reward given. The card starts again, and the customer comes back.',
+    'how.label': 'How it works', 'how.title': 'Three steps and you\'re ready.',
+    'how.s1': 'Create the card', 'how.s1p': 'Name, reward, number of stamps. We guide you step by step, or design it for you.', 'how.s1w': 'You, once',
+    'how.s2': 'Customers scan the QR', 'how.s2p': 'The poster at the till does the work. In 10 seconds the card is on their phone.', 'how.s2w': 'Your customer, 10 seconds',
+    'how.s3': 'Stamp from your phone', 'how.s3p': 'Staff scan the customer\'s card and tap once. Full card? Hand over the reward.', 'how.s3w': 'Your staff, every visit',
+    'b.label': 'Try it with your place', 'b.title': 'Type your name. Here\'s your card.',
+    'b.lede': 'This is how your customers will see it: on their phone, at the till and on Instagram. Change anything, it updates right away.',
+    'b.name': 'Name of your place', 'b.namePh': 'E.g. Corner Café', 'b.type': 'What kind of place is it?', 'b.reward': 'The reward', 'b.stamps': 'Stamps for the reward',
+    'b.go': 'Create this card', 'b.note': 'Free for 30 days. No credit card needed.',
+    'b.tPhone': 'On the phone', 'b.tPoster': 'Poster for the till', 'b.tInsta': 'Instagram post',
+    'b.cPhone': 'Your customer\'s card, always in their pocket.', 'b.cPoster': 'A5 size. We post it to you printed, or you print it yourself.', 'b.cInsta': 'Ready to publish. Download it in one tap.',
+    'h.label': 'What we do for you', 'h.title': 'You don\'t need to be a designer. Or a marketer.',
+    'h.lede': 'Other services hand you a tool and leave you to it. With Timbro you get someone who helps, from the idea to your first customer.',
+    'h.1': 'We design the card with you', 'h.1p': 'With your logo and colours. You choose the reward, we handle the rest.',
+    'h.2': 'A printed kit, on real paper', 'h.2p': 'Poster for the till, window sticker and table cards. They arrive ready to put up.',
+    'h.3': 'Posts and messages, already written', 'h.3p': 'Instagram, stories, WhatsApp and Google. Copy, paste, publish.',
+    'h.4': 'A 7-day launch plan', 'h.4p': 'What to do each day of the first week. The goal: 30 members.',
+    'h.5': 'The card speaks Italian and English', 'h.5p': 'Customers with an English phone see the card in English. Handy for tourists.',
+    'h.6': 'A real person on WhatsApp', 'h.6p': 'We answer in Italian and English. In Milan we also come by in person.',
+    'h.sticker': 'Our loyalty card is digital', 'h.stickerSub': 'Window sticker',
+    'h.kitCap': 'The printed kit for The Coffee, Milan: A5 poster for the till and a window sticker.',
+    'p.label': 'Pricing', 'p.title': 'One subscription. Everything included.', 'p.lede': 'Plans only differ in how many locations you have and how much help you want from us.',
+    'p.billing': 'Billing period', 'p.monthly': 'Monthly', 'p.yearly': 'Yearly', 'p.save': '2 months free',
+    'p.month': '/ month', 'p.year': '/ year', 'p.billedM': 'Billed monthly', 'p.billedY': 'Works out at {x} a month',
+    'p.loc': 'locations', 'p.loc1': 'location', 'p.cards': 'cards', 'p.cards1': 'card', 'p.staff': 'staff',
+    'p.popular': 'Most popular', 'p.cta': 'Try 30 days free',
+    'p.all': 'All plans: unlimited customers, unlimited stamps, card in Italian and English. Prices exclude VAT.',
+    'f.title': 'Questions we get asked at the counter',
+    'f.q1': 'Do my customers need to download an app?', 'f.a1': 'No. They scan the QR code and the card opens on their phone. One tap adds it to their home screen.',
+    'f.q2': 'Do I need to buy anything for the till?', 'f.a2': 'No. The phone or tablet you already have is enough. Staff open the stamper and scan the customer\'s card.',
+    'f.q3': 'What about customers without a smartphone?', 'f.a3': 'Keep paper cards for the people who prefer them. Timbro doesn\'t make you choose.',
+    'f.q4': 'What happens when a card is full?', 'f.a4': 'The card shows "Reward ready". Staff tap "Give the reward" and the card starts again from zero.',
+    'f.q5': 'Can I stop whenever I want?', 'f.a5': 'Yes. The subscription is monthly: stop, and you don\'t pay the next month.',
+    'f.q6': 'Does it work outside Milan?', 'f.a6': 'Yes, anywhere. The card works in Italian and English. In Milan we can also come by in person.',
+    'v.title': 'In Milan? We\'ll come to you.', 'v.lede': 'We\'ll show you Timbro at your counter in 10 minutes, with your own card already made.',
+    'v.wa': 'Message us on WhatsApp', 'v.mail': 'Send us an email', 'v.start': 'Create your card',
+    'ft.dash': 'Business login', 'ft.stamper': 'Stamper for staff', 'ft.example': 'Example: The Coffee'
   }
-  btn.addEventListener('click', () => {
-    if (n >= card.stampsNeeded) { n = 0; hint.textContent = 'Reward claimed. The card starts again, and so does the habit.'; draw(); return; }
-    n++;
-    hint.textContent = n >= card.stampsNeeded ? 'Full card. The customer sees "Reward ready".'
-      : `${card.stampsNeeded - n} more to go.`;
-    draw(n - 1);
-  });
-  document.getElementById('demo-reset').addEventListener('click', () => { n = 0; hint.textContent = 'Fresh card, like a new customer gets.'; draw(); });
-  draw();
-})();
+});
 
-// ---- Pricing (edit plans here) ----
 (() => {
-  const currency = '$';
-  const plans = [
-    { name: 'Starter', for: 'One café, salon or shop', month: 19, locations: 1, cards: 1, staff: 3,
-      extras: ['Stamper app for staff', 'QR code poster to print', 'Customer list'] },
-    { name: 'Growth', for: 'A few locations or offers', month: 39, locations: 3, cards: 3, staff: 10, popular: true,
-      extras: ['Everything in Starter', 'Export customers to CSV', 'Stats per location'] },
-    { name: 'Pro', for: 'Groups and franchises', month: 79, locations: 10, cards: 10, staff: 50,
-      extras: ['Everything in Growth', 'Priority support', 'Help setting up'] }
-  ];
-  const yearly = m => Math.round(m * 12 * 0.8);
-  const box = document.getElementById('plans');
-  function draw(mode) {
-    box.innerHTML = plans.map(p => {
-      const price = mode === 'year' ? yearly(p.month) : p.month;
-      const billed = mode === 'year'
-        ? `${currency}${(yearly(p.month) / 12).toFixed(2)} a month, billed yearly`
-        : 'Billed monthly';
-      return `
-      <article class="plan${p.popular ? ' pop' : ''}">
-        <h3>${p.name}</h3>
-        <p class="for">${p.for}</p>
-        <div class="price"><b>${currency}${price}</b><span>/ ${mode === 'year' ? 'year' : 'month'}</span></div>
+  const L = () => I18N.lang;
+  const fmt = (n, dec = 0) => new Intl.NumberFormat(L() === 'it' ? 'it-IT' : 'en-IE', { style: 'currency', currency: 'EUR', minimumFractionDigits: dec, maximumFractionDigits: dec }).format(n);
+
+  // ---------- hero: a card you can stamp ----------
+  const heroCard = () => Store.getCard('the-coffee');
+  let n = 3, hint = 'hero.h0', hintVars;
+  const heroBtn = document.getElementById('hero-stamp');
+  function hero(pop) {
+    const card = heroCard();
+    document.getElementById('hero-pass').innerHTML = UI.renderPass(card, null, { stamps: n, pop });
+    heroBtn.textContent = I18N.t(n >= card.stampsNeeded ? 'hero.redeem' : 'hero.stamp');
+    document.getElementById('hero-hint').textContent = I18N.t(hint, hintVars);
+  }
+  heroBtn.addEventListener('click', () => {
+    const need = heroCard().stampsNeeded;
+    if (n >= need) { n = 0; hint = 'hero.hDone'; hero(); return; }
+    n++;
+    if (n >= need) hint = 'hero.hFull'; else { hint = 'hero.hLeft'; hintVars = { n: need - n }; }
+    hero(n - 1);
+  });
+  document.getElementById('hero-reset').addEventListener('click', () => { n = 0; hint = 'hero.h0'; hero(); });
+
+  // ---------- builder ----------
+  const form = document.getElementById('bform');
+  const typesBox = document.getElementById('types');
+  let stamps = 10, rewardTouched = false, typeId = 'caffe';
+  function drawTypes() {
+    typesBox.innerHTML = CONFIG.templates.map(tp =>
+      `<input type="radio" name="type" id="ty-${tp.id}" value="${tp.id}" ${tp.id === typeId ? 'checked' : ''}><label for="ty-${tp.id}">${UI.icon(tp.icon)}${UI.esc(I18N.pick(tp).type)}</label>`).join('');
+  }
+  const tpl = () => CONFIG.templates.find(tp => tp.id === typeId);
+  function builderCard() {
+    const tp = tpl(), main = I18N.pick(tp);
+    const reward = form.reward.value.trim() || main.reward;
+    const card = {
+      id: 'preview', business: form.name.value.trim() || I18N.t('b.namePh').replace(/^(Es\.|E\.g\.)\s*/, ''),
+      title: main.title, reward, stampsNeeded: stamps, color: tp.color, ink: '#2B32FF', icon: tp.icon
+    };
+    if (L() === 'it') { card.titleEn = tp.en.title; if (reward === tp.it.reward) card.rewardEn = tp.en.reward; }
+    return card;
+  }
+  let instaTimer;
+  function builder() {
+    const card = builderCard();
+    document.getElementById('b-pass').innerHTML = UI.renderPass(card, null, { stamps: Math.min(3, stamps) });
+    document.getElementById('b-poster').innerHTML = MARKETING.poster(card, { url: UI.publicUrl('') });
+    document.getElementById('stamps').textContent = stamps;
+    const q = new URLSearchParams({ new: 1, name: card.business, type: typeId, reward: card.reward, stamps, lang: L() });
+    document.getElementById('b-go').href = 'app/dashboard.html?' + q;
+    clearTimeout(instaTimer);
+    instaTimer = setTimeout(async () => {
+      const cv = await MARKETING.instagram(card, L());
+      const img = document.getElementById('b-insta');
+      img.src = cv.toDataURL('image/png');
+      img.alt = I18N.t('b.tInsta') + ': ' + card.business;
+    }, 180);
+  }
+  form.addEventListener('input', e => { if (e.target.name === 'reward') rewardTouched = true; builder(); });
+  form.addEventListener('change', e => {
+    if (e.target.name === 'type') {
+      typeId = e.target.value;
+      stamps = tpl().stamps;
+      if (!rewardTouched) form.reward.value = I18N.pick(tpl()).reward;
+      builder();
+    }
+  });
+  form.addEventListener('submit', e => e.preventDefault());
+  form.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => {
+    stamps = Math.max(3, Math.min(15, stamps + +b.dataset.step)); builder();
+  }));
+
+  // preview tabs
+  const ptabs = [...document.querySelectorAll('.ptabs [role=tab]')];
+  function showTab(tab) {
+    ptabs.forEach(x => {
+      const on = x === tab;
+      x.setAttribute('aria-selected', String(on)); x.tabIndex = on ? 0 : -1;
+      document.getElementById(x.getAttribute('aria-controls')).hidden = !on;
+    });
+  }
+  ptabs.forEach((x, i) => {
+    x.addEventListener('click', () => showTab(x));
+    x.addEventListener('keydown', e => {
+      const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (d) { const nx = ptabs[(i + d + ptabs.length) % ptabs.length]; nx.focus(); showTab(nx); }
+    });
+  });
+
+  // ---------- kit ----------
+  function kit() { document.getElementById('kit-poster').innerHTML = MARKETING.poster(heroCard()); }
+
+  // ---------- pricing ----------
+  let bill = 'month';
+  function plans() {
+    document.getElementById('plans').innerHTML = CONFIG.plans.map(p => {
+      const tx = I18N.pick(p);
+      const yearly = p.month * CONFIG.yearlyMonths;
+      const price = bill === 'year' ? fmt(yearly) : fmt(p.month);
+      const billed = bill === 'year' ? I18N.t('p.billedY', { x: fmt(yearly / 12, 2) }) : I18N.t('p.billedM');
+      const lim = (v, one, many) => `<div><b>${v}</b><span>${I18N.t(v === 1 ? one : many)}</span></div>`;
+      return `<article class="plan${p.popular ? ' popular' : ''}">
+        ${p.popular ? `<span class="badge">${I18N.t('p.popular')}</span>` : ''}
+        <h3>${tx.name}</h3><p class="for">${tx.for}</p>
+        <div class="price"><b>${price}</b><span>${I18N.t(bill === 'year' ? 'p.year' : 'p.month')}</span></div>
         <p class="billed">${billed}</p>
-        <div class="limits">
-          <div><b>${p.locations}</b><span>location${p.locations > 1 ? 's' : ''}</span></div>
-          <div><b>${p.cards}</b><span>card${p.cards > 1 ? 's' : ''}</span></div>
-          <div><b>${p.staff}</b><span>staff</span></div>
-        </div>
-        <ul>${p.extras.map(x => `<li>${x}</li>`).join('')}</ul>
-        <a class="btn ${p.popular ? 'accent' : 'secondary'} block" href="app/dashboard.html">Start free trial</a>
+        <div class="limits">${lim(p.locations, 'p.loc1', 'p.loc')}${lim(p.cards, 'p.cards1', 'p.cards')}${lim(p.staff, 'p.staff', 'p.staff')}</div>
+        <ul>${tx.extras.map(x => `<li>${x}</li>`).join('')}</ul>
+        <a class="btn ${p.popular ? 'pop' : 'line'} block" href="#prova">${I18N.t('p.cta')}</a>
       </article>`;
     }).join('');
   }
   document.querySelectorAll('.bill button').forEach(b => b.addEventListener('click', () => {
+    bill = b.dataset.bill;
     document.querySelectorAll('.bill button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-    draw(b.dataset.bill);
+    plans();
   }));
-  draw('month');
+
+  // ---------- contact ----------
+  function contact() {
+    const c = CONFIG.contact, out = [];
+    if (c.phone) out.push(`<a class="btn pop" href="https://wa.me/${c.phone.replace(/\D/g, '')}">${I18N.t('v.wa')}</a>`);
+    if (c.email) out.push(`<a class="btn line" href="mailto:${c.email}">${I18N.t('v.mail')}</a>`);
+    if (!out.length) out.push(`<a class="btn pop" href="#prova">${I18N.t('v.start')}</a>`);
+    document.getElementById('contact').innerHTML = out.join('');
+  }
+
+  function all() {
+    I18N.apply();
+    hero(); drawTypes();
+    if (!rewardTouched) form.reward.value = I18N.pick(tpl()).reward;
+    builder(); kit(); plans(); contact();
+    document.title = L() === 'it' ? 'Timbro · La carta fedeltà digitale per il tuo bar' : 'Timbro · The digital loyalty card for your café';
+  }
+  // ?bar=Name (used by the brochure QR) opens the builder with that name.
+  const bar = new URLSearchParams(location.search).get('bar');
+  if (bar) { form.name.value = bar.slice(0, 28); if (!location.hash) location.hash = '#prova'; }
+
+  I18N.switchers();
+  document.addEventListener('langchange', all);
+  all();
 })();
 </script>
 </body>
