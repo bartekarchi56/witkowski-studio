@@ -37,6 +37,24 @@ window.CONFIG = {
       en: { name: 'Pro', for: 'Several locations or a chain', extras: ['Everything in Plus', 'Stats per location', 'Export customers to Excel', 'Priority WhatsApp support'] } }
   ],
 
+  // Card styles. A style sets the whole look; every part can still be changed.
+  //   shape: dot | ring | square | hanko (Japanese seal)
+  //   mark:  icon | text (markText, 1–2 characters) | none
+  //   empty: soft (grey) | outline | dashed      font: sans | wide | serif | mono
+  //   strip: background colour behind the stamps ('' = same as the card)
+  styles: [
+    { id: 'timbro', it: 'Timbro', en: 'Timbro',
+      look: { color: '#FFFFFF', ink: '#2B32FF', shape: 'dot', mark: 'icon', empty: 'soft', font: 'sans', strip: '' } },
+    { id: 'minimal', it: 'Minimal', en: 'Minimal',
+      look: { color: '#FFFFFF', ink: '#0B0B0C', shape: 'dot', mark: 'none', empty: 'soft', font: 'serif', strip: '' } },
+    { id: 'giappone', it: 'Giapponese', en: 'Japanese',
+      look: { color: '#FFFFFF', ink: '#B5442E', shape: 'hanko', mark: 'text', markText: '珈', empty: 'outline', font: 'wide', strip: '#EEE9E1' } },
+    { id: 'milano', it: 'Milano sera', en: 'Milan night',
+      look: { color: '#0B0B0C', ink: '#C9A24A', shape: 'ring', mark: 'icon', empty: 'outline', font: 'wide', strip: '' } },
+    { id: 'bottega', it: 'Bottega', en: 'Bottega',
+      look: { color: '#F3EEE4', ink: '#4A2E21', shape: 'square', mark: 'icon', empty: 'dashed', font: 'serif', strip: '' } }
+  ],
+
   // Starter templates by type of business. Picking one fills in a sensible card.
   templates: [
     { id: 'caffe', icon: 'cup', stamps: 10, color: '#FFFFFF',

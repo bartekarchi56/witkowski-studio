@@ -20,31 +20,58 @@ const iconPath = (name, x, y, size, colour) => PATHS[name]
   ? `<path transform="translate(${x} ${y}) scale(${size / 24})" d="${PATHS[name]}" fill="none" stroke="${colour}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`
   : '';
 
+const ANGLES = [-8, 5, -3, 9, -6, 3, -10, 7, -2, 6, -7, 4, -4, 8, -9, 2, -5, 10, -1, 5];
+const pngData = v => /^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(v || '') && v.length < 200000 ? v : '';
+
 /**
- * The stamp grid. `w`×`h` in points; `scale` gives @2x/@3x versions.
+ * The stamp grid, in the card's own style (shape, mark, empty boxes,
+ * background). `w`×`h` in points; `scale` gives @2x/@3x versions.
  * Apple: strip.png (375×123 pt). Google: hero image (1032×336 px).
  */
-export async function strip(card, have, { w = 375, h = 123, scale = 1, background = true } = {}) {
-  const { bg, fg, ink } = colours(card);
+export async function strip(card, have, { w = 375, h = 123, scale = 1 } = {}) {
+  const { bg, ink } = colours(card);
+  const stripBg = hex(card.strip) || bg;
+  const fg = textOn(stripBg);
+  const shape = ['dot', 'ring', 'square', 'hanko'].includes(card.shape) ? card.shape : 'dot';
+  const mark = ['icon', 'text', 'none'].includes(card.mark) ? card.mark : (card.icon === 'dot' ? 'none' : 'icon');
+  const empty = ['soft', 'outline', 'dashed'].includes(card.empty) ? card.empty : 'soft';
   const need = Math.max(1, Math.min(20, +card.stampsNeeded || 10));
   const rows = Math.ceil(need / 5);
   const cols = Math.ceil(need / rows);
   const padX = w * 0.08, padY = h * 0.12;
-  const d = Math.min((w - padX * 2) / (cols + (cols - 1) * 0.55), (h - padY * 2) / (rows + (rows - 1) * 0.35));
+  const d = Math.min((w - padX * 2) / (cols + (cols - 1) * 0.45), (h - padY * 2) / (rows + (rows - 1) * 0.3));
   const gapX = cols > 1 ? (w - padX * 2 - cols * d) / (cols - 1) : 0;
-  const gapY = rows > 1 ? Math.min(d * 0.35, (h - padY * 2 - rows * d) / (rows - 1)) : 0;
+  const gapY = rows > 1 ? Math.min(d * 0.3, (h - padY * 2 - rows * d) / (rows - 1)) : 0;
   const top = (h - (rows * d + (rows - 1) * gapY)) / 2;
-  const empty = fg === '#FFFFFF' ? 'rgba(255,255,255,0.22)' : 'rgba(11,11,12,0.22)';
-  let dots = '';
+  const faint = fg === '#FFFFFF' ? 'rgba(255,255,255,' : 'rgba(11,11,12,';
+  const markColour = ['ring', 'hanko'].includes(shape) ? ink : '#FFFFFF';
+  const markImg = pngData(card.markImage);
+  const r = shape === 'square' ? 0.18 : shape === 'hanko' ? 0.12 : 0.5;
+
+  const box = (x, y, s, attrs) => r === 0.5
+    ? `<circle cx="${x + s / 2}" cy="${y + s / 2}" r="${s / 2}" ${attrs}/>`
+    : `<rect x="${x}" y="${y}" width="${s}" height="${s}" rx="${s * r}" ${attrs}/>`;
+
+  let out = '';
   for (let i = 0; i < need; i++) {
-    const cx = padX + (i % cols) * (d + gapX) + d / 2;
-    const cy = top + Math.floor(i / cols) * (d + gapY) + d / 2;
-    const on = i < have;
-    dots += `<circle cx="${cx}" cy="${cy}" r="${d / 2}" fill="${on ? ink : empty}"/>`;
-    if (on && card.icon !== 'dot') dots += iconPath(card.icon, cx - d * 0.25, cy - d * 0.25, d * 0.5, '#FFFFFF');
+    const x = padX + (i % cols) * (d + gapX), y = top + Math.floor(i / cols) * (d + gapY);
+    if (i >= have) {
+      out += empty === 'soft' ? box(x, y, d, `fill="${faint}0.22)"`)
+        : box(x + 0.75, y + 0.75, d - 1.5, `fill="none" stroke="${faint}${empty === 'dashed' ? '0.4' : '0.28'})" stroke-width="1.5"${empty === 'dashed' ? ' stroke-dasharray="3 3"' : ''}`);
+      continue;
+    }
+    let g = '';
+    if (shape === 'ring') g += box(x + 1.25, y + 1.25, d - 2.5, `fill="none" stroke="${ink}" stroke-width="2.5"`);
+    else if (shape === 'hanko') g += box(x + 1.25, y + 1.25, d - 2.5, `fill="none" stroke="${ink}" stroke-width="2.5"`) + box(x + 5, y + 5, d - 10, `fill="none" stroke="${ink}" stroke-width="1"`);
+    else g += box(x, y, d, `fill="${ink}"`);
+    if (mark === 'icon') g += iconPath(card.icon, x + d * 0.25, y + d * 0.25, d * 0.5, markColour);
+    if (mark === 'text') g += markImg
+      ? `<image href="${markImg}" x="${x + d * 0.14}" y="${y + d * 0.14}" width="${d * 0.72}" height="${d * 0.72}"/>`
+      : `<text x="${x + d / 2}" y="${y + d * 0.68}" font-size="${d * 0.5}" font-weight="700" text-anchor="middle" fill="${markColour}" font-family="Noto Serif CJK JP, Noto Serif JP, serif">${(card.markText || '').slice(0, 2).replace(/[<&>]/g, '')}</text>`;
+    out += shape === 'hanko' ? `<g opacity="0.92" transform="rotate(${ANGLES[i]} ${x + d / 2} ${y + d / 2})">${g}</g>` : g;
   }
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w * scale}" height="${h * scale}" viewBox="0 0 ${w} ${h}">
-    ${background ? `<rect width="${w}" height="${h}" fill="${bg}"/>` : ''}${dots}</svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${w * scale}" height="${h * scale}" viewBox="0 0 ${w} ${h}">
+    <rect width="${w}" height="${h}" fill="${stripBg}"/>${out}</svg>`;
   return sharp(Buffer.from(svg)).png().toBuffer();
 }
 
@@ -56,9 +83,10 @@ export async function icon(card, px = 58) {
   return sharp(Buffer.from(svg)).png().toBuffer();
 }
 
-// Logo: the café's uploaded logo (a data: URL) fitted into Apple's 160×50 pt box.
+// Logo: the café's uploaded logo, or the name drawn in the card's font
+// by the website (logoAuto), fitted into Apple's 160×50 pt box.
 export async function logo(card, scale = 2) {
-  const m = /^data:image\/(png|jpeg|webp|svg\+xml);base64,(.+)$/.exec(card.logo || '');
+  const m = /^data:image\/(png|jpeg|webp|svg\+xml);base64,(.+)$/.exec(card.logo || card.logoAuto || '');
   if (!m) return null;
   const input = Buffer.from(m[2], 'base64');
   if (input.length > 600 * 1024) return null;

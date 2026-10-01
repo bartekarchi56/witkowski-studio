@@ -53,7 +53,7 @@ Working prototype. Data is saved in the browser only, so the dashboard, customer
 
 ## Editing
 
-- Name, contact, prices, plans, starter templates: `assets/js/config.js`
+- Name, contact, prices, plans, starter templates and card styles (Timbro, Minimal, Giapponese, Milano sera, Bottega): `assets/js/config.js`
 - Colours and fonts: top of `assets/css/base.css` (one colour only: `--pop`, the ink blue)
 - Ready-made posts, messages and the launch plan: `assets/js/marketing.js`
 - Sales emails and the in-person script: `sales/outreach.html`

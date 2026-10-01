@@ -25,3 +25,6 @@
 .poster-foot{display:flex;justify-content:space-between;align-items:center;gap:3cqw;border-top:.35cqw solid #0B0B0C;margin-top:6cqw;padding-top:3cqw;font-size:3cqw;font-weight:600}
 .poster-brand{display:flex;align-items:center;gap:1.4cqw;font-weight:800;font-stretch:125%}
 .poster-brand i{width:3.4cqw;height:3.4cqw;border-radius:50%;background:var(--pop)}
+.poster-dots i.p-square,.poster-dots i.p-hanko{border-radius:14%}
+.poster-dots i.p-ring.on,.poster-dots i.p-hanko.on{background:none;border:.55cqw solid var(--s)}
+.poster-dots i.p-hanko.on{transform:rotate(-6deg);box-shadow:inset 0 0 0 .5cqw #fff,inset 0 0 0 .8cqw var(--s)}

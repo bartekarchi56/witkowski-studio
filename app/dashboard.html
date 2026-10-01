@@ -25,6 +25,14 @@ h2.sec{font-size:26px;font-stretch:112%;font-weight:800;margin-bottom:8px}
 .preview .phone{width:320px}
 .preview .label{justify-self:center}
 .logo-row{display:flex;align-items:center;gap:14px}
+h3.group{font-size:19px;font-weight:800;font-stretch:112%;margin:30px 0 16px;padding-top:22px;border-top:1.5px solid var(--line)}
+.hint{display:block;margin-top:8px;font-size:14px}
+.chips .sw{width:16px;height:16px;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.2)}
+.chips label .mini{width:18px;height:18px}
+#fonts .ff-wide{font-stretch:125%;text-transform:uppercase;letter-spacing:.14em;font-size:13px}
+#fonts .ff-serif{font-family:'EB Garamond',serif;font-style:italic;font-size:17px}
+#fonts .ff-mono{font-family:var(--mono);text-transform:uppercase;font-size:13px}
+#mark-text-field input{font:700 22px/1 'Noto Serif JP','EB Garamond',serif;text-align:center;max-width:90px}
 .logo-row label{cursor:pointer}
 .preview .phone-screen{min-height:430px}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -157,6 +165,10 @@ td code{font:500 13px var(--mono);background:var(--wash);padding:3px 7px;border-
             </div>
           </div>
         </div>
+        <label class="field"><span data-i18n="d.tagline"></span><input type="text" name="tagline" maxlength="24" data-i18n-attr="placeholder:d.taglinePh"><small data-i18n="d.taglineHint"></small></label>
+
+        <h3 class="group" data-i18n="d.gLook"></h3>
+        <fieldset><legend data-i18n="d.style"></legend><div class="chips" id="styles"></div><small class="muted hint" data-i18n="d.styleHint"></small></fieldset>
         <div class="field">
           <span data-i18n="d.logo"></span>
           <div class="logo-row">
@@ -166,9 +178,18 @@ td code{font:500 13px var(--mono);background:var(--wash);padding:3px 7px;border-
           </div>
           <small data-i18n="d.logoHint"></small>
         </div>
-        <fieldset><legend data-i18n="d.icon"></legend><div class="chips icons" id="icons"></div></fieldset>
+        <fieldset><legend data-i18n="d.font"></legend><div class="chips" id="fonts"></div></fieldset>
         <fieldset><legend data-i18n="d.color"></legend><div class="swatches" id="colors"></div></fieldset>
+        <fieldset><legend data-i18n="d.strip"></legend><div class="swatches" id="strips"></div></fieldset>
+
+        <h3 class="group" data-i18n="d.gStamp"></h3>
+        <fieldset><legend data-i18n="d.shape"></legend><div class="chips" id="shapes"></div></fieldset>
+        <fieldset><legend data-i18n="d.mark"></legend><div class="chips" id="marks"></div>
+          <div class="chips icons" id="icons" style="margin-top:10px"></div>
+          <label class="field" id="mark-text-field" style="margin:10px 0 0;max-width:220px"><span class="sr-only" data-i18n="d.markText"></span><input type="text" name="markText" maxlength="2" data-i18n-attr="placeholder:d.markTextPh"></label>
+        </fieldset>
         <fieldset><legend data-i18n="d.ink"></legend><div class="swatches" id="inks"></div></fieldset>
+        <fieldset><legend data-i18n="d.empty"></legend><div class="chips" id="empties"></div></fieldset>
         <details class="en">
           <summary data-i18n="d.enTitle"></summary>
           <p class="muted" style="font-size:14px;margin-bottom:14px" data-i18n="d.enHint"></p>
@@ -262,7 +283,13 @@ I18N.add({
     'd.tDesign': 'La carta', 'd.tPrint': 'Stampa', 'd.tPromote': 'Promuovi', 'd.tCustomers': 'Clienti',
     'd.start': 'Parti da un modello', 'd.business': 'Nome del locale', 'd.title': 'Nome della carta',
     'd.reward': 'Premio', 'd.rewardHint': 'Cosa riceve il cliente, es. "un caffè gratis"', 'd.stamps': 'Timbri per il premio',
-    'd.logo': 'Logo (facoltativo)', 'd.logoPick': 'Carica il logo', 'd.logoRemove': 'Togli il logo', 'd.logoHint': 'PNG con sfondo trasparente, orizzontale. Prende il posto del nome in cima alla carta.', 'd.iconDot': 'Solo punto',
+    'd.tagline': 'Sottotitolo (facoltativo)', 'd.taglinePh': 'Es. dal 1952', 'd.taglineHint': 'Una riga piccola sotto il nome. The Coffee usa ザ・コーヒー.',
+    'd.gLook': 'L\'aspetto della carta', 'd.gStamp': 'Il timbro', 'd.style': 'Stile', 'd.styleHint': 'Uno stile cambia tutto in un tocco. Poi puoi cambiare ogni dettaglio.',
+    'd.font': 'Carattere del nome', 'fontSans': 'Moderno', 'fontWide': 'Largo', 'fontSerif': 'Classico', 'fontMono': 'Macchina',
+    'd.strip': 'Sfondo dei timbri', 'd.shape': 'Forma del timbro', 'shDot': 'Tondo', 'shRing': 'Anello', 'shSquare': 'Quadrato', 'shHanko': 'Sigillo giapponese',
+    'd.mark': 'Dentro il timbro', 'mkIcon': 'Icona', 'mkText': 'Lettera o simbolo', 'mkNone': 'Niente', 'd.markText': 'Lettera o simbolo', 'd.markTextPh': 'C',
+    'd.empty': 'Caselle vuote', 'emSoft': 'Grigie', 'emOutline': 'Contorno', 'emDashed': 'Tratteggio', 'sameAsCard': 'Uguale alla carta',
+    'd.logo': 'Logo (facoltativo)', 'd.logoPick': 'Carica il logo', 'd.logoRemove': 'Togli il logo', 'd.logoHint': 'PNG con sfondo trasparente, orizzontale. Prende il posto del nome in cima alla carta.',
     'd.icon': 'Icona', 'd.color': 'Colore della carta', 'd.ink': 'Colore del timbro',
     'd.enTitle': 'In inglese, per i turisti (facoltativo)', 'd.enHint': 'Chi ha il telefono in inglese vedrà questi testi.',
     'd.titleEn': 'Nome della carta in inglese', 'd.rewardEn': 'Premio in inglese',
@@ -289,7 +316,13 @@ I18N.add({
     'd.tDesign': 'The card', 'd.tPrint': 'Print', 'd.tPromote': 'Promote', 'd.tCustomers': 'Customers',
     'd.start': 'Start from a template', 'd.business': 'Name of your place', 'd.title': 'Card name',
     'd.reward': 'Reward', 'd.rewardHint': 'What the customer gets, e.g. "a free coffee"', 'd.stamps': 'Stamps for the reward',
-    'd.logo': 'Logo (optional)', 'd.logoPick': 'Upload logo', 'd.logoRemove': 'Remove logo', 'd.logoHint': 'A wide PNG with a transparent background. It replaces the name at the top of the card.', 'd.iconDot': 'Plain dot',
+    'd.tagline': 'Tagline (optional)', 'd.taglinePh': 'E.g. since 1952', 'd.taglineHint': 'A small line under the name. The Coffee uses ザ・コーヒー.',
+    'd.gLook': 'How the card looks', 'd.gStamp': 'The stamp', 'd.style': 'Style', 'd.styleHint': 'A style changes everything in one tap. Then you can change any detail.',
+    'd.font': 'Name font', 'fontSans': 'Modern', 'fontWide': 'Wide', 'fontSerif': 'Classic', 'fontMono': 'Typewriter',
+    'd.strip': 'Behind the stamps', 'd.shape': 'Stamp shape', 'shDot': 'Round', 'shRing': 'Ring', 'shSquare': 'Square', 'shHanko': 'Japanese seal',
+    'd.mark': 'Inside the stamp', 'mkIcon': 'Icon', 'mkText': 'Letter or symbol', 'mkNone': 'Nothing', 'd.markText': 'Letter or symbol', 'd.markTextPh': 'C',
+    'd.empty': 'Empty boxes', 'emSoft': 'Grey', 'emOutline': 'Outline', 'emDashed': 'Dashed', 'sameAsCard': 'Same as the card',
+    'd.logo': 'Logo (optional)', 'd.logoPick': 'Upload logo', 'd.logoRemove': 'Remove logo', 'd.logoHint': 'A wide PNG with a transparent background. It replaces the name at the top of the card.',
     'd.icon': 'Icon', 'd.color': 'Card colour', 'd.ink': 'Stamp colour',
     'd.enTitle': 'Second language for tourists (optional)', 'd.enHint': 'Customers whose phone is in English see these texts.',
     'd.titleEn': 'Card name in English', 'd.rewardEn': 'Reward in English',
@@ -313,8 +346,12 @@ I18N.add({
 });
 
 (() => {
-  const COLORS = ['#FFFFFF', '#0B0B0C', '#F3EEE4', '#4A2E21', '#1F3D2B', '#6B1E2B', '#1B2A4A'];
-  const INKS = ['#2B32FF', '#0B0B0C', '#D6261C', '#B07D12'];
+  const COLORS = ['#FFFFFF', '#0B0B0C', '#F3EEE4', '#EEE9E1', '#4A2E21', '#1F3D2B', '#6B1E2B', '#1B2A4A'];
+  const STRIPS = ['', '#EEE9E1', '#F3EEE4', '#F4F4F2', '#E7EFE9', '#0B0B0C'];
+  const INKS = ['#2B32FF', '#0B0B0C', '#B5442E', '#D6261C', '#C9A24A', '#4A2E21', '#2F6B4F'];
+  const SHAPES = [['dot', 'shDot', '<circle cx="12" cy="12" r="9" fill="currentColor"/>'], ['ring', 'shRing', '<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2.5"/>'],
+                  ['square', 'shSquare', '<rect x="3" y="3" width="18" height="18" rx="4" fill="currentColor"/>'], ['hanko', 'shHanko', '<rect x="3" y="3" width="18" height="18" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="6.5" y="6.5" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1"/>']];
+  const radios = (name, items) => items.map(([v, label]) => `<input type="radio" name="${name}" id="${name}-${v || 'none'}" value="${v}"><label for="${name}-${v || 'none'}">${label}</label>`).join('');
   const ICON_NAMES = { it: { cup: 'Tazza', cake: 'Dolce', glass: 'Calice', cone: 'Cono', pizza: 'Pizza', scissors: 'Forbici', leaf: 'Foglia', heart: 'Cuore', star: 'Stella' },
                        en: { cup: 'Cup', cake: 'Cake', glass: 'Glass', cone: 'Cone', pizza: 'Pizza', scissors: 'Scissors', leaf: 'Leaf', heart: 'Heart', star: 'Star' } };
   const $ = id => document.getElementById(id);
@@ -325,8 +362,13 @@ I18N.add({
   function controls() {
     $('templates').innerHTML = CONFIG.templates.map(tp =>
       `<input type="radio" name="tpl" id="tp-${tp.id}" value="${tp.id}"><label for="tp-${tp.id}">${UI.icon(tp.icon)}${UI.esc(I18N.pick(tp).type)}</label>`).join('');
-    $('icons').innerHTML = `<input type="radio" name="icon" id="ic-dot" value="dot"><label for="ic-dot" title="${I18N.t('d.iconDot')}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6" fill="currentColor"/></svg><span class="sr-only">${I18N.t('d.iconDot')}</span></label>` +
-      UI.ICONS.map(ic =>
+    $('styles').innerHTML = radios('style', CONFIG.styles.map(st => [st.id, `<span class="sw" style="background:${st.look.color}"></span><span class="sw" style="background:${st.look.ink}"></span>${UI.esc(I18N.pick(st))}`]));
+    $('fonts').innerHTML = radios('font', [['sans', `<span>${I18N.t('fontSans')}</span>`], ['wide', `<span class="ff-wide">${I18N.t('fontWide')}</span>`], ['serif', `<span class="ff-serif">${I18N.t('fontSerif')}</span>`], ['mono', `<span class="ff-mono">${I18N.t('fontMono')}</span>`]]);
+    $('shapes').innerHTML = radios('shape', SHAPES.map(([v, k, svg]) => [v, `<svg class="mini" viewBox="0 0 24 24" aria-hidden="true">${svg}</svg>${I18N.t(k)}`]));
+    $('marks').innerHTML = radios('mark', [['icon', I18N.t('mkIcon')], ['text', I18N.t('mkText')], ['none', I18N.t('mkNone')]]);
+    $('empties').innerHTML = radios('empty', [['soft', I18N.t('emSoft')], ['outline', I18N.t('emOutline')], ['dashed', I18N.t('emDashed')]]);
+    $('strips').innerHTML = STRIPS.map((c, i) => `<input type="radio" name="strip" id="sb${i}" value="${c}"><label for="sb${i}" title="${c || I18N.t('sameAsCard')}" style="background:${c || 'repeating-linear-gradient(45deg,#fff 0 4px,#ddd 4px 8px)'}"><span class="sr-only">${c || I18N.t('sameAsCard')}</span></label>`).join('');
+    $('icons').innerHTML = UI.ICONS.map(ic =>
       `<input type="radio" name="icon" id="ic-${ic}" value="${ic}"><label for="ic-${ic}" title="${ICON_NAMES[I18N.lang][ic]}">${UI.icon(ic)}<span class="sr-only">${ICON_NAMES[I18N.lang][ic]}</span></label>`).join('');
     $('colors').innerHTML = COLORS.map((c, i) => `<input type="radio" name="color" id="co${i}" value="${c}"><label for="co${i}" style="background:${c}"><span class="sr-only">${c}</span></label>`).join('');
     $('inks').innerHTML = INKS.map((c, i) => `<input type="radio" name="ink" id="in${i}" value="${c}"><label for="in${i}" style="background:${c}"><span class="sr-only">${c}</span></label>`).join('');
@@ -337,11 +379,16 @@ I18N.add({
     const v = k => (f.get(k) || '').trim();
     return { ...current, business: v('business') || 'Il tuo locale', title: v('title') || 'Carta fedeltà', reward: v('reward') || 'un premio',
       titleEn: v('titleEn'), rewardEn: v('rewardEn'), stampsNeeded: stamps,
-      icon: f.get('icon') || 'cup', logo, color: f.get('color') || '#FFFFFF', ink: f.get('ink') || '#2B32FF', type: f.get('tpl') || current.type };
+      icon: f.get('icon') || 'cup', logo, color: f.get('color') || '#FFFFFF', ink: f.get('ink') || '#2B32FF', type: f.get('tpl') || current.type,
+      tagline: v('tagline'), style: f.get('style') || '', font: f.get('font') || 'sans', strip: f.get('strip') || '',
+      shape: f.get('shape') || 'dot', mark: f.get('mark') || 'icon', markText: v('markText'), empty: f.get('empty') || 'soft' };
   }
   const check = (name, value) => { const el = form.querySelector(`input[name=${name}][value="${value}"]`) || form.querySelector(`input[name=${name}]`); if (el) el.checked = true; };
   function fillForm(c) {
-    ['business', 'title', 'reward', 'titleEn', 'rewardEn'].forEach(k => form[k].value = c[k] || '');
+    ['business', 'title', 'reward', 'titleEn', 'rewardEn', 'tagline', 'markText'].forEach(k => form[k].value = c[k] || '');
+    const look = UI.lookOf(c);
+    check('font', look.font); check('shape', look.shape); check('mark', look.mark); check('empty', look.empty); check('strip', look.strip);
+    form.querySelectorAll('input[name=style]').forEach(r => r.checked = r.value === c.style);
     stamps = c.stampsNeeded;
     logo = c.logo || ''; $('logo-remove').hidden = !logo;
     check('icon', c.icon); check('color', c.color); check('ink', c.ink || '#2B32FF');
@@ -350,6 +397,8 @@ I18N.add({
   }
   function preview() {
     const c = readForm();
+    $('icons').hidden = c.mark !== 'icon';
+    $('mark-text-field').hidden = c.mark !== 'text';
     $('preview').innerHTML = UI.renderPass(c, null, { stamps: Math.min(3, c.stampsNeeded) });
     $('stamps-out').textContent = stamps;
   }
@@ -375,12 +424,21 @@ I18N.add({
 
   form.addEventListener('input', e => { if (e.target.name !== 'tpl' && e.target.type !== 'file') markDirty(); });
   form.addEventListener('change', e => {
+    if (e.target.name === 'style') {
+      const st = CONFIG.styles.find(x => x.id === e.target.value).look;
+      check('color', st.color); check('ink', st.ink); check('shape', st.shape); check('mark', st.mark);
+      check('empty', st.empty); check('font', st.font); check('strip', st.strip);
+      if (st.markText) form.markText.value = st.markText;
+      markDirty(); return;
+    }
+    // Changing any single detail means the card no longer matches a preset exactly.
+    if (['color', 'ink', 'shape', 'mark', 'empty', 'font', 'strip'].includes(e.target.name)) form.querySelectorAll('input[name=style]').forEach(r => r.checked = false);
     if (e.target.name !== 'tpl') return;
     // A template fills in everything except the business name.
     const tp = CONFIG.templates.find(x => x.id === e.target.value), main = I18N.pick(tp);
     form.title.value = main.title; form.reward.value = main.reward;
     form.titleEn.value = I18N.lang === 'it' ? tp.en.title : ''; form.rewardEn.value = I18N.lang === 'it' ? tp.en.reward : '';
-    stamps = tp.stamps; check('icon', tp.icon); check('color', tp.color);
+    stamps = tp.stamps; check('icon', tp.icon);
     markDirty();
   });
   form.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => { stamps = Math.max(3, Math.min(15, stamps + +b.dataset.step)); markDirty(); }));
@@ -415,7 +473,7 @@ I18N.add({
       business: opts.name || (current && current.id !== 'the-coffee' ? current.business : I18N.t('d.business')),
       type: tp.id, title: main.title, reward, stampsNeeded: +opts.stamps || tp.stamps,
       titleEn: lang === 'it' ? tp.en.title : '', rewardEn: lang === 'it' && reward === tp.it.reward ? tp.en.reward : '',
-      icon: tp.icon, color: tp.color, ink: '#2B32FF'
+      icon: tp.icon, ...(() => { const st = CONFIG.styles.find(x => x.id === opts.style) || CONFIG.styles[0]; return { style: st.id, ...st.look }; })()
     });
     loadCard(card.id);
     showTab('design');
@@ -521,7 +579,7 @@ I18N.add({
   const startTab = ['design', 'print', 'promote', 'customers'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'design';
   if (q.get('new')) {
     current = Store.getCard('the-coffee');
-    createCard({ name: q.get('name'), type: q.get('type'), reward: q.get('reward'), stamps: q.get('stamps'), lang: q.get('lang') });
+    createCard({ name: q.get('name'), type: q.get('type'), style: q.get('style'), reward: q.get('reward'), stamps: q.get('stamps'), lang: q.get('lang') });
   } else {
     loadCard(q.get('card'));
     showTab(startTab);

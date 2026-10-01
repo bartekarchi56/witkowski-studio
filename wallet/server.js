@@ -44,7 +44,7 @@ export const server = http.createServer(async (req, res) => {
 
     if (req.method === 'GET' && url.pathname.startsWith('/img/')) {
       const q = Object.fromEntries(url.searchParams);
-      const card = { icon: q.icon, color: q.color, ink: q.ink, stampsNeeded: q.need };
+      const card = { icon: q.icon, color: q.color, ink: q.ink, stampsNeeded: q.need, shape: q.shape, mark: q.mark, markText: (q.markText || '').slice(0, 2), empty: q.empty, strip: q.strip };
       const png = url.pathname === '/img/strip'
         ? await strip(card, Math.max(0, parseInt(q.have, 10) || 0), { w: 1032, h: 336 })
         : await icon(card, 660);

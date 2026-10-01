@@ -158,7 +158,7 @@ I18N.add({
   it: {
     'x.label': 'Esempio · Milano', 'x.title': 'La carta fedeltà di <em>The Coffee.</em>',
     'x.lede': 'Ecco cosa riceve The Coffee con Timbro: la carta sul telefono dei clienti, il kit stampato e i testi per lanciarla. Tutto già pronto, da guardare e da provare.',
-    'x.l1': 'Sul telefono', 'x.h1': 'La carta dei clienti', 'x.p1': 'Bianca e nera, essenziale, con il timbro blu. Dopo dieci timbri il caffè è offerto. In inglese per i turisti.',
+    'x.l1': 'Sul telefono', 'x.h1': 'La carta dei clienti', 'x.p1': 'Nello stile del locale di Viale Piave: bianco, pietra e legno chiaro, il nome anche in katakana. Ogni timbro è un sigillo giapponese con 珈, il carattere del caffè. Dopo dieci timbri il caffè è offerto.',
     'x.s1': 'Il cliente inquadra il QR alla cassa', 'x.s1p': 'Scrive il nome e la carta è sua. Niente app.',
     'x.s2': 'Il barista timbra', 'x.s2p': 'Inquadra la carta con il telefono del bar e tocca "Aggiungi un timbro".',
     'x.s3': 'Al decimo timbro, il caffè è offerto', 'x.s3p': 'La carta mostra "Premio pronto" e riparte da zero.',
@@ -175,7 +175,7 @@ I18N.add({
   en: {
     'x.label': 'Example · Milan', 'x.title': 'The loyalty card for <em>The Coffee.</em>',
     'x.lede': 'Here\'s what The Coffee gets with Timbro: the card on customers\' phones, the printed kit and the texts to launch it. All ready to look at and try.',
-    'x.l1': 'On the phone', 'x.h1': 'The customer\'s card', 'x.p1': 'Black and white, simple, with a blue stamp. After ten stamps the coffee is on the house. In English for tourists.',
+    'x.l1': 'On the phone', 'x.h1': 'The customer\'s card', 'x.p1': 'In the style of the Viale Piave café: white, stone and light wood, with the name in katakana too. Each stamp is a Japanese seal with 珈, the character for coffee. After ten stamps the coffee is on the house.',
     'x.s1': 'Customers scan the QR at the till', 'x.s1p': 'They type their name and the card is theirs. No app.',
     'x.s2': 'Staff add the stamp', 'x.s2p': 'They scan the card with the café\'s phone and tap "Add a stamp".',
     'x.s3': 'At ten stamps, the coffee is free', 'x.s3p': 'The card shows "Reward ready" and starts again.',
@@ -204,6 +204,7 @@ I18N.add({
 
   async function all() {
     I18N.apply();
+    $('stamp').style.color = card.ink;
     $('stamp').innerHTML = UI.inkStamp(I18N.lang === 'it' ? 'THE COFFEE · MILANO · THE COFFEE · MILANO · ' : 'THE COFFEE · MILAN · THE COFFEE · MILAN · ');
     pass();
     $('poster').innerHTML = MARKETING.poster(card);

@@ -48,6 +48,18 @@
   // Each stamp lands at a slightly different angle, like a real rubber stamp.
   const ANGLES = [-8, 5, -3, 9, -6, 3, -10, 7, -2, 6, -7, 4, -4, 8, -9, 2, -5, 10, -1, 5];
 
+  // A card's look, with defaults for cards made before styles existed.
+  function lookOf(card) {
+    return {
+      shape: card.shape || 'dot',
+      mark: card.mark || (card.icon === 'dot' ? 'none' : 'icon'),
+      markText: (card.markText || (card.business || '?').trim()[0] || '?').slice(0, 2),
+      empty: card.empty || 'soft',
+      font: card.font || 'sans',
+      strip: card.strip || ''
+    };
+  }
+
   // Which Wallet to draw: the phone's own, unless a page switch says otherwise.
   let platform = /android/i.test(navigator.userAgent) ? 'google' : 'apple';
   const SAMPLE_CODE = 'K7M2QX';
@@ -67,10 +79,12 @@
     const have = Math.min(need, customer ? customer.stamps : (opts.stamps || 0));
     const full = have >= need;
     const cols = Math.ceil(need / Math.ceil(need / 5));
+    const look = lookOf(card);
+    const markHtml = look.mark === 'icon' ? icon(card.icon) : look.mark === 'text' ? `<b>${esc(look.markText)}</b>` : '';
     let dots = '';
     for (let i = 0; i < need; i++) {
       const on = i < have;
-      dots += `<span class="wp-dot${on ? ' on' : ''}${opts.pop === i ? ' pop' : ''}">${on && card.icon !== 'dot' ? icon(card.icon) : ''}</span>`;
+      dots += `<span class="wp-dot s-${look.shape} e-${look.empty}${on ? ' on' : ''}${opts.pop === i ? ' pop' : ''}" style="--r:${ANGLES[i]}deg">${on ? markHtml : ''}</span>`;
     }
     const bg = card.color || '#FFFFFF';
     // Tourists browsing in English see the English text when the café wrote one.
@@ -82,14 +96,15 @@
     const field = (label, value, cls = '') => `<div class="${cls}"><span class="wp-label">${esc(label)}</span><span class="wp-val">${esc(value)}</span></div>`;
     const ready = full ? `<div class="wp-ready">${t('pass.ready')}</div>` : '';
     const strip = `<div class="wp-strip" style="--cols:${cols}" aria-hidden="true">${dots}</div>`;
-    const style = `--c:${esc(bg)};--t:${textOn(bg)};--s:${esc(card.ink || '#2B32FF')}`;
+    const style = `--c:${esc(bg)};--t:${textOn(bg)};--s:${esc(card.ink || '#2B32FF')};--sb:${esc(look.strip || bg)}`;
+    const fontCls = ` f-${look.font}`;
     const aria = esc(t('pass.aria', { title, have, need }));
 
     if (kind === 'google') {
-      const logo = card.logo ? `<img src="${esc(card.logo)}" alt="">` : icon(card.icon === 'dot' ? 'star' : card.icon);
+      const logo = card.logo ? `<img src="${esc(card.logo)}" alt="">` : (look.mark === 'text' ? `<b class="wp-gmark">${esc(look.markText)}</b>` : icon(card.icon === 'dot' ? 'star' : card.icon));
       return `
-      <div class="pass google" style="${style}" role="group" aria-label="${aria}">
-        <div class="wp-head"><span class="wp-glogo">${logo}</span><span>${esc(card.business)}</span></div>
+      <div class="pass google${fontCls}" style="${style}" role="group" aria-label="${aria}">
+        <div class="wp-head"><span class="wp-glogo">${logo}</span><span class="wp-name">${esc(card.business)}</span></div>
         <div class="wp-title">${esc(title)}</div>
         <div class="wp-fields">${field(t('pass.stamps'), `${have}/${need}`)}${field(t('pass.reward'), reward)}</div>
         ${ready}
@@ -99,9 +114,9 @@
     }
     const logo = card.logo
       ? `<img src="${esc(card.logo)}" alt="${esc(card.business)}">`
-      : `${card.icon === 'dot' ? '' : icon(card.icon)}<span>${esc(card.business)}</span>`;
+      : `${look.mark === 'icon' ? icon(card.icon) : ''}<span class="wp-word"><span class="wp-name">${esc(card.business)}</span>${card.tagline ? `<small>${esc(card.tagline)}</small>` : ''}</span>`;
     return `
-      <div class="pass apple${opts.compact ? ' compact' : ''}" style="${style}" role="group" aria-label="${aria}">
+      <div class="pass apple${fontCls}${opts.compact ? ' compact' : ''}" style="${style}" role="group" aria-label="${aria}">
         <div class="wp-head"><div class="wp-logo">${logo}</div>${field(t('pass.stamps'), `${have}/${need}`, 'wp-hf')}</div>
         ${strip}
         <div class="wp-fields">${field(t('pass.reward'), reward)}${field(customer ? t('pass.member') : t('pass.card'), customer ? customer.name : title)}</div>
@@ -186,5 +201,47 @@
     </svg>`;
   }
 
-  window.UI = { platformSwitch, getPlatform: () => platform, inkStamp, esc, icon, ICONS: Object.keys(PATHS), textOn, qrSvg, qrCanvas, renderPass, toast, copy, joinUrl, publicUrl, publicJoinUrl, timeAgo };
+  /**
+   * Wallet apps draw text in their own system font, so the café's chosen
+   * font and the stamp's letter/symbol are turned into images here and sent
+   * to the wallet server with the card.
+   */
+  async function walletAssets(card) {
+    const look = lookOf(card);
+    const FONTS = {
+      sans: ['600 64px "Archivo"', 'normal', false, 0],
+      wide: ['400 54px "Archivo"', 'expanded', true, 14],
+      serif: ['italic 500 74px "EB Garamond"', 'normal', false, 0],
+      mono: ['500 58px "Spline Sans Mono"', 'normal', true, 4]
+    };
+    const [font, stretch, upper, track] = FONTS[look.font] || FONTS.sans;
+    try { await Promise.all([document.fonts.load(font), document.fonts.load('300 30px "Noto Sans JP"', card.tagline || 'ザ'), document.fonts.load('700 90px "Noto Serif JP"', look.markText)]); } catch (e) {}
+    const fg = textOn(card.color || '#FFFFFF');
+    const out = {};
+    if (!card.logo) {
+      const cv = document.createElement('canvas'); cv.width = 480; cv.height = 150;
+      const c = cv.getContext('2d');
+      const setFont = (f, st, tr) => { c.font = f; if ('fontStretch' in c) c.fontStretch = st; if ('letterSpacing' in c) c.letterSpacing = tr + 'px'; };
+      setFont(font, stretch, track);
+      const name = upper ? card.business.toUpperCase() : card.business;
+      // Long names get a smaller font instead of being cut.
+      const k = Math.min(1, 470 / c.measureText(name).width);
+      if (k < 1) setFont(font.replace(/(\d+)px/, (_, n) => Math.floor(n * k) + 'px'), stretch, track * k);
+      c.fillStyle = fg; c.textBaseline = 'alphabetic';
+      c.fillText(name, 0, card.tagline ? 78 : 98);
+      if (card.tagline) { setFont('300 30px "Noto Sans JP", sans-serif', 'normal', 9); c.globalAlpha = .7; c.fillText(card.tagline, 2, 128); }
+      out.logoAuto = cv.toDataURL('image/png');
+    }
+    if (look.mark === 'text') {
+      const cv = document.createElement('canvas'); cv.width = cv.height = 128;
+      const c = cv.getContext('2d');
+      c.font = '700 84px "Noto Serif JP", "EB Garamond", serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+      c.fillStyle = ['ring', 'hanko'].includes(look.shape) ? (card.ink || '#2B32FF') : '#FFFFFF';
+      c.fillText(look.markText, 64, 70);
+      out.markImage = cv.toDataURL('image/png');
+    }
+    return out;
+  }
+
+  window.UI = { walletAssets, lookOf, platformSwitch, getPlatform: () => platform, inkStamp, esc, icon, ICONS: Object.keys(PATHS), textOn, qrSvg, qrCanvas, renderPass, toast, copy, joinUrl, publicUrl, publicJoinUrl, timeAgo };
 })();

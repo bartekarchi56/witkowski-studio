@@ -55,6 +55,12 @@ npm start         # http://localhost:8787, check /health
 
 It is a plain Node 18+ server (no framework), so any Node host works: Render, Railway, Fly.io or a small VPS. When it's online, set `walletApi` in `assets/js/config.js` to its address. The buttons on the card page switch on by themselves.
 
+## Card styles
+
+Each card keeps its own look: card and strip colours, stamp shape (round, ring, square, Japanese seal), what's inside the stamp (icon, a letter or symbol such as 珈, or nothing), empty boxes (grey, outline, dashed) and the name's font with an optional tagline (e.g. ザ・コーヒー).
+
+Wallet apps draw text in their own font, so the website turns the name and the stamp's letter or symbol into images (`logoAuto`, `markImage`) and sends them with the card. The server draws the stamp strip in the same style. Google fetches its images by URL, so for a letter or symbol on Android the server writes the text itself: install a CJK font on the server for Japanese characters (e.g. `apt install fonts-noto-cjk`).
+
 ## What's not done yet (needs the database)
 
 - **Live updates.** A saved pass shows the stamps it had when it was added. To update it on every stamp:

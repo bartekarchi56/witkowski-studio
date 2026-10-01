@@ -13,7 +13,13 @@
   function load() {
     try {
       const raw = localStorage.getItem(KEY);
-      if (raw) return JSON.parse(raw);
+      if (raw) {
+        const db = JSON.parse(raw);
+        // Browsers that saw the older example get The Coffee's new look.
+        const tc = db.cards['the-coffee'];
+        if (tc && !tc.shape) { Object.assign(tc, COFFEE_LOOK); save(db); }
+        return db;
+      }
     } catch (e) { if (memory) return memory; }
     return memory || seed();
   }
@@ -22,6 +28,11 @@
     memory = db;
     try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) { /* memory only */ }
   }
+
+  // The Coffee, Viale Piave 20: Japanese minimalism (white, beige, stone,
+  // light wood) and the name in katakana. Stamps are red hanko seals with 珈.
+  const COFFEE_LOOK = { style: 'giappone', color: '#FFFFFF', ink: '#B5442E', shape: 'hanko', mark: 'text', markText: '珈',
+    empty: 'outline', font: 'wide', strip: '#EEE9E1', tagline: 'ザ・コーヒー' };
 
   // Every fresh browser starts with the example card for The Coffee, so a
   // QR code on the brochure opens a working card on any phone.
@@ -37,9 +48,8 @@
       titleEn: 'Coffee card',
       rewardEn: 'a free coffee',
       stampsNeeded: 10,
-      color: '#FFFFFF',
-      ink: '#2B32FF',
       icon: 'cup',
+      ...COFFEE_LOOK,
       createdAt: Date.now()
     };
     save(db);

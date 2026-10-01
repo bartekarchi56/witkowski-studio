@@ -265,6 +265,10 @@ footer .lang button[aria-pressed="true"]{background:#fff;color:var(--ink)}
             <legend style="font-weight:600;font-size:15px;margin-bottom:8px;padding:0" data-i18n="b.type"></legend>
             <div class="chips" id="types"></div>
           </fieldset>
+          <fieldset class="field" style="border:0;padding:0;margin:0 0 18px">
+            <legend style="font-weight:600;font-size:15px;margin-bottom:8px;padding:0" data-i18n="b.style"></legend>
+            <div class="chips" id="bstyles"></div>
+          </fieldset>
           <label class="field"><span data-i18n="b.reward"></span>
             <input type="text" name="reward" maxlength="40">
           </label>
@@ -412,7 +416,7 @@ I18N.add({
     'how.s3': 'Timbri dal telefono', 'how.s3p': 'Il barista inquadra la carta del cliente e tocca una volta. Carta piena? Si offre il premio.', 'how.s3w': 'Il barista, a ogni visita',
     'b.label': 'Prova con il tuo locale', 'b.title': 'Scrivi il nome. Ecco la tua carta.',
     'b.lede': 'Così la vedranno i tuoi clienti: sul telefono, alla cassa e su Instagram. Cambia quello che vuoi, si aggiorna subito.',
-    'b.name': 'Nome del locale', 'b.namePh': 'Es. Bar Centrale', 'b.type': 'Che tipo di locale è?', 'b.reward': 'Il premio', 'b.stamps': 'Timbri per il premio',
+    'b.name': 'Nome del locale', 'b.namePh': 'Es. Bar Centrale', 'b.type': 'Che tipo di locale è?', 'b.style': 'Che stile?', 'b.reward': 'Il premio', 'b.stamps': 'Timbri per il premio',
     'b.go': 'Crea questa carta', 'b.note': 'Gratis per 30 giorni. Non serve la carta di credito.',
     'b.tPhone': 'Sul telefono', 'b.tPoster': 'Poster per la cassa', 'b.tInsta': 'Post Instagram',
     'b.cPhone': 'Nel Wallet del cliente, accanto ai biglietti e alle carte d\'imbarco.', 'b.cPoster': 'Formato A5. Te lo spediamo stampato, oppure lo stampi tu.', 'b.cInsta': 'Pronto da pubblicare. Lo scarichi con un tocco.',
@@ -460,7 +464,7 @@ I18N.add({
     'how.s3': 'Stamp from your phone', 'how.s3p': 'Staff scan the customer\'s card and tap once. Full card? Hand over the reward.', 'how.s3w': 'Your staff, every visit',
     'b.label': 'Try it with your place', 'b.title': 'Type your name. Here\'s your card.',
     'b.lede': 'This is how your customers will see it: on their phone, at the till and on Instagram. Change anything, it updates right away.',
-    'b.name': 'Name of your place', 'b.namePh': 'E.g. Corner Café', 'b.type': 'What kind of place is it?', 'b.reward': 'The reward', 'b.stamps': 'Stamps for the reward',
+    'b.name': 'Name of your place', 'b.namePh': 'E.g. Corner Café', 'b.type': 'What kind of place is it?', 'b.style': 'Which style?', 'b.reward': 'The reward', 'b.stamps': 'Stamps for the reward',
     'b.go': 'Create this card', 'b.note': 'Free for 30 days. No credit card needed.',
     'b.tPhone': 'On the phone', 'b.tPoster': 'Poster for the till', 'b.tInsta': 'Instagram post',
     'b.cPhone': 'In your customer\'s Wallet, next to their tickets and boarding passes.', 'b.cPoster': 'A5 size. We post it to you printed, or you print it yourself.', 'b.cInsta': 'Ready to publish. Download it in one tap.',
@@ -519,10 +523,14 @@ I18N.add({
   // ---------- builder ----------
   const form = document.getElementById('bform');
   const typesBox = document.getElementById('types');
-  let stamps = 10, rewardTouched = false, typeId = 'caffe';
+  let stamps = 10, rewardTouched = false, typeId = 'caffe', styleId = 'timbro';
   function drawTypes() {
     typesBox.innerHTML = CONFIG.templates.map(tp =>
       `<input type="radio" name="type" id="ty-${tp.id}" value="${tp.id}" ${tp.id === typeId ? 'checked' : ''}><label for="ty-${tp.id}">${UI.icon(tp.icon)}${UI.esc(I18N.pick(tp).type)}</label>`).join('');
+  }
+  function drawStyles() {
+    document.getElementById('bstyles').innerHTML = CONFIG.styles.map(st =>
+      `<input type="radio" name="bstyle" id="bs-${st.id}" value="${st.id}" ${st.id === styleId ? 'checked' : ''}><label for="bs-${st.id}"><span style="width:14px;height:14px;border-radius:50%;background:${st.look.ink};box-shadow:0 0 0 2px ${st.look.color === '#FFFFFF' ? '#3A3A3F' : st.look.color}"></span>${UI.esc(I18N.pick(st))}</label>`).join('');
   }
   const tpl = () => CONFIG.templates.find(tp => tp.id === typeId);
   function builderCard() {
@@ -530,8 +538,10 @@ I18N.add({
     const reward = form.reward.value.trim() || main.reward;
     const card = {
       id: 'preview', business: form.name.value.trim() || I18N.t('b.namePh').replace(/^(Es\.|E\.g\.)\s*/, ''),
-      title: main.title, reward, stampsNeeded: stamps, color: tp.color, ink: '#2B32FF', icon: tp.icon
+      title: main.title, reward, stampsNeeded: stamps, icon: tp.icon,
+      ...CONFIG.styles.find(st => st.id === styleId).look, style: styleId
     };
+    if (styleId === 'giappone' && /coffee/i.test(card.business)) card.tagline = 'ザ・コーヒー';
     if (L() === 'it') { card.titleEn = tp.en.title; if (reward === tp.it.reward) card.rewardEn = tp.en.reward; }
     return card;
   }
@@ -541,7 +551,7 @@ I18N.add({
     document.getElementById('b-pass').innerHTML = UI.renderPass(card, null, { stamps: Math.min(3, stamps) });
     document.getElementById('b-poster').innerHTML = MARKETING.poster(card, { url: UI.publicUrl('') });
     document.getElementById('stamps').textContent = stamps;
-    const q = new URLSearchParams({ new: 1, name: card.business, type: typeId, reward: card.reward, stamps, lang: L() });
+    const q = new URLSearchParams({ new: 1, name: card.business, type: typeId, style: styleId, reward: card.reward, stamps, lang: L() });
     document.getElementById('b-go').href = 'app/dashboard.html?' + q;
     clearTimeout(instaTimer);
     instaTimer = setTimeout(async () => {
@@ -553,6 +563,7 @@ I18N.add({
   }
   form.addEventListener('input', e => { if (e.target.name === 'reward') rewardTouched = true; builder(); });
   form.addEventListener('change', e => {
+    if (e.target.name === 'bstyle') { styleId = e.target.value; builder(); return; }
     if (e.target.name === 'type') {
       typeId = e.target.value;
       stamps = tpl().stamps;
@@ -622,7 +633,7 @@ I18N.add({
 
   function all() {
     I18N.apply();
-    hero(); drawTypes();
+    hero(); drawTypes(); drawStyles();
     if (!rewardTouched) form.reward.value = I18N.pick(tpl()).reward;
     builder(); kit(); plans(); contact();
     document.title = L() === 'it' ? 'Timbro · La carta fedeltà digitale per il tuo bar' : 'Timbro · The digital loyalty card for your café';

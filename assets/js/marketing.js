@@ -30,7 +30,8 @@
     const url = opts.url || UI.publicJoinUrl(card.id);
     const need = card.stampsNeeded;
     let dots = '';
-    for (let i = 0; i < need; i++) dots += `<i class="${i < 3 ? 'on' : ''}"></i>`;
+    const shape = UI.lookOf(card).shape;
+    for (let i = 0; i < need; i++) dots += `<i class="p-${shape}${i < 3 ? ' on' : ''}"></i>`;
     return `
       <div class="poster" lang="${lang}" style="--s:${esc(card.ink || '#2B32FF')}"><div class="poster-in">
         <div class="poster-top">
@@ -90,9 +91,15 @@
     const r = 46, gap = (W - 180 - 100 - cols * r * 2) / (cols - 1 || 1);
     for (let i = 0; i < n; i++) {
       const cx = 140 + r + (i % cols) * (r * 2 + gap), cy = top + 230 + Math.floor(i / cols) * (r * 2 + 22) + (rows === 1 ? 40 : 0);
-      c.beginPath(); c.arc(cx, cy, r, 0, Math.PI * 2);
-      if (i < 4) { c.fillStyle = ink; c.fill(); c.strokeStyle = 'rgba(255,255,255,.6)'; c.lineWidth = 3; c.beginPath(); c.arc(cx, cy, r - 9, 0, Math.PI * 2); c.stroke(); }
+      const shape = UI.lookOf(card).shape;
+      const path = (rr) => { if (shape === 'square' || shape === 'hanko') roundRect(c, cx - rr, cy - rr, rr * 2, rr * 2, rr * (shape === 'hanko' ? .24 : .36)); else { c.beginPath(); c.arc(cx, cy, rr, 0, Math.PI * 2); } };
+      c.save();
+      if (i < 4 && shape === 'hanko') { c.translate(cx, cy); c.rotate((i % 2 ? 5 : -7) * Math.PI / 180); c.translate(-cx, -cy); }
+      path(r);
+      if (i < 4 && (shape === 'ring' || shape === 'hanko')) { c.strokeStyle = ink; c.lineWidth = 6; c.stroke(); if (shape === 'hanko') { path(r - 12); c.lineWidth = 2.5; c.stroke(); } }
+      else if (i < 4) { c.fillStyle = ink; c.fill(); }
       else { c.setLineDash([8, 8]); c.strokeStyle = '#B5B5B8'; c.lineWidth = 3; c.stroke(); c.setLineDash([]); }
+      c.restore();
     }
 
     // footer

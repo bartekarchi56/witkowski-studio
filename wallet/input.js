@@ -14,7 +14,11 @@ export function readPassRequest(raw) {
     reward: str(card.reward, 60), rewardEn: str(card.rewardEn, 60),
     stampsNeeded: Math.max(1, Math.min(20, parseInt(card.stampsNeeded, 10) || 10)),
     color: str(card.color, 7), ink: str(card.ink, 7), icon: str(card.icon, 12),
-    logo: typeof card.logo === 'string' && card.logo.length < 800000 ? card.logo : ''
+    logo: typeof card.logo === 'string' && card.logo.length < 800000 ? card.logo : '',
+    logoAuto: typeof card.logoAuto === 'string' && card.logoAuto.length < 400000 ? card.logoAuto : '',
+    markImage: typeof card.markImage === 'string' && card.markImage.length < 200000 ? card.markImage : '',
+    shape: str(card.shape, 10), mark: str(card.mark, 10), markText: str(card.markText, 2),
+    empty: str(card.empty, 10), strip: str(card.strip, 7), tagline: str(card.tagline, 30)
   };
   const m = {
     id: str(customer.id, 6).toUpperCase(),

@@ -16,6 +16,12 @@
   src:url(../fonts/spline-mono-latin-ext.woff2) format("woff2");
   unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+20A0-20AB,U+20AD-20C0}
 
+/* Card fonts: a classic serif and Japanese subsets (ザ・コーヒー, 珈琲茶抹好) */
+@font-face{font-family:"EB Garamond";font-style:normal;font-weight:400 600;font-display:swap;src:url(../fonts/eb-garamond.woff2) format("woff2")}
+@font-face{font-family:"EB Garamond";font-style:italic;font-weight:400 600;font-display:swap;src:url(../fonts/eb-garamond-italic.woff2) format("woff2")}
+@font-face{font-family:"Noto Sans JP";font-weight:300 500;font-display:swap;src:url(../fonts/noto-sans-jp-sub.woff2) format("woff2")}
+@font-face{font-family:"Noto Serif JP";font-weight:700;font-display:swap;src:url(../fonts/noto-serif-jp-sub.woff2) format("woff2")}
+
 :root{
   --paper:#FFFFFF;
   --ink:#0B0B0C;
@@ -31,6 +37,7 @@
   --mono:"Spline Sans Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.55 var(--font);-webkit-font-smoothing:antialiased}
 img,svg,canvas{display:block;max-width:100%}
@@ -111,12 +118,35 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink)}
    "loyalty" layouts, so what the café sees here is what lands in the
    customer's Wallet. */
 .pass{--c:#fff;--t:#0B0B0C;--s:#2B32FF;width:100%;max-width:340px;background:var(--c);color:var(--t);font-family:-apple-system,"SF Pro Text",var(--font);overflow:hidden;position:relative}
-.wp-dot{aspect-ratio:1;border-radius:50%;background:color-mix(in srgb,var(--t) 22%,transparent);display:grid;place-items:center;color:var(--c)}
+.wp-dot{aspect-ratio:1;border-radius:50%;background:color-mix(in srgb,var(--t) 22%,transparent);display:grid;place-items:center;color:var(--c);container-type:inline-size}
 .wp-dot svg{width:50%;height:50%}
-.wp-dot.on{background:var(--s);color:#fff}
+.wp-dot b{font-size:56cqw;line-height:1;font-weight:700;font-family:"Noto Serif JP","EB Garamond",serif}
+/* empty boxes */
+.wp-dot.e-outline{background:transparent;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--t) 28%,transparent)}
+.wp-dot.e-dashed{background:transparent;border:1.5px dashed color-mix(in srgb,var(--t) 40%,transparent)}
+/* shapes */
+.wp-dot.s-square{border-radius:18%}
+.wp-dot.s-hanko{border-radius:12%}
+.wp-dot.on{background:var(--s);color:#fff;border:0;box-shadow:none}
+.wp-dot.s-ring.on{background:transparent;color:var(--s);box-shadow:inset 0 0 0 2.5px var(--s)}
+/* hanko: a red seal, a frame inside a frame, pressed at a slight angle */
+.wp-dot.s-hanko.on{background:transparent;color:var(--s);box-shadow:inset 0 0 0 2.5px var(--s),inset 0 0 0 4.5px var(--sb),inset 0 0 0 5.5px var(--s);transform:rotate(var(--r));opacity:.92}
+.wp-dot.s-hanko.on.pop{animation:seal .38s cubic-bezier(.2,1.5,.5,1)}
+@keyframes seal{0%{transform:scale(1.8) rotate(var(--r));opacity:0}60%{opacity:.92}100%{transform:scale(1) rotate(var(--r))}}
+/* card fonts */
+.f-wide .wp-name{font-family:var(--font);font-stretch:125%;font-weight:400;text-transform:uppercase;letter-spacing:.2em;font-size:14px}
+.f-serif .wp-name,.f-serif .wp-title{font-family:"EB Garamond",Georgia,serif;font-style:italic;font-weight:500;font-size:24px;letter-spacing:0}
+.f-mono .wp-name{font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;font-size:16px}
+.f-wide .wp-title{font-family:var(--font);font-stretch:118%;font-weight:400;letter-spacing:.04em}
+.wp-word{display:grid;gap:3px;min-width:0}
+.wp-word .wp-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wp-word small{font:300 10px/1 "Noto Sans JP",var(--font);letter-spacing:.3em;opacity:.7}
+.google .wp-name{font-size:14px}
+.google.f-serif .wp-name{font-size:16px}
+.wp-gmark{font:700 17px/1 "Noto Serif JP",serif;color:var(--s)}
 .wp-dot.pop{animation:stamp .38s cubic-bezier(.2,1.5,.5,1)}
 @keyframes stamp{0%{transform:scale(1.9);opacity:0}60%{opacity:1}100%{transform:scale(1)}}
-.wp-strip{display:grid;grid-template-columns:repeat(var(--cols,5),1fr);gap:14px 22px;padding:18px 30px}
+.wp-strip{display:grid;grid-template-columns:repeat(var(--cols,5),1fr);gap:12px 14px;padding:18px 26px;background:var(--sb)}
 .wp-label{display:block;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;opacity:.6}
 .wp-val{display:block;font-size:16px;font-weight:500;line-height:1.2}
 .wp-code{display:grid;justify-items:center;gap:6px;color:#000}
@@ -128,13 +158,13 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink)}
 /* Apple Wallet store card */
 .pass.apple{border-radius:12px;aspect-ratio:1/1.4;overflow:visible;display:flex;flex-direction:column;box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 10px 30px -10px rgba(0,0,0,.5)}
 .apple .wp-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:14px 16px 0;min-height:52px}
-.apple .wp-logo{display:flex;align-items:center;gap:8px;min-width:0;font-size:22px;font-weight:500;letter-spacing:-.01em;line-height:1.1}
+.apple .wp-logo{display:flex;align-items:center;gap:8px;min-width:0;font-size:20px;font-weight:500;letter-spacing:-.01em;line-height:1.1}
 .apple .wp-logo img{max-height:44px;max-width:200px;object-fit:contain;object-position:left center}
 .apple .wp-logo svg{width:24px;height:24px;flex:0 0 24px}
 .apple .wp-logo span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .apple .wp-hf{text-align:right;flex:0 0 auto}
 .apple .wp-hf .wp-val{font-size:19px}
-.apple .wp-strip{padding:20px 30px 12px}
+.apple .wp-strip{padding:18px 26px;margin:10px 0 8px}
 .apple .wp-fields{display:flex;justify-content:space-between;gap:12px;padding:6px 16px 0}
 .apple .wp-fields > div:last-child{text-align:right}
 .apple .wp-code{margin-top:auto;padding:12px 0 10px}
@@ -153,7 +183,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink)}
 .google .wp-code{margin:16px 18px 0;background:#fff;border-radius:16px;padding:14px}
 .google .wp-code .qr{padding:0;width:120px}
 .google .wp-code small{color:#3c4043}
-.google .wp-strip{margin-top:16px;padding:18px 28px;background:color-mix(in srgb,var(--t) 6%,var(--c))}
+.google .wp-strip{margin-top:16px;padding:18px 28px;background:var(--sb);border-top:1px solid color-mix(in srgb,var(--t) 10%,transparent)}
 .google .wp-ready{margin:12px 18px 0}
 
 /* wallet app backgrounds behind the pass */

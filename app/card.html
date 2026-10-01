@@ -157,6 +157,19 @@ I18N.add({
   I18N.switchers();
   I18N.apply();
   document.addEventListener('langchange', () => render(false));
+  // Before going to the wallet server, add the name/mark images (see UI.walletAssets).
+  app.addEventListener('submit', async e => {
+    const form = e.target.closest('form[action]');
+    if (!form || form.dataset.ready) return;
+    e.preventDefault();
+    const field = form.querySelector('input[name=data]');
+    const data = JSON.parse(field.value);
+    Object.assign(data.card, await UI.walletAssets(data.card));
+    data.lang = I18N.lang;
+    field.value = JSON.stringify(data);
+    form.dataset.ready = '1';
+    form.submit();
+  });
   Store.onChange(render);
   render();
 })();
