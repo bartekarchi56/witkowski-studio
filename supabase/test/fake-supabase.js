@@ -9,6 +9,7 @@ import crypto from 'node:crypto';
 import { pool, call } from './db.js';
 
 const SECRET = 'local-test-secret';
+export const SERVICE_KEY = process.env.SERVICE_KEY || 'test-service-role-key';
 const b64 = x => Buffer.from(JSON.stringify(x)).toString('base64url');
 const sign = data => crypto.createHmac('sha256', SECRET).update(data).digest('base64url');
 const jwt = payload => { const h = b64({ alg: 'HS256', typ: 'JWT' }), p = b64(payload); return `${h}.${p}.${sign(h + '.' + p)}`; };
@@ -43,7 +44,9 @@ http.createServer(async (req, res) => {
   if (req.method === 'OPTIONS') return send(res, 204);
   try {
     const claims = verify((req.headers.authorization || '').replace(/^Bearer /, ''));
-    const who = claims ? { role: 'authenticated', sub: claims.sub } : { role: 'anon' };
+    const bearer = (req.headers.authorization || '').replace(/^Bearer /, '');
+    // The Edge Functions call with the service role key, like on Supabase.
+    const who = bearer === SERVICE_KEY ? { role: 'service_role' } : claims ? { role: 'authenticated', sub: claims.sub } : { role: 'anon' };
 
     if (req.method === 'POST' && url.pathname.startsWith('/rest/v1/rpc/')) {
       // Like Supabase: the schema comes from the Content-Profile header (default public).

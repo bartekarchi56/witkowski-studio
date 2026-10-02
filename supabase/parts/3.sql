@@ -1,4 +1,4 @@
--- Timbro database, part 3 of 5. Run the parts in order.
+-- Timbro database, part 3 of 6. Run the parts in order.
 set search_path = timbro, extensions;
 
 create or replace function _device(p_token text) returns devices

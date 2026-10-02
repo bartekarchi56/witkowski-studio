@@ -98,5 +98,29 @@ await call(users.ownerA, 'owner_remove_device', { p_device_id: dataA.devices[0].
 await rejects(call(anon, 'stamper_lookup', { p_token: dev.token, p_code: joined.id }), /not linked/);
 ok('a removed phone stops working at once');
 
+// ---- billing: only the Stripe functions (service role) can touch it ----
+const service = { role: 'service_role' };
+const syncArgs = { p_customer: 'cus_test_' + id, p_subscription: 'sub_test', p_status: 'active', p_plan: 'pro', p_interval: 'month', p_period_end: 1893456000 };
+for (const who of [anon, users.ownerA, users.designer]) {
+  await rejects(call(who, 'stripe_sync', syncArgs), /permission denied/);
+  await rejects(call(who, 'stripe_set_customer', { p_business: dataA.cards[0] ? '00000000-0000-0000-0000-000000000000' : null, p_customer: 'cus_x' }), /permission denied/);
+  await rejects(call(who, 'stripe_business', { p_user: users.ownerA.sub }), /permission denied/);
+}
+const bizA = await call(service, 'stripe_business', { p_user: users.ownerA.sub });
+assert.equal(bizA.email, 'ownerA@test.local'); assert.equal(bizA.customer, null);
+await call(service, 'stripe_set_customer', { p_business: bizA.id, p_customer: syncArgs.p_customer });
+await call(service, 'stripe_set_customer', { p_business: bizA.id, p_customer: 'cus_other' });   // never replaces an existing customer
+assert.equal((await call(service, 'stripe_business', { p_user: users.ownerA.sub })).customer, syncArgs.p_customer);
+assert.equal(await call(service, 'stripe_is_admin', { p_user: users.designer.sub }), true);
+assert.equal(await call(service, 'stripe_is_admin', { p_user: users.ownerA.sub }), false);
+assert.equal(await call(service, 'stripe_sync', syncArgs), bizA.id);
+const billed = await call(users.ownerA, 'owner_data');
+assert.equal(billed.billing.status, 'active'); assert.equal(billed.billing.plan, 'pro'); assert.equal(billed.billing.trialUsed, true);
+assert.ok(billed.cards.every(c => c.plan === 'pro'));
+await call(service, 'stripe_sync', { ...syncArgs, p_status: 'canceled' });
+assert.equal((await call(users.ownerA, 'owner_data')).cards[0].plan, 'pro');   // cancelling keeps the cards; you decide
+assert.equal((await call(users.designer, 'admin_cards')).find(c => c.id === id).billing.status, 'canceled');
+ok('only the Stripe functions change billing; a paid plan reaches the cards; you see the status in the Studio');
+
 console.log(`\nAll ${n} checks passed.`);
 await pool.end();

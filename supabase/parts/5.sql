@@ -1,4 +1,4 @@
--- Timbro database, part 5 of 5. Run the parts in order.
+-- Timbro database, part 5 of 6. Run the parts in order.
 set search_path = timbro, extensions;
 
 create or replace function owner_remove_device(p_device_id uuid) returns void
@@ -12,7 +12,8 @@ begin
   if not _is_admin() then raise exception 'Only Witkowski Design can open the Studio.' using errcode = '42501'; end if;
   -- Each card comes with its owner's contact details, so you can get in touch.
   return coalesce((select jsonb_agg(_card_json(c, true) || jsonb_build_object('contact', jsonb_build_object(
-      'name', b.contact_name, 'email', u.email, 'phone', b.phone, 'city', b.city, 'address', b.address, 'instagram', b.instagram))
+      'name', b.contact_name, 'email', u.email, 'phone', b.phone, 'city', b.city, 'address', b.address, 'instagram', b.instagram),
+      'billing', _billing_json(b))
     order by c.created_at)
     from cards c join businesses b on b.id = c.business_id left join auth.users u on u.id = b.owner_id), '[]'::jsonb);
 end $$;
@@ -51,17 +52,42 @@ begin
   return _card_json(c, true);
 end $$;
 
-grant usage on schema timbro to anon, authenticated;
+alter table businesses add column if not exists stripe_customer     text;
 
-revoke all on all tables in schema timbro from anon, authenticated;
+alter table businesses add column if not exists stripe_subscription text;
 
-revoke execute on all functions in schema timbro from public, anon, authenticated;
+alter table businesses add column if not exists billing_status      text not null default '';  -- trialing, active, past_due, canceled...
 
-grant execute on function get_card(text), join_card(text, text), get_my_card(text, text),
-  device_link(text, text), stamper_lookup(text, text), stamper_stamp(text, text, int), stamper_redeem(text, text)
-  to anon, authenticated;
+alter table businesses add column if not exists billing_plan        text not null default '';  -- start, plus, pro
 
-grant execute on function owner_data(), owner_save_card(jsonb), owner_send_design(text, text, jsonb, text, jsonb, jsonb),
-  owner_link_code(), owner_remove_device(uuid),
-  admin_cards(), admin_publish(text, jsonb), admin_ask_changes(text, text), admin_set_plan(text, text)
-  to authenticated;
+alter table businesses add column if not exists billing_interval    text not null default '';  -- month, year
+
+alter table businesses add column if not exists billing_period_end  timestamptz;
+
+alter table businesses add column if not exists trial_used          boolean not null default false;
+
+create unique index if not exists businesses_stripe_customer on businesses(stripe_customer);
+
+create or replace function _billing_json(b businesses) returns jsonb
+language sql stable
+as $$
+  select jsonb_build_object('status', b.billing_status, 'plan', b.billing_plan, 'interval', b.billing_interval,
+    'periodEnd', (extract(epoch from b.billing_period_end) * 1000)::bigint, 'trialUsed', b.trial_used,
+    'customer', b.stripe_customer is not null)
+$$;
+
+create or replace function stripe_business(p_user uuid) returns jsonb
+language sql stable security definer set search_path = timbro
+as $$
+  select jsonb_build_object('id', b.id, 'name', b.name, 'email', u.email, 'phone', b.phone,
+    'customer', b.stripe_customer, 'subscription', b.stripe_subscription, 'status', b.billing_status, 'trialUsed', b.trial_used)
+  from businesses b left join auth.users u on u.id = b.owner_id where b.owner_id = p_user
+$$;
+
+create or replace function stripe_is_admin(p_user uuid) returns boolean
+language sql stable security definer set search_path = timbro
+as $$ select exists (select 1 from admins where user_id = p_user) $$;
+
+create or replace function stripe_set_customer(p_business uuid, p_customer text) returns void
+language sql security definer set search_path = timbro
+as $$ update businesses set stripe_customer = p_customer where id = p_business and stripe_customer is null $$;

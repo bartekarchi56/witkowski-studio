@@ -1,4 +1,4 @@
--- Timbro database, part 2 of 5. Run the parts in order.
+-- Timbro database, part 2 of 6. Run the parts in order.
 set search_path = timbro, extensions;
 
 alter table events     enable row level security;

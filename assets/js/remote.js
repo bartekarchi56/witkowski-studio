@@ -23,6 +23,16 @@
     if (error) throw new Error(error.message || 'Something went wrong. Try again.');
     return data;
   }
+  // Calls a Supabase Edge Function (supabase/functions/), as the logged-in user.
+  async function edge(name, body = {}) {
+    const { data, error } = await sb.functions.invoke(name, { body });
+    if (error) {
+      let msg = error.message;
+      try { msg = (await error.context.json()).error || msg; } catch (e) { /* not JSON */ }
+      throw new Error(msg);
+    }
+    return data;
+  }
   const device = () => { try { return JSON.parse(localStorage.getItem(DEVICE)); } catch (e) { return null; } };
 
   window.Remote = {
@@ -70,6 +80,9 @@
 
     // ---- owner dashboard ----
     ownerData: () => rpc('owner_data'),
+    // Subscriptions (Stripe): each returns { url } to open.
+    checkout: (plan, interval) => edge('stripe-checkout', { plan, interval }),
+    billingPortal: () => edge('stripe-portal'),
     saveCard: card => rpc('owner_save_card', { p_card: card }),
     sendDesign: (cardId, kind, design, note, images, links) => rpc('owner_send_design', { p_card_id: cardId, p_kind: kind, p_design: design, p_note: note, p_images: images, p_links: links }),
     linkCode: () => rpc('owner_link_code'),
@@ -79,6 +92,7 @@
     adminCards: () => rpc('admin_cards'),
     publish: (cardId, design) => rpc('admin_publish', { p_card_id: cardId, p_design: design }),
     askChanges: (cardId, reply) => rpc('admin_ask_changes', { p_card_id: cardId, p_reply: reply }),
-    setPlan: (cardId, plan) => rpc('admin_set_plan', { p_card_id: cardId, p_plan: plan })
+    setPlan: (cardId, plan) => rpc('admin_set_plan', { p_card_id: cardId, p_plan: plan }),
+    stripeSetup: plans => edge('stripe-setup', { plans })
   };
 })();

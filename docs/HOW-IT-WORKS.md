@@ -70,7 +70,7 @@ All data access goes through `assets/js/store.js`, so moving to a real server me
 3. **Swap `store.js`** for API calls (same function names).
 4. **Wallet passes.** Done in `wallet/`: signed `.pkpass` (Apple) and JWT save links (Google). Needs your Apple Developer account and Google Wallet issuer ID; see `wallet/README.md`.
 5. **Live updates in Wallet.** Apple PassKit web service endpoints + APNs push after each stamp; Google: PATCH the loyalty object after each stamp.
-6. **Payments.** Stripe Billing with the three plans and a 30-day trial; enforce plan limits (locations, cards, staff).
+6. **Payments.** Done in `supabase/functions/` (Stripe Checkout, billing portal, webhook; 30-day trial; see `supabase/STRIPE.md`). Still to do: enforce plan limits (locations, cards, staff).
 7. **Legal.** Privacy policy and GDPR basics (you store customer names and visit history).
 
 ## Security notes for the real version

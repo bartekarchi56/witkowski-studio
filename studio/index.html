@@ -70,6 +70,7 @@ main{max-width:1320px;margin:0 auto;padding:24px 24px 72px;display:grid;grid-tem
         <button class="btn line small" type="button" id="export" data-i18n="s.export"></button>
         <label class="btn line small" for="import" style="cursor:pointer" data-i18n="s.import"></label>
         <input type="file" id="import" accept="application/json" class="sr-only">
+        <button class="btn line small" type="button" id="stripe-setup" hidden data-i18n="s.stripeSetup"></button>
       </div>
     </div>
     <div class="compare">
@@ -105,6 +106,8 @@ I18N.add({
     's.from': 'Messaggio dal locale', 's.pics': 'Immagini e ispirazioni (clicca per scaricare)', 's.links': 'Link di ispirazione', 's.download': 'Scarica', 's.live': 'Ora, per i clienti', 's.new': 'Nuovo design',
     's.approve': 'Approva e pubblica', 's.ask': 'Chiedi una modifica', 's.reply': 'Risposta al locale', 's.replyPh': 'Es. Il logo è troppo piccolo, mandacelo in alta risoluzione.',
     's.published': 'Pubblicato. I clienti vedono il nuovo design.', 's.asked': 'Richiesta inviata al locale.', 's.needReply': 'Scrivi cosa cambiare, poi invia.',
+    's.stripeSetup': 'Prepara i piani su Stripe', 's.stripeDone': 'Stripe pronto. Cambiati: {list}', 's.stripeSame': 'Stripe è già aggiornato.',
+    's.bill': { trialing: 'In prova', active: 'Paga', past_due: 'Pagamento non riuscito', unpaid: 'Non pagato', canceled: 'Disdetto', paused: 'In pausa', '': 'Non abbonato' },
     's.pending': 'Da approvare', 's.changes': 'Modifica chiesta', 's.export': 'Esporta il design', 's.import': 'Importa un design', 's.imported': 'Design importato. Controlla e pubblica.'
   },
   en: {
@@ -113,6 +116,8 @@ I18N.add({
     's.from': 'Message from the café', 's.pics': 'Images and inspiration (click to download)', 's.links': 'Inspiration links', 's.download': 'Download', 's.live': 'Live now', 's.new': 'New design',
     's.approve': 'Approve and publish', 's.ask': 'Ask for a change', 's.reply': 'Reply to the café', 's.replyPh': 'E.g. The logo is too small, please send it in high resolution.',
     's.published': 'Published. Customers see the new design.', 's.asked': 'Request sent to the café.', 's.needReply': 'Write what to change, then send.',
+    's.stripeSetup': 'Set up plans in Stripe', 's.stripeDone': 'Stripe ready. Changed: {list}', 's.stripeSame': 'Stripe is already up to date.',
+    's.bill': { trialing: 'On trial', active: 'Paying', past_due: 'Payment failed', unpaid: 'Unpaid', canceled: 'Cancelled', paused: 'Paused', '': 'Not subscribed' },
     's.pending': 'To review', 's.changes': 'Change asked', 's.export': 'Export design', 's.import': 'Import a design', 's.imported': 'Design imported. Check it and publish.'
   }
 });
@@ -148,7 +153,8 @@ I18N.add({
       ct.phone && `<a href="tel:${UI.esc(ct.phone.replace(/[^\d+]/g, ''))}">${UI.esc(ct.phone)}</a>`,
       ct.email && `<a href="mailto:${UI.esc(ct.email)}">${UI.esc(ct.email)}</a>`,
       ig && `<a href="https://instagram.com/${encodeURIComponent(ig)}" target="_blank" rel="noopener noreferrer">@${UI.esc(ig)}</a>`,
-      [ct.address, ct.city].filter(Boolean).map(UI.esc).join(', ')].filter(Boolean).map(x => `<span>${x}</span>`).join('');
+      [ct.address, ct.city].filter(Boolean).map(UI.esc).join(', '),
+      bills[card.id] && `<b>${UI.esc(billLabel(bills[card.id]))}</b>`].filter(Boolean).map(x => `<span>${x}</span>`).join('');
     $('w-contact').hidden = !$('w-contact').innerHTML;
     $('w-plan').innerHTML = CONFIG.plans.map(p => `<option value="${p.id}">${UI.esc(I18N.pick(p).name)}</option>`).join('');
     $('w-plan').value = card.plan || 'start';
@@ -197,13 +203,27 @@ I18N.add({
   document.addEventListener('storeerror', e => UI.toast(e.detail));
   Store.onChange(() => { lists(); });
 
-  const contacts = {};   // card id → owner's contact details
-  const withContacts = cards => { cards.forEach(c => { if (c.contact) contacts[c.id] = c.contact; }); return cards; };
+  const contacts = {}, bills = {};   // card id → owner's contact details, subscription
+  const withContacts = cards => { cards.forEach(c => { if (c.contact) contacts[c.id] = c.contact; if (c.billing) bills[c.id] = c.billing; }); return cards; };
+  const billLabel = b => {
+    const names = I18N.t('s.bill'), plan = CONFIG.plans.find(p => p.id === b.plan);
+    return (names[b.status] ?? b.status) + (plan && b.status !== 'canceled' && b.status ? ' · ' + I18N.pick(plan).name + (b.interval === 'year' ? ' / yr' : '') : '');
+  };
   async function start() {
     if (Remote.enabled) {
       if (!await Remote.requireLogin()) return;
       try { Store.attachRemote({ cards: withContacts(await Remote.adminCards()), customers: [] }); }
       catch (err) { document.querySelector('main').innerHTML = `<p class="help" style="grid-column:1/-1">${UI.esc(err.message)}</p>`; return; }
+      // Creates the Stripe products and prices from the plans in config.js.
+      $('stripe-setup').hidden = false;
+      $('stripe-setup').addEventListener('click', async e => {
+        const btn = e.currentTarget; btn.disabled = true;
+        try {
+          const r = await Remote.stripeSetup(CONFIG.plans.map(p => ({ id: p.id, name: p.en.name, month: p.month, yearMonths: CONFIG.yearlyMonths })));
+          UI.toast(r.changed.length ? I18N.t('s.stripeDone', { list: r.changed.join(', ') }) : I18N.t('s.stripeSame'));
+        } catch (err) { UI.toast(err.message); }
+        btn.disabled = false;
+      });
       // New proposals and requests appear without reloading.
       setInterval(async () => { if (document.visibilityState === 'visible') try { Store.refresh({ cards: withContacts(await Remote.adminCards()), customers: [] }); } catch (e) {} }, 30000);
     }

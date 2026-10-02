@@ -13,12 +13,12 @@ Use one of your **existing** Supabase projects; you don't need a new one (the fr
 1. In the project, open **SQL Editor** → **New query**.
 2. Paste the whole of [`schema.sql`](schema.sql) and press **Run**. You should see "Success".
 
-   **If you can only paste 100 lines at a time**, use the 5 short files in [`parts/`](parts) instead: paste `1.sql`, press **Run**, then replace it with `2.sql`, **Run**, and so on up to `5.sql`. Always run them in order. Nothing can be reached from the website until part 5 has run. (They are made from `schema.sql` with `node supabase/make-parts.js`.)
+   **If you can only paste 100 lines at a time**, use the short files in [`parts/`](parts) instead: paste `1.sql`, press **Run**, then replace it with `2.sql`, **Run**, and so on up to the last one. Always run them in order. Nothing can be reached from the website until the last part has run. (They are made from `schema.sql` with `node supabase/make-parts.js`.)
 3. Open **Project Settings → Data API** (or **API**) → **Exposed schemas**, add `timbro` next to `public`, and save. Without this the website can't reach Timbro.
 
 You can run the SQL again later after an update: it keeps your data.
 
-**Already installed?** Run only the new files in [`updates/`](updates), in order (each is under 100 lines). `updates/1a` and `1b` add the sign-up details (name, café, phone, address, Instagram), which you see in the Studio.
+**Already installed?** Run only the new files in [`updates/`](updates), in order (each is under 100 lines). `updates/1a` and `1b` add the sign-up details (name, café, phone, address, Instagram), which you see in the Studio. `updates/2a` and `2b` add subscriptions (see [STRIPE.md](STRIPE.md)).
 
 **Sharing a project:** logins (Supabase Auth) are shared between apps in the same project. Someone with an account in your other app could also sign in to Timbro, but they would only get an empty café of their own: they can't see any café's data or open the Studio.
 
@@ -83,7 +83,8 @@ cd supabase/test && npm install
 node security.test.js                         # who can do what (11 checks)
 node fake-supabase.js &                       # stand-in for Supabase on :54321
 npx http-server -p 8123 ../.. &               # the site
-node e2e.js                                   # signup → link phone → join → stamp → approve
+node e2e.js                                   # signup → link phone → join → stamp → approve → plan
+DENO=deno node stripe.test.js                 # subscriptions: the Stripe functions (see STRIPE.md)
 ```
 
 Set `DATABASE_URL` if your Postgres isn't on `localhost:5433`.

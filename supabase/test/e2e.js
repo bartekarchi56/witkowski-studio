@@ -161,6 +161,24 @@ assert.equal(calls, 0, 'demo pages never call the database');
 await demo.close();
 ok('the poster shows the café\'s own card; The Coffee\'s brochure QR still opens the demo');
 
+// ---- subscription: the Plan tab sends the owner to Stripe Checkout ----
+let asked = null;
+await owner.route('**/functions/v1/stripe-checkout', async route => { asked = route.request().postDataJSON(); route.fulfill({ json: { url: SITE + 'app/dashboard.html?billing=success#plan' } }); });
+await o.click('#t-plan');
+assert.match(await o.textContent('#bill-status'), /30 giorni sono gratis/);
+await o.click('#bill-interval button[data-i=year]');
+assert.match(await o.textContent('#bill-plans'), /350/);   // Plus yearly = 10 months
+await o.click('#bill-plans [data-buy=plus]');
+await o.waitForURL(/billing=success|#plan/); await o.waitForSelector('#toast, .toast', { state: 'attached' }).catch(() => {});
+assert.deepEqual(asked, { plan: 'plus', interval: 'year' });
+await pool.query(`update timbro.businesses b set stripe_customer = 'cus_e2e', billing_status = 'trialing', billing_plan = 'plus', billing_interval = 'year',
+  billing_period_end = now() + interval '30 days' from auth.users u where u.id = b.owner_id and u.email = $1`, [`owner-${stamp}@test.local`]);
+await o.reload(); await o.waitForSelector('#card-form input[name=business]', { state: 'attached' }); await o.waitForTimeout(800);
+await o.click('#t-plan');
+assert.match(await o.textContent('#bill-status'), /Prova gratuita di Plus fino al/);
+assert.equal(await o.isVisible('#bill-manage'), true); assert.equal(await o.locator('[data-buy]').count(), 0);
+ok('the Plan tab opens Stripe Checkout for the chosen plan and shows the trial afterwards');
+
 // ---- unlinking the till phone ----
 await o.reload(); await o.waitForSelector('#card-form input[name=business]', { state: 'attached' }); await o.waitForTimeout(800);
 await o.click('#t-till');

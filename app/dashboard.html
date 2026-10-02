@@ -58,6 +58,19 @@ details.en[open]{padding-bottom:4px}
 .review.approved{background:var(--wash)}
 .review b{display:block;margin-bottom:2px}
 .which button{font-size:12px}
+.bill-tools{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:4px 0 22px}
+.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:999px;padding:2px}
+.seg button{font:600 14px/1 var(--font);padding:9px 14px;border:0;border-radius:999px;background:transparent;color:var(--ink);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.bill-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.bill-plan{border:1.5px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:6px}
+.bill-plan.mine{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.bill-plan h3{font-size:20px;font-weight:800;font-stretch:112%}
+.bill-plan .price{font-size:30px;font-weight:800;letter-spacing:-.02em}
+.bill-plan .price small{font-size:14px;font-weight:500;color:var(--muted);letter-spacing:0}
+.bill-plan p{color:var(--ink-2);font-size:15px;flex:1}
+.bill-plan .tag{font:600 12px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--pop)}
+@media (max-width:860px){.bill-plans{grid-template-columns:1fr}}
 .till{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
 .till-steps{margin:0 0 22px;padding-left:20px;color:var(--ink-2)}
 .till-steps li{padding:4px 0}
@@ -176,6 +189,7 @@ td code{font:500 13px var(--mono);background:var(--wash);padding:3px 7px;border-
     <button role="tab" id="t-promote" aria-controls="tab-promote" data-tab="promote" data-i18n="d.tPromote"></button>
     <button role="tab" id="t-customers" aria-controls="tab-customers" data-tab="customers" data-i18n="d.tCustomers"></button>
     <button role="tab" id="t-till" aria-controls="tab-till" data-tab="till" data-i18n="d.tTill"></button>
+    <button role="tab" id="t-plan" aria-controls="tab-plan" data-tab="plan" data-i18n="d.tPlan"></button>
   </div>
 
   <!-- CARD DESIGN -->
@@ -314,6 +328,21 @@ td code{font:500 13px var(--mono);background:var(--wash);padding:3px 7px;border-
     </div>
   </section>
 
+  <!-- PLAN: the subscription, paid with Stripe -->
+  <section role="tabpanel" id="tab-plan" aria-labelledby="t-plan" hidden>
+    <h2 class="sec" data-i18n="d.planT"></h2>
+    <p class="sec-sub" id="bill-status"></p>
+    <div class="bill-tools">
+      <div class="seg" id="bill-interval" role="group">
+        <button type="button" data-i="month" aria-pressed="true" data-i18n="d.monthly"></button>
+        <button type="button" data-i="year" aria-pressed="false" data-i18n="d.yearly"></button>
+      </div>
+      <button class="btn line small" type="button" id="bill-manage" hidden data-i18n="d.manage"></button>
+    </div>
+    <div class="bill-plans" id="bill-plans"></div>
+    <p class="help" data-i18n="d.billFine"></p>
+  </section>
+
   <!-- CUSTOMERS -->
   <section role="tabpanel" id="tab-customers" aria-labelledby="t-customers" hidden>
     <div class="stats" id="stats"></div>
@@ -360,6 +389,16 @@ I18N.add({
     'd.rvPending': 'In attesa di approvazione', 'd.rvPendingP': 'I clienti vedono ancora il design attuale. Ti avvisiamo appena è approvato.',
     'd.rvRequest': 'Richiesta inviata. Witkowski Design aggiorna il design e te lo mostra:', 'd.rvChanges': 'Witkowski Design chiede una modifica', 'd.rvApproved': 'Design approvato', 'd.rvApprovedP': 'È quello che vedono i tuoi clienti.',
     'd.vLive': 'Attuale', 'd.vDraft': 'Proposta',
+    'd.tPlan': 'Abbonamento', 'd.planT': 'Il tuo abbonamento', 'd.monthly': 'Mensile', 'd.yearly': 'Annuale (2 mesi gratis)', 'd.manage': 'Gestisci abbonamento',
+    'd.billNone': 'Scegli un piano: i primi {days} giorni sono gratis, poi paghi con carta o addebito SEPA. Disdici quando vuoi.',
+    'd.billNoTrial': 'Scegli un piano. Paghi con carta o addebito SEPA e disdici quando vuoi.',
+    'd.billTrial': 'Prova gratuita di {plan} fino al {date}. Poi si rinnova da solo; puoi disdire prima.',
+    'd.billActive': 'Abbonamento {plan} attivo. Prossimo rinnovo: {date}.', 'd.billCanceling': 'Abbonamento {plan} attivo fino al {date}, poi termina.',
+    'd.billPastDue': 'Il pagamento non è riuscito. Aggiorna la carta in "Gestisci abbonamento".', 'd.billCanceled': 'Abbonamento disdetto. Puoi riattivarlo quando vuoi.',
+    'd.billDemo': 'Questa è la demo: i pagamenti funzionano nell\'area del tuo locale, dopo aver creato l\'account.',
+    'd.choose': 'Scegli {plan}', 'd.mine': 'Il tuo piano', 'd.perMonth': '/ mese', 'd.perYear': '/ anno', 'd.vat': 'IVA esclusa',
+    'd.billFine': 'Il pagamento è gestito da Stripe: i dati della carta non passano da noi. Ricevi la fattura via email; inserisci la partita IVA al pagamento.',
+    'd.billThanks': 'Grazie! L\'abbonamento si attiva in pochi secondi.', 'd.billCancelled': 'Pagamento annullato: nessun addebito.',
     'd.logout': 'Esci', 'd.tTill': 'Cassa', 'd.loadErr': 'Non riesco a caricare i dati: {msg}', 'd.planFixed': 'Piano: {plan}',
     'd.tillT': 'I telefoni della cassa', 'd.tillP': 'Ogni telefono o tablet che timbra va collegato una volta. Il barista non ha bisogno di un account.',
     'd.till1': 'Tocca "Collega un telefono" qui sotto.', 'd.till2': 'Sul telefono della cassa inquadra il QR con la fotocamera (oppure apri il timbratore e scrivi il codice).', 'd.till3': 'Dai un nome al telefono, per esempio "Cassa 1". Fatto.',
@@ -414,6 +453,16 @@ I18N.add({
     'd.rvPending': 'Waiting for approval', 'd.rvPendingP': 'Customers still see the current design. We\'ll let you know as soon as it\'s approved.',
     'd.rvRequest': 'Request sent. Witkowski Design will update the design and show you:', 'd.rvChanges': 'Witkowski Design asked for a change', 'd.rvApproved': 'Design approved', 'd.rvApprovedP': 'This is what your customers see.',
     'd.vLive': 'Current', 'd.vDraft': 'Proposal',
+    'd.tPlan': 'Plan', 'd.planT': 'Your subscription', 'd.monthly': 'Monthly', 'd.yearly': 'Yearly (2 months free)', 'd.manage': 'Manage subscription',
+    'd.billNone': 'Pick a plan: the first {days} days are free, then you pay by card or SEPA direct debit. Cancel any time.',
+    'd.billNoTrial': 'Pick a plan. You pay by card or SEPA direct debit and can cancel any time.',
+    'd.billTrial': 'Free trial of {plan} until {date}. It then renews by itself; you can cancel before.',
+    'd.billActive': '{plan} subscription active. Next renewal: {date}.', 'd.billCanceling': '{plan} subscription active until {date}, then it ends.',
+    'd.billPastDue': 'The payment didn\'t go through. Update your card in "Manage subscription".', 'd.billCanceled': 'Subscription cancelled. You can restart it any time.',
+    'd.billDemo': 'This is the demo: payments work in your café\'s dashboard once you have an account.',
+    'd.choose': 'Choose {plan}', 'd.mine': 'Your plan', 'd.perMonth': '/ month', 'd.perYear': '/ year', 'd.vat': 'excluding VAT',
+    'd.billFine': 'Payments are handled by Stripe: your card details never pass through us. Invoices arrive by email; add your VAT number at checkout.',
+    'd.billThanks': 'Thank you! Your subscription switches on in a few seconds.', 'd.billCancelled': 'Payment cancelled: nothing was charged.',
     'd.logout': 'Log out', 'd.tTill': 'Till', 'd.loadErr': 'Can\'t load your data: {msg}', 'd.planFixed': 'Plan: {plan}',
     'd.tillT': 'The till phones', 'd.tillP': 'Each phone or tablet that stamps is linked once. Baristas don\'t need an account.',
     'd.till1': 'Tap "Link a phone" below.', 'd.till2': 'On the till phone, scan the QR code with the camera (or open the stamper and type the code).', 'd.till3': 'Give the phone a name, like "Till 1". Done.',
@@ -751,12 +800,49 @@ I18N.add({
   });
   Store.onChange(() => { current = Store.getCard(current.id) || current; renderCustomers(); renderReview(); setView(view); });
 
+  // ---------- plan: the subscription (Stripe, see supabase/functions/) ----------
+  let billing = null, interval = 'month';
+  const LIVE = ['trialing', 'active', 'past_due', 'unpaid', 'paused'];
+  const fmtDate = ms => new Date(ms).toLocaleDateString(I18N.lang === 'it' ? 'it-IT' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  function renderBilling() {
+    const b = billing || {}, live = LIVE.includes(b.status), canPay = Store.remote && !Remote.demo;
+    const planName = (CONFIG.plans.find(p => p.id === b.plan) && I18N.pick(CONFIG.plans.find(p => p.id === b.plan)).name) || '';
+    const v = { plan: planName, date: b.periodEnd ? fmtDate(b.periodEnd) : '', days: CONFIG.trialDays };
+    $('bill-status').textContent = !canPay ? I18N.t('d.billDemo')
+      : b.status === 'trialing' ? I18N.t('d.billTrial', v) : b.status === 'active' ? I18N.t('d.billActive', v)
+      : ['past_due', 'unpaid'].includes(b.status) ? I18N.t('d.billPastDue') : b.status === 'canceled' ? I18N.t('d.billCanceled')
+      : I18N.t(b.trialUsed ? 'd.billNoTrial' : 'd.billNone', v);
+    $('bill-manage').hidden = !(canPay && b.customer && b.status);
+    $('bill-interval').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.i === interval)));
+    const money = n => new Intl.NumberFormat(I18N.lang === 'it' ? 'it-IT' : 'en-IE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
+    $('bill-plans').innerHTML = CONFIG.plans.map(p => {
+      const L = I18N.pick(p), mine = live && b.plan === p.id;
+      const price = interval === 'year' ? p.month * CONFIG.yearlyMonths : p.month;
+      return `<div class="bill-plan${mine ? ' mine' : ''}">
+        ${mine ? `<span class="tag">${I18N.t('d.mine')}</span>` : ''}
+        <h3>${UI.esc(L.name)}</h3>
+        <div class="price">${money(price)} <small>${I18N.t(interval === 'year' ? 'd.perYear' : 'd.perMonth')} · ${I18N.t('d.vat')}</small></div>
+        <p>${UI.esc(L.for)}</p>
+        ${live ? '' : `<button class="btn ${p.popular ? 'pop' : 'line'} block" type="button" data-buy="${p.id}"${canPay ? '' : ' disabled'}>${UI.esc(I18N.t('d.choose', { plan: L.name }))}</button>`}
+      </div>`;
+    }).join('');
+  }
+  async function openStripe(call, btn) {
+    btn.disabled = true;
+    try { const { url } = await call(); location.href = url; }
+    catch (err) { UI.toast(err.message); btn.disabled = false; }
+  }
+  $('bill-interval').addEventListener('click', e => { const x = e.target.closest('button'); if (x) { interval = x.dataset.i; renderBilling(); } });
+  $('bill-plans').addEventListener('click', e => { const x = e.target.closest('[data-buy]'); if (x) openStripe(() => Remote.checkout(x.dataset.buy, interval), x); });
+  $('bill-manage').addEventListener('click', e => openStripe(() => Remote.billingPortal(), e.currentTarget));
+  document.addEventListener('langchange', renderBilling);
+
   let profile = {};   // what the owner typed when signing up
   async function start() {
     I18N.apply();
     controls();
     const q = new URLSearchParams(location.search);
-    const startTab = ['design', 'print', 'promote', 'customers', 'till'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'design';
+    const startTab = ['design', 'print', 'promote', 'customers', 'till', 'plan'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'design';
     // In the demo, keep the till and the dashboard in the demo too.
     if (Remote.demo) document.querySelectorAll('a[href="stamper.html"]').forEach(a => a.href = 'stamper.html?demo');
     if (Remote.enabled) {
@@ -765,15 +851,21 @@ I18N.add({
       try { data = await Remote.ownerData(); }
       catch (err) { document.querySelector('main').innerHTML = `<p class="help">${UI.esc(I18N.t('d.loadErr', { msg: err.message }))}</p>`; return; }
       Store.attachRemote(data);
-      isAdmin = data.isAdmin; devices = data.devices; profile = data.profile || {};
+      isAdmin = data.isAdmin; devices = data.devices; profile = data.profile || {}; billing = data.billing;
       $('logout').hidden = false;
       // Keep customers, phones and design replies up to date.
       setInterval(async () => {
         if (document.visibilityState !== 'visible') return;
-        try { const d = await Remote.ownerData(); devices = d.devices; Store.refresh(d); renderDevices(); } catch (err) {}
+        try { const d = await Remote.ownerData(); devices = d.devices; billing = d.billing; Store.refresh(d); renderDevices(); renderBilling(); } catch (err) {}
       }, 30000);
     }
-    renderDevices();
+    renderDevices(); renderBilling();
+    // Back from Stripe Checkout. The webhook may take a moment: look again shortly.
+    if (q.get('billing')) {
+      UI.toast(I18N.t(q.get('billing') === 'success' ? 'd.billThanks' : 'd.billCancelled'));
+      history.replaceState(null, '', location.pathname + location.hash);
+      if (Store.remote) setTimeout(async () => { try { billing = (await Remote.ownerData()).billing; renderBilling(); } catch (err) {} }, 4000);
+    }
     if (q.get('new') || !Store.listCards().length) {
       current = Store.listCards()[0] || null;
       createCard({ name: q.get('name') || profile.business, type: q.get('type') || profile.type, city: profile.city, style: q.get('style'), reward: q.get('reward'), stamps: q.get('stamps'), lang: q.get('lang') });
