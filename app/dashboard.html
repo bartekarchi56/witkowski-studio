@@ -50,6 +50,14 @@ details.en[open]{padding-bottom:4px}
 .actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:6px}
 .status{font-size:14px;color:var(--muted)}
 .templates{margin-bottom:22px;padding-bottom:22px;border-bottom:1.5px solid var(--line)}
+.design > form{grid-column:1}
+.preview{grid-column:2;grid-row:1 / span 2}
+.review{padding:14px 16px;border-radius:12px;margin-bottom:20px;font-size:15px}
+.review.pending{background:var(--pop-wash)}
+.review.changes{background:#FFF1E8}
+.review.approved{background:var(--wash)}
+.review b{display:block;margin-bottom:2px}
+.which button{font-size:12px}
 
 /* print */
 .print{display:grid;grid-template-columns:340px 1fr;gap:40px;align-items:start}
@@ -98,7 +106,7 @@ td code{font:500 13px var(--mono);background:var(--wash);padding:3px 7px;border-
 
 @media (max-width:960px){
   .design,.print,.promote{grid-template-columns:1fr}
-  .preview{position:static;order:-1}
+  .preview{position:static;order:-1;grid-column:1;grid-row:auto}
   .stats{grid-template-columns:1fr 1fr}
   .print > :first-child,.insta{max-width:360px}
 }
@@ -165,31 +173,6 @@ td code{font:500 13px var(--mono);background:var(--wash);padding:3px 7px;border-
             </div>
           </div>
         </div>
-        <label class="field"><span data-i18n="d.tagline"></span><input type="text" name="tagline" maxlength="24" data-i18n-attr="placeholder:d.taglinePh"><small data-i18n="d.taglineHint"></small></label>
-
-        <h3 class="group" data-i18n="d.gLook"></h3>
-        <fieldset><legend data-i18n="d.style"></legend><div class="chips" id="styles"></div><small class="muted hint" data-i18n="d.styleHint"></small></fieldset>
-        <div class="field">
-          <span data-i18n="d.logo"></span>
-          <div class="logo-row">
-            <label class="btn line small" for="logo-file" data-i18n="d.logoPick"></label>
-            <input type="file" id="logo-file" accept="image/png,image/jpeg,image/svg+xml,image/webp" class="sr-only">
-            <button class="link" type="button" id="logo-remove" hidden data-i18n="d.logoRemove"></button>
-          </div>
-          <small data-i18n="d.logoHint"></small>
-        </div>
-        <fieldset><legend data-i18n="d.font"></legend><div class="chips" id="fonts"></div></fieldset>
-        <fieldset><legend data-i18n="d.color"></legend><div class="swatches" id="colors"></div></fieldset>
-        <fieldset><legend data-i18n="d.strip"></legend><div class="swatches" id="strips"></div></fieldset>
-
-        <h3 class="group" data-i18n="d.gStamp"></h3>
-        <fieldset><legend data-i18n="d.shape"></legend><div class="chips" id="shapes"></div></fieldset>
-        <fieldset><legend data-i18n="d.mark"></legend><div class="chips" id="marks"></div>
-          <div class="chips icons" id="icons" style="margin-top:10px"></div>
-          <label class="field" id="mark-text-field" style="margin:10px 0 0;max-width:220px"><span class="sr-only" data-i18n="d.markText"></span><input type="text" name="markText" maxlength="2" data-i18n-attr="placeholder:d.markTextPh"></label>
-        </fieldset>
-        <fieldset><legend data-i18n="d.ink"></legend><div class="swatches" id="inks"></div></fieldset>
-        <fieldset><legend data-i18n="d.empty"></legend><div class="chips" id="empties"></div></fieldset>
         <details class="en">
           <summary data-i18n="d.enTitle"></summary>
           <p class="muted" style="font-size:14px;margin-bottom:14px" data-i18n="d.enHint"></p>
@@ -199,14 +182,26 @@ td code{font:500 13px var(--mono);background:var(--wash);padding:3px 7px;border-
           </div>
         </details>
         <div class="actions">
-          <button class="btn pop" type="submit" data-i18n="d.save"></button>
+          <button class="btn" type="submit" data-i18n="d.save"></button>
           <span class="status" id="status" aria-live="polite"></span>
         </div>
-        <p class="help" style="margin-top:22px" data-i18n-html="d.helpDesign"></p>
+      </form>
+
+      <form class="panel" id="design-form" autocomplete="off" style="grid-column:1">
+        <h2 class="sec" data-i18n="d.dTitle"></h2>
+        <p class="sec-sub" data-i18n="d.dSub"></p>
+        <div class="review" id="review" hidden></div>
+        <div id="editor"></div>
+        <label class="field"><span data-i18n="d.note"></span><textarea name="note" rows="3" data-i18n-attr="placeholder:d.notePh"></textarea></label>
+        <div class="actions">
+          <button class="btn pop" type="submit" data-i18n="d.send"></button>
+          <button class="link" type="button" id="design-reset" data-i18n="d.reset"></button>
+        </div>
       </form>
       <div class="preview">
         <span class="label" data-i18n="d.preview"></span>
         <div class="platform" id="plat"></div>
+        <div class="platform which" id="which" role="group" hidden><button type="button" data-v="live" aria-pressed="false" data-i18n="d.vLive"></button><button type="button" data-v="draft" aria-pressed="true" data-i18n="d.vDraft"></button></div>
         <div class="phone"><div class="phone-screen" id="preview"></div></div>
       </div>
     </div>
@@ -275,6 +270,7 @@ td code{font:500 13px var(--mono);background:var(--wash);padding:3px 7px;border-
 <script src="../assets/js/store.js"></script>
 <script src="../assets/js/ui.js"></script>
 <script src="../assets/js/marketing.js"></script>
+<script src="../assets/js/design-editor.js"></script>
 <script>
 I18N.add({
   it: {
@@ -290,6 +286,12 @@ I18N.add({
     'd.mark': 'Dentro il timbro', 'mkIcon': 'Icona', 'mkText': 'Lettera o simbolo', 'mkNone': 'Niente', 'd.markText': 'Lettera o simbolo', 'd.markTextPh': 'C',
     'd.empty': 'Caselle vuote', 'emSoft': 'Grigie', 'emOutline': 'Contorno', 'emDashed': 'Tratteggio', 'sameAsCard': 'Uguale alla carta',
     'd.logo': 'Logo (facoltativo)', 'd.logoPick': 'Carica il logo', 'd.logoRemove': 'Togli il logo', 'd.logoHint': 'PNG con sfondo trasparente, orizzontale. Prende il posto del nome in cima alla carta.',
+    'd.dTitle': 'Il design', 'd.dSub': 'La grafica la disegna Witkowski Design su misura. Puoi cambiare logo, colori, sfondo e timbro: ogni modifica la controlliamo noi prima che la vedano i clienti.',
+    'd.note': 'Messaggio per il designer (facoltativo)', 'd.notePh': 'Es. vorrei il timbro come la nostra tazzina, e il verde del nostro logo.',
+    'd.send': 'Invia per approvazione', 'd.reset': 'Torna al design attuale', 'd.sent': 'Inviato. Witkowski Design controlla e approva il nuovo design.',
+    'd.rvPending': 'In attesa di approvazione', 'd.rvPendingP': 'I clienti vedono ancora il design attuale. Ti avvisiamo appena è approvato.',
+    'd.rvChanges': 'Witkowski Design chiede una modifica', 'd.rvApproved': 'Design approvato', 'd.rvApprovedP': 'È quello che vedono i tuoi clienti.',
+    'd.vLive': 'Attuale', 'd.vDraft': 'Proposta',
     'd.icon': 'Icona', 'd.color': 'Colore della carta', 'd.ink': 'Colore del timbro',
     'd.enTitle': 'In inglese, per i turisti (facoltativo)', 'd.enHint': 'Chi ha il telefono in inglese vedrà questi testi.',
     'd.titleEn': 'Nome della carta in inglese', 'd.rewardEn': 'Premio in inglese',
@@ -323,6 +325,12 @@ I18N.add({
     'd.mark': 'Inside the stamp', 'mkIcon': 'Icon', 'mkText': 'Letter or symbol', 'mkNone': 'Nothing', 'd.markText': 'Letter or symbol', 'd.markTextPh': 'C',
     'd.empty': 'Empty boxes', 'emSoft': 'Grey', 'emOutline': 'Outline', 'emDashed': 'Dashed', 'sameAsCard': 'Same as the card',
     'd.logo': 'Logo (optional)', 'd.logoPick': 'Upload logo', 'd.logoRemove': 'Remove logo', 'd.logoHint': 'A wide PNG with a transparent background. It replaces the name at the top of the card.',
+    'd.dTitle': 'The design', 'd.dSub': 'Witkowski Design designs the artwork for you. You can change the logo, colours, background and stamp: we check every change before your customers see it.',
+    'd.note': 'Message for the designer (optional)', 'd.notePh': 'E.g. I\'d like the stamp to look like our cup, in the green of our logo.',
+    'd.send': 'Send for approval', 'd.reset': 'Back to the current design', 'd.sent': 'Sent. Witkowski Design will check and approve the new design.',
+    'd.rvPending': 'Waiting for approval', 'd.rvPendingP': 'Customers still see the current design. We\'ll let you know as soon as it\'s approved.',
+    'd.rvChanges': 'Witkowski Design asked for a change', 'd.rvApproved': 'Design approved', 'd.rvApprovedP': 'This is what your customers see.',
+    'd.vLive': 'Current', 'd.vDraft': 'Proposal',
     'd.icon': 'Icon', 'd.color': 'Card colour', 'd.ink': 'Stamp colour',
     'd.enTitle': 'Second language for tourists (optional)', 'd.enHint': 'Customers whose phone is in English see these texts.',
     'd.titleEn': 'Card name in English', 'd.rewardEn': 'Reward in English',
@@ -346,105 +354,85 @@ I18N.add({
 });
 
 (() => {
-  const COLORS = ['#FFFFFF', '#0B0B0C', '#F3EEE4', '#EEE9E1', '#4A2E21', '#1F3D2B', '#6B1E2B', '#1B2A4A'];
-  const STRIPS = ['', '#EEE9E1', '#F3EEE4', '#F4F4F2', '#E7EFE9', '#0B0B0C'];
-  const INKS = ['#2B32FF', '#0B0B0C', '#B5442E', '#D6261C', '#C9A24A', '#4A2E21', '#2F6B4F'];
-  const SHAPES = [['dot', 'shDot', '<circle cx="12" cy="12" r="9" fill="currentColor"/>'], ['ring', 'shRing', '<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2.5"/>'],
-                  ['square', 'shSquare', '<rect x="3" y="3" width="18" height="18" rx="4" fill="currentColor"/>'], ['hanko', 'shHanko', '<rect x="3" y="3" width="18" height="18" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="6.5" y="6.5" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1"/>']];
-  const radios = (name, items) => items.map(([v, label]) => `<input type="radio" name="${name}" id="${name}-${v || 'none'}" value="${v}"><label for="${name}-${v || 'none'}">${label}</label>`).join('');
-  const ICON_NAMES = { it: { cup: 'Tazza', cake: 'Dolce', glass: 'Calice', cone: 'Cono', pizza: 'Pizza', scissors: 'Forbici', leaf: 'Foglia', heart: 'Cuore', star: 'Stella' },
-                       en: { cup: 'Cup', cake: 'Cake', glass: 'Glass', cone: 'Cone', pizza: 'Pizza', scissors: 'Scissors', leaf: 'Leaf', heart: 'Heart', star: 'Star' } };
   const $ = id => document.getElementById(id);
   const form = $('card-form');
-  let current = null, stamps = 10, dirty = false, instaLang = I18N.lang, logo = '';
+  let current = null, stamps = 10, dirty = false, instaLang = I18N.lang;
+  let draft = null;          // the design being edited (not live until approved)
+  let view = 'draft';        // preview: 'live' design or the 'draft'
 
-  // ---------- build controls ----------
+  // ---------- texts (saved straight away) ----------
   function controls() {
     $('templates').innerHTML = CONFIG.templates.map(tp =>
       `<input type="radio" name="tpl" id="tp-${tp.id}" value="${tp.id}"><label for="tp-${tp.id}">${UI.icon(tp.icon)}${UI.esc(I18N.pick(tp).type)}</label>`).join('');
-    $('styles').innerHTML = radios('style', CONFIG.styles.map(st => [st.id, `<span class="sw" style="background:${st.look.color}"></span><span class="sw" style="background:${st.look.ink}"></span>${UI.esc(I18N.pick(st))}`]));
-    $('fonts').innerHTML = radios('font', [['sans', `<span>${I18N.t('fontSans')}</span>`], ['wide', `<span class="ff-wide">${I18N.t('fontWide')}</span>`], ['serif', `<span class="ff-serif">${I18N.t('fontSerif')}</span>`], ['mono', `<span class="ff-mono">${I18N.t('fontMono')}</span>`]]);
-    $('shapes').innerHTML = radios('shape', SHAPES.map(([v, k, svg]) => [v, `<svg class="mini" viewBox="0 0 24 24" aria-hidden="true">${svg}</svg>${I18N.t(k)}`]));
-    $('marks').innerHTML = radios('mark', [['icon', I18N.t('mkIcon')], ['text', I18N.t('mkText')], ['none', I18N.t('mkNone')]]);
-    $('empties').innerHTML = radios('empty', [['soft', I18N.t('emSoft')], ['outline', I18N.t('emOutline')], ['dashed', I18N.t('emDashed')]]);
-    $('strips').innerHTML = STRIPS.map((c, i) => `<input type="radio" name="strip" id="sb${i}" value="${c}"><label for="sb${i}" title="${c || I18N.t('sameAsCard')}" style="background:${c || 'repeating-linear-gradient(45deg,#fff 0 4px,#ddd 4px 8px)'}"><span class="sr-only">${c || I18N.t('sameAsCard')}</span></label>`).join('');
-    $('icons').innerHTML = UI.ICONS.map(ic =>
-      `<input type="radio" name="icon" id="ic-${ic}" value="${ic}"><label for="ic-${ic}" title="${ICON_NAMES[I18N.lang][ic]}">${UI.icon(ic)}<span class="sr-only">${ICON_NAMES[I18N.lang][ic]}</span></label>`).join('');
-    $('colors').innerHTML = COLORS.map((c, i) => `<input type="radio" name="color" id="co${i}" value="${c}"><label for="co${i}" style="background:${c}"><span class="sr-only">${c}</span></label>`).join('');
-    $('inks').innerHTML = INKS.map((c, i) => `<input type="radio" name="ink" id="in${i}" value="${c}"><label for="in${i}" style="background:${c}"><span class="sr-only">${c}</span></label>`).join('');
   }
-
-  function readForm() {
+  function readTexts() {
     const f = new FormData(form);
     const v = k => (f.get(k) || '').trim();
-    return { ...current, business: v('business') || 'Il tuo locale', title: v('title') || 'Carta fedeltà', reward: v('reward') || 'un premio',
-      titleEn: v('titleEn'), rewardEn: v('rewardEn'), stampsNeeded: stamps,
-      icon: f.get('icon') || 'cup', logo, color: f.get('color') || '#FFFFFF', ink: f.get('ink') || '#2B32FF', type: f.get('tpl') || current.type,
-      tagline: v('tagline'), style: f.get('style') || '', font: f.get('font') || 'sans', strip: f.get('strip') || '',
-      shape: f.get('shape') || 'dot', mark: f.get('mark') || 'icon', markText: v('markText'), empty: f.get('empty') || 'soft' };
+    return { business: v('business') || 'Il tuo locale', title: v('title') || 'Carta fedeltà', reward: v('reward') || 'un premio',
+      titleEn: v('titleEn'), rewardEn: v('rewardEn'), stampsNeeded: stamps, type: f.get('tpl') || current.type };
   }
-  const check = (name, value) => { const el = form.querySelector(`input[name=${name}][value="${value}"]`) || form.querySelector(`input[name=${name}]`); if (el) el.checked = true; };
-  function fillForm(c) {
-    ['business', 'title', 'reward', 'titleEn', 'rewardEn', 'tagline', 'markText'].forEach(k => form[k].value = c[k] || '');
-    const look = UI.lookOf(c);
-    check('font', look.font); check('shape', look.shape); check('mark', look.mark); check('empty', look.empty); check('strip', look.strip);
-    form.querySelectorAll('input[name=style]').forEach(r => r.checked = r.value === c.style);
+  function fillTexts(c) {
+    ['business', 'title', 'reward', 'titleEn', 'rewardEn'].forEach(k => form[k].value = c[k] || '');
     stamps = c.stampsNeeded;
-    logo = c.logo || ''; $('logo-remove').hidden = !logo;
-    check('icon', c.icon); check('color', c.color); check('ink', c.ink || '#2B32FF');
     form.querySelectorAll('input[name=tpl]').forEach(r => r.checked = r.value === c.type);
     $('stamps-out').textContent = stamps;
   }
+
+  // ---------- design (sent for approval) ----------
+  const editor = DesignEditor.mount($('editor'), { mode: 'owner', onChange: d => { draft = d; setView('draft'); } });
+  const designDiffers = () => JSON.stringify(Store.designOf({ ...current, ...draft })) !== JSON.stringify(Store.designOf(current));
+
+  function renderReview() {
+    const r = current.review, box = $('review');
+    if (!r) { box.hidden = true; return; }
+    box.hidden = false;
+    box.className = 'review ' + r.status;
+    box.innerHTML = r.status === 'pending' ? `<b>${I18N.t('d.rvPending')}</b>${I18N.t('d.rvPendingP')}`
+      : r.status === 'changes' ? `<b>${I18N.t('d.rvChanges')}</b>${UI.esc(r.reply)}`
+      : `<b>${I18N.t('d.rvApproved')}</b>${I18N.t('d.rvApprovedP')}`;
+  }
+  function setView(v) {
+    view = v;
+    $('which').hidden = !(designDiffers() || (current.review && current.review.status === 'pending'));
+    $('which').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === view)));
+    preview();
+  }
+  $('which').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setView(b.dataset.v); });
+
   function preview() {
-    const c = readForm();
-    $('icons').hidden = c.mark !== 'icon';
-    $('mark-text-field').hidden = c.mark !== 'text';
-    $('preview').innerHTML = UI.renderPass(c, null, { stamps: Math.min(3, c.stampsNeeded) });
+    const texts = readTexts();
+    const look = view === 'live' ? Store.designOf(current) : draft;
+    $('preview').innerHTML = UI.renderPass({ ...current, ...texts, ...look }, null, { stamps: Math.min(3, texts.stampsNeeded) });
     $('stamps-out').textContent = stamps;
   }
-  // Logo: scaled down in the browser so it stays small enough to store.
-  $('logo-file').addEventListener('change', e => {
-    const file = e.target.files[0]; if (!file) return;
-    const img = new Image();
-    img.onload = () => {
-      const k = Math.min(1, 600 / img.width, 180 / img.height);
-      const cv = document.createElement('canvas');
-      cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
-      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
-      logo = cv.toDataURL('image/png'); $('logo-remove').hidden = false;
-      URL.revokeObjectURL(img.src); e.target.value = '';
-      markDirty();
-    };
-    img.src = URL.createObjectURL(file);
-  });
-  $('logo-remove').addEventListener('click', () => { logo = ''; $('logo-remove').hidden = true; markDirty(); });
   UI.platformSwitch($('plat'), () => preview());
 
-  function markDirty() { dirty = true; $('status').textContent = I18N.t('d.unsaved'); preview(); }
+  $('design-form').addEventListener('submit', e => {
+    e.preventDefault();
+    current = Store.proposeDesign(current.id, draft, e.target.note.value);
+    e.target.note.value = '';
+    renderReview(); setView('draft');
+    UI.toast(I18N.t('d.sent'));
+  });
+  $('design-reset').addEventListener('click', () => {
+    draft = Store.designOf(current); editor.set(draft); setView('live');
+  });
 
-  form.addEventListener('input', e => { if (e.target.name !== 'tpl' && e.target.type !== 'file') markDirty(); });
+  function markDirty() { dirty = true; $('status').textContent = I18N.t('d.unsaved'); preview(); }
+  form.addEventListener('input', e => { if (e.target.name !== 'tpl') markDirty(); });
   form.addEventListener('change', e => {
-    if (e.target.name === 'style') {
-      const st = CONFIG.styles.find(x => x.id === e.target.value).look;
-      check('color', st.color); check('ink', st.ink); check('shape', st.shape); check('mark', st.mark);
-      check('empty', st.empty); check('font', st.font); check('strip', st.strip);
-      if (st.markText) form.markText.value = st.markText;
-      markDirty(); return;
-    }
-    // Changing any single detail means the card no longer matches a preset exactly.
-    if (['color', 'ink', 'shape', 'mark', 'empty', 'font', 'strip'].includes(e.target.name)) form.querySelectorAll('input[name=style]').forEach(r => r.checked = false);
     if (e.target.name !== 'tpl') return;
-    // A template fills in everything except the business name.
+    // A template fills in the texts and number of stamps; the business name stays.
     const tp = CONFIG.templates.find(x => x.id === e.target.value), main = I18N.pick(tp);
     form.title.value = main.title; form.reward.value = main.reward;
     form.titleEn.value = I18N.lang === 'it' ? tp.en.title : ''; form.rewardEn.value = I18N.lang === 'it' ? tp.en.reward : '';
-    stamps = tp.stamps; check('icon', tp.icon);
+    stamps = tp.stamps;
     markDirty();
   });
   form.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => { stamps = Math.max(3, Math.min(15, stamps + +b.dataset.step)); markDirty(); }));
   form.addEventListener('submit', e => {
     e.preventDefault();
-    current = Store.saveCard(readForm());
+    current = Store.saveCard({ ...current, ...readTexts() });
     dirty = false; $('status').textContent = '';
     fillSelect(); renderPrint(); renderPromote();
     UI.toast(I18N.t('d.saved'));
@@ -458,7 +446,10 @@ I18N.add({
   }
   function loadCard(id) {
     current = Store.getCard(id) || Store.listCards()[0];
-    fillSelect(); fillForm(current); preview();
+    fillSelect(); fillTexts(current);
+    // Show a pending proposal in the editor so the owner can see what they sent.
+    draft = current.review && current.review.status === 'pending' ? { ...Store.designOf(current), ...current.review.design } : Store.designOf(current);
+    editor.set(draft); renderReview(); setView('draft');
     dirty = false; $('status').textContent = '';
     renderPrint(); renderPromote(); renderCustomers();
     history.replaceState(null, '', `?card=${current.id}${location.hash}`);
@@ -565,13 +556,13 @@ I18N.add({
   // ---------- start ----------
   I18N.switchers();
   document.addEventListener('langchange', () => {
-    const keep = readForm();
-    controls(); fillForm(keep); preview();
+    const keep = readTexts();
+    controls(); fillTexts({ ...current, ...keep }); editor.redraw(); renderReview(); preview();
     if (dirty) $('status').textContent = I18N.t('d.unsaved');
     instaLang = I18N.lang;
     renderPrint(); renderPromote(); renderCustomers();
   });
-  Store.onChange(() => { current = Store.getCard(current.id) || current; renderCustomers(); });
+  Store.onChange(() => { current = Store.getCard(current.id) || current; renderCustomers(); renderReview(); setView(view); });
 
   I18N.apply();
   controls();

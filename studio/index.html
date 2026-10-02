@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Studio · Witkowski Design</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+<style>
+main{max-width:1320px;margin:0 auto;padding:24px 24px 72px;display:grid;grid-template-columns:230px 1fr;gap:28px;align-items:start}
+.side h2{font-size:14px;font:500 12px/1.2 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 10px}
+.list{list-style:none;margin:0 0 24px;padding:0;display:grid;gap:6px}
+.list button{width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font:500 15px/1.2 var(--font);cursor:pointer;color:var(--ink)}
+.list button[aria-current="true"]{border-color:var(--ink)}
+.list small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.badge{font:600 11px/1 var(--font);padding:5px 8px;border-radius:999px;background:var(--pop);color:#fff;white-space:nowrap}
+.badge.changes{background:#B5442E}
+.empty-list{color:var(--muted);font-size:14px;margin:0 0 24px}
+.work{display:grid;grid-template-columns:minmax(380px,1fr) 520px;gap:28px;align-items:start}
+.work h1{font-size:28px;font-stretch:112%;font-weight:800}
+.work .sub{color:var(--ink-2);margin:6px 0 20px}
+.note{padding:14px 16px;border-radius:12px;background:var(--pop-wash);margin-bottom:20px;font-size:15px}
+.note b{display:block}
+.compare{position:sticky;top:84px;display:grid;gap:14px}
+.compare .pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.compare figure{margin:0;display:grid;gap:8px;justify-items:center}
+.compare figcaption{font:500 12px/1 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.compare .screen{width:100%;background:#000;border-radius:24px;padding:18px 14px;display:grid;justify-items:center}
+.compare .screen:has(.pass.google){background:#f1f3f4}
+.decide{border:1.5px solid var(--ink);border-radius:16px;padding:18px;display:grid;gap:12px}
+.decide .row{display:flex;gap:8px;flex-wrap:wrap}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+@media (max-width:1100px){ .work{grid-template-columns:1fr} .compare{position:static} }
+@media (max-width:800px){ main{grid-template-columns:1fr} .compare .pair{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<header class="appbar">
+  <a class="brand" href="../index.html"><span class="brand-mark" aria-hidden="true"></span><span>Studio <span class="muted" style="font-weight:500;font-stretch:100%">· Witkowski Design</span></span></a>
+  <div class="right"><div class="lang"></div></div>
+</header>
+
+<main>
+  <aside class="side">
+    <h2 data-i18n="s.toReview"></h2>
+    <ul class="list" id="pending"></ul>
+    <h2 data-i18n="s.all"></h2>
+    <ul class="list" id="all"></ul>
+  </aside>
+
+  <section class="work" id="work">
+    <div>
+      <h1 id="w-title"></h1>
+      <p class="sub" data-i18n="s.sub"></p>
+      <div class="note" id="w-note" hidden></div>
+      <div class="panel"><div id="editor"></div></div>
+      <div class="tools">
+        <button class="btn line small" type="button" id="export" data-i18n="s.export"></button>
+        <label class="btn line small" for="import" style="cursor:pointer" data-i18n="s.import"></label>
+        <input type="file" id="import" accept="application/json" class="sr-only">
+      </div>
+    </div>
+    <div class="compare">
+      <div class="platform" id="plat" style="justify-self:center"></div>
+      <div class="pair">
+        <figure><figcaption data-i18n="s.live"></figcaption><div class="screen" id="live"></div></figure>
+        <figure><figcaption data-i18n="s.new"></figcaption><div class="screen" id="next"></div></figure>
+      </div>
+      <div class="decide">
+        <div class="row">
+          <button class="btn pop" type="button" id="approve" data-i18n="s.approve"></button>
+          <button class="btn line" type="button" id="ask" data-i18n="s.ask"></button>
+        </div>
+        <label class="field" style="margin:0"><span data-i18n="s.reply"></span><textarea id="reply" rows="2" data-i18n-attr="placeholder:s.replyPh"></textarea></label>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="../assets/vendor/qrcode.js"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/i18n.js"></script>
+<script src="../assets/js/store.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script src="../assets/js/design-editor.js"></script>
+<script>
+I18N.add({
+  it: {
+    's.toReview': 'Da approvare', 's.all': 'Tutte le carte', 's.none': 'Niente da approvare.',
+    's.sub': 'Qui disegni la carta su misura, oppure controlli e sistemi le modifiche proposte dal locale. I clienti vedono il nuovo design solo dopo "Approva e pubblica".',
+    's.from': 'Messaggio dal locale', 's.live': 'Ora, per i clienti', 's.new': 'Nuovo design',
+    's.approve': 'Approva e pubblica', 's.ask': 'Chiedi una modifica', 's.reply': 'Risposta al locale', 's.replyPh': 'Es. Il logo è troppo piccolo, mandacelo in alta risoluzione.',
+    's.published': 'Pubblicato. I clienti vedono il nuovo design.', 's.asked': 'Richiesta inviata al locale.', 's.needReply': 'Scrivi cosa cambiare, poi invia.',
+    's.pending': 'Da approvare', 's.changes': 'Modifica chiesta', 's.export': 'Esporta il design', 's.import': 'Importa un design', 's.imported': 'Design importato. Controlla e pubblica.'
+  },
+  en: {
+    's.toReview': 'To review', 's.all': 'All cards', 's.none': 'Nothing to review.',
+    's.sub': 'Design the card from scratch here, or check and fix the changes a café proposed. Customers only see the new design after "Approve and publish".',
+    's.from': 'Message from the café', 's.live': 'Live now', 's.new': 'New design',
+    's.approve': 'Approve and publish', 's.ask': 'Ask for a change', 's.reply': 'Reply to the café', 's.replyPh': 'E.g. The logo is too small, please send it in high resolution.',
+    's.published': 'Published. Customers see the new design.', 's.asked': 'Request sent to the café.', 's.needReply': 'Write what to change, then send.',
+    's.pending': 'To review', 's.changes': 'Change asked', 's.export': 'Export design', 's.import': 'Import a design', 's.imported': 'Design imported. Check it and publish.'
+  }
+});
+
+(() => {
+  const $ = id => document.getElementById(id);
+  let card = null, design = null;
+  const editor = DesignEditor.mount($('editor'), { mode: 'designer', onChange: d => { design = d; previews(); } });
+
+  function lists() {
+    const pending = Store.listPending();
+    const item = c => {
+      const st = c.review && c.review.status;
+      const badge = st === 'pending' ? `<span class="badge">${I18N.t('s.pending')}</span>` : st === 'changes' ? `<span class="badge changes">${I18N.t('s.changes')}</span>` : '';
+      return `<li><button type="button" data-id="${c.id}" aria-current="${card && c.id === card.id}"><span>${UI.esc(c.business)}<small>${UI.esc(c.title)}</small></span>${badge}</button></li>`;
+    };
+    $('pending').innerHTML = pending.length ? pending.map(item).join('') : '';
+    $('pending').insertAdjacentHTML('afterend', '');
+    document.querySelector('.empty-list')?.remove();
+    if (!pending.length) $('pending').insertAdjacentHTML('afterend', `<p class="empty-list">${I18N.t('s.none')}</p>`);
+    $('all').innerHTML = Store.listCards().map(item).join('');
+  }
+
+  function open(id) {
+    card = Store.getCard(id);
+    const r = card.review;
+    design = r && r.status === 'pending' ? { ...Store.designOf(card), ...r.design } : Store.designOf(card);
+    editor.set(design);
+    $('w-title').textContent = card.business;
+    $('w-note').hidden = !(r && r.status === 'pending' && r.note);
+    if (r && r.note) $('w-note').innerHTML = `<b>${I18N.t('s.from')}</b>${UI.esc(r.note)}`;
+    $('reply').value = '';
+    lists(); previews();
+  }
+
+  function previews() {
+    $('live').innerHTML = UI.renderPass(card, null, { stamps: 4 });
+    $('next').innerHTML = UI.renderPass({ ...card, ...design }, null, { stamps: 4 });
+  }
+
+  $('approve').addEventListener('click', () => { card = Store.approveDesign(card.id, design); UI.toast(I18N.t('s.published')); open(card.id); });
+  $('ask').addEventListener('click', () => {
+    const reply = $('reply').value.trim();
+    if (!reply) { UI.toast(I18N.t('s.needReply')); $('reply').focus(); return; }
+    if (!card.review) Store.proposeDesign(card.id, design, '');
+    Store.askChanges(card.id, reply); UI.toast(I18N.t('s.asked')); open(card.id);
+  });
+  document.addEventListener('click', e => { const b = e.target.closest('.list button'); if (b) open(b.dataset.id); });
+
+  // Export / import a design as a small JSON file, to move it between devices.
+  $('export').addEventListener('click', () => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify({ business: card.business, design }, null, 2)], { type: 'application/json' }));
+    a.download = `${card.business.replace(/\W+/g, '-').toLowerCase()}-design.json`;
+    a.click();
+  });
+  $('import').addEventListener('change', async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try { const data = JSON.parse(await f.text()); design = { ...design, ...(data.design || {}) }; editor.set(design); previews(); UI.toast(I18N.t('s.imported')); } catch (err) {}
+    e.target.value = '';
+  });
+
+  UI.platformSwitch($('plat'), previews);
+  I18N.switchers();
+  I18N.apply();
+  document.addEventListener('langchange', () => { editor.redraw(); lists(); previews(); });
+  Store.onChange(() => { lists(); });
+  const first = new URLSearchParams(location.search).get('card') || (Store.listPending()[0] || Store.listCards()[0]).id;
+  open(first);
+})();
+</script>
+</body>
+</html>

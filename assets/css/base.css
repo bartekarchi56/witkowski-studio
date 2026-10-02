@@ -128,6 +128,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink)}
 .wp-dot.s-square{border-radius:18%}
 .wp-dot.s-hanko{border-radius:12%}
 .wp-dot.on{background:var(--s);color:#fff;border:0;box-shadow:none}
+/* the designer's own stamp artwork */
+.wp-dot.s-art.on{background:none}
+.wp-dot.s-art img{width:100%;height:100%;object-fit:contain;transform:rotate(var(--r))}
+.wp-strip{background-size:cover;background-position:center}
 .wp-dot.s-ring.on{background:transparent;color:var(--s);box-shadow:inset 0 0 0 2.5px var(--s)}
 /* hanko: a red seal, a frame inside a frame, pressed at a slight angle */
 .wp-dot.s-hanko.on{background:transparent;color:var(--s);box-shadow:inset 0 0 0 2.5px var(--s),inset 0 0 0 4.5px var(--sb),inset 0 0 0 5.5px var(--s);transform:rotate(var(--r));opacity:.92}
@@ -156,7 +160,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink)}
 .wp-ready{margin:4px 18px 0;padding:9px 12px;border-radius:8px;background:var(--s);color:#fff;font-weight:600;font-size:13px;text-align:center}
 
 /* Apple Wallet store card */
-.pass.apple{border-radius:12px;aspect-ratio:1/1.4;overflow:visible;display:flex;flex-direction:column;box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 10px 30px -10px rgba(0,0,0,.5)}
+.pass.apple{border-radius:12px;display:flex;flex-direction:column;box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 10px 30px -10px rgba(0,0,0,.5)}
 .apple .wp-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:14px 16px 0;min-height:52px}
 .apple .wp-logo{display:flex;align-items:center;gap:8px;min-width:0;font-size:20px;font-weight:500;letter-spacing:-.01em;line-height:1.1}
 .apple .wp-logo img{max-height:44px;max-width:200px;object-fit:contain;object-position:left center}
@@ -167,8 +171,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink)}
 .apple .wp-strip{padding:18px 26px;margin:10px 0 8px}
 .apple .wp-fields{display:flex;justify-content:space-between;gap:12px;padding:6px 16px 0}
 .apple .wp-fields > div:last-child{text-align:right}
-.apple .wp-code{margin-top:auto;padding:12px 0 10px}
-.pass.apple.compact{aspect-ratio:auto;padding-bottom:16px}
+.apple .wp-code{margin-top:auto;padding:22px 0 10px}
+.pass.apple.compact{padding-bottom:16px}
 .apple .wp-tap{font-size:11px;opacity:.55;text-align:center;padding-bottom:10px}
 
 /* Google Wallet loyalty card */
@@ -205,3 +209,13 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink)}
   *,*::before,*::after{transition:none!important;animation:none!important}
   html{scroll-behavior:auto}
 }
+
+/* ---------- design editor (dashboard + studio) ---------- */
+.de-field{margin-bottom:22px}
+.de-field > .chips svg{width:18px;height:18px}
+.chips .sw{width:16px;height:16px;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.2)}
+.de-up{display:flex;align-items:center;gap:12px;margin-top:6px}
+.de-up label{cursor:pointer}
+.de-thumb img{height:40px;max-width:140px;object-fit:contain;border-radius:6px;box-shadow:0 0 0 1.5px var(--line);background:repeating-conic-gradient(#eee 0 25%,#fff 0 50%) 0 0/10px 10px}
+.de-icons label{padding:9px}
+.de-marktext{margin-top:10px;max-width:90px;font:700 22px/1 "Noto Serif JP","EB Garamond",serif!important;text-align:center}

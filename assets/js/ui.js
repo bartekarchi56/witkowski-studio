@@ -84,7 +84,9 @@
     let dots = '';
     for (let i = 0; i < need; i++) {
       const on = i < have;
-      dots += `<span class="wp-dot s-${look.shape} e-${look.empty}${on ? ' on' : ''}${opts.pop === i ? ' pop' : ''}" style="--r:${ANGLES[i]}deg">${on ? markHtml : ''}</span>`;
+      dots += card.stampImage
+        ? `<span class="wp-dot s-art e-${look.empty}${on ? ' on' : ''}${opts.pop === i ? ' pop' : ''}" style="--r:${ANGLES[i]}deg">${on ? `<img src="${esc(card.stampImage)}" alt="">` : ''}</span>`
+        : `<span class="wp-dot s-${look.shape} e-${look.empty}${on ? ' on' : ''}${opts.pop === i ? ' pop' : ''}" style="--r:${ANGLES[i]}deg">${on ? markHtml : ''}</span>`;
     }
     const bg = card.color || '#FFFFFF';
     // Tourists browsing in English see the English text when the café wrote one.
@@ -95,7 +97,7 @@
     const codeBox = opts.compact ? '' : `<div class="wp-code"><div class="qr" aria-hidden="true">${qrSvg(code)}</div><small>${esc(code)}</small></div>`;
     const field = (label, value, cls = '') => `<div class="${cls}"><span class="wp-label">${esc(label)}</span><span class="wp-val">${esc(value)}</span></div>`;
     const ready = full ? `<div class="wp-ready">${t('pass.ready')}</div>` : '';
-    const strip = `<div class="wp-strip" style="--cols:${cols}" aria-hidden="true">${dots}</div>`;
+    const strip = `<div class="wp-strip" style="--cols:${cols}${card.stripImage ? `;background-image:url('${esc(card.stripImage)}')` : ''}" aria-hidden="true">${dots}</div>`;
     const style = `--c:${esc(bg)};--t:${textOn(bg)};--s:${esc(card.ink || '#2B32FF')};--sb:${esc(look.strip || bg)}`;
     const fontCls = ` f-${look.font}`;
     const aria = esc(t('pass.aria', { title, have, need }));

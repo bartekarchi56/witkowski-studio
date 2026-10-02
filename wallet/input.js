@@ -16,6 +16,8 @@ export function readPassRequest(raw) {
     color: str(card.color, 7), ink: str(card.ink, 7), icon: str(card.icon, 12),
     logo: typeof card.logo === 'string' && card.logo.length < 800000 ? card.logo : '',
     logoAuto: typeof card.logoAuto === 'string' && card.logoAuto.length < 400000 ? card.logoAuto : '',
+    stampImage: typeof card.stampImage === 'string' && card.stampImage.length < 400000 ? card.stampImage : '',
+    stripImage: typeof card.stripImage === 'string' && card.stripImage.length < 900000 ? card.stripImage : '',
     markImage: typeof card.markImage === 'string' && card.markImage.length < 200000 ? card.markImage : '',
     shape: str(card.shape, 10), mark: str(card.mark, 10), markText: str(card.markText, 2),
     empty: str(card.empty, 10), strip: str(card.strip, 7), tagline: str(card.tagline, 30)

@@ -56,6 +56,9 @@
     return db;
   }
 
+  // Everything about how a card looks (as opposed to its text and rules).
+  const DESIGN_KEYS = ['style', 'color', 'ink', 'shape', 'mark', 'markText', 'empty', 'font', 'strip', 'tagline', 'icon', 'logo', 'stampImage', 'stripImage'];
+
   // Short, unambiguous codes staff can read out or type (no 0/O, 1/I).
   function code(len) {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -128,6 +131,33 @@
       save(db);
       return c;
     },
+
+    // ---- design review ----
+    // Café owners propose design changes; Witkowski Design approves them in
+    // the Studio. Customers keep seeing the live design until then.
+    DESIGN_KEYS,
+    designOf(card) { const d = {}; DESIGN_KEYS.forEach(k => { if (card[k] !== undefined) d[k] = card[k]; }); return d; },
+    proposeDesign(cardId, design, note) {
+      const db = load(); const card = db.cards[cardId];
+      if (!card) throw new Error('No card');
+      card.review = { status: 'pending', design, note: (note || '').trim(), sentAt: Date.now(), reply: '' };
+      save(db); return card;
+    },
+    approveDesign(cardId, design) {
+      const db = load(); const card = db.cards[cardId];
+      const d = design || (card.review && card.review.design) || {};
+      DESIGN_KEYS.forEach(k => { if (d[k] !== undefined) card[k] = d[k]; });
+      card.review = { status: 'approved', at: Date.now(), reply: '' };
+      card.updatedAt = Date.now();
+      save(db); return card;
+    },
+    askChanges(cardId, reply) {
+      const db = load(); const card = db.cards[cardId];
+      if (!card.review) return card;
+      card.review.status = 'changes'; card.review.reply = (reply || '').trim(); card.review.at = Date.now();
+      save(db); return card;
+    },
+    listPending() { return Object.values(load().cards).filter(c => c.review && c.review.status === 'pending').sort((a, b) => a.review.sentAt - b.review.sentAt); },
 
     stats(cardId) {
       const list = this.listCustomers(cardId);

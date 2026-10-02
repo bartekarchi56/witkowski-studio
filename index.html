@@ -76,6 +76,14 @@ section{padding:104px 0}
 .b-platform{color:#fff}
 .b-platform button[aria-pressed="true"]{background:#fff;color:var(--ink)}
 
+/* ---------- custom design gallery ---------- */
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.gallery figure{margin:0;background:#000;border-radius:28px;padding:28px 22px;display:grid;justify-items:center;gap:16px}
+.gallery figure:nth-child(2){background:var(--wash)}
+.gallery figcaption{color:#A9A9AE;font-size:14px;text-align:center}
+.gallery figure:nth-child(2) figcaption{color:var(--muted)}
+@media (max-width:900px){.gallery{grid-template-columns:1fr;max-width:380px;margin:0 auto}}
+
 /* ---------- what we do ---------- */
 .help-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
 .dolist{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink)}
@@ -183,7 +191,7 @@ footer .lang button[aria-pressed="true"]{background:#fff;color:var(--ink)}
     <ul>
       <li><a href="#come" data-i18n="nav.how"></a></li>
       <li><a href="#prova" data-i18n="nav.try"></a></li>
-      <li><a href="#aiuto" data-i18n="nav.help"></a></li>
+      <li><a href="#design" data-i18n="nav.help"></a></li>
       <li><a href="#prezzi" data-i18n="nav.pricing"></a></li>
       <li><a href="#faq">FAQ</a></li>
     </ul>
@@ -265,10 +273,6 @@ footer .lang button[aria-pressed="true"]{background:#fff;color:var(--ink)}
             <legend style="font-weight:600;font-size:15px;margin-bottom:8px;padding:0" data-i18n="b.type"></legend>
             <div class="chips" id="types"></div>
           </fieldset>
-          <fieldset class="field" style="border:0;padding:0;margin:0 0 18px">
-            <legend style="font-weight:600;font-size:15px;margin-bottom:8px;padding:0" data-i18n="b.style"></legend>
-            <div class="chips" id="bstyles"></div>
-          </fieldset>
           <label class="field"><span data-i18n="b.reward"></span>
             <input type="text" name="reward" maxlength="40">
           </label>
@@ -300,6 +304,23 @@ footer .lang button[aria-pressed="true"]{background:#fff;color:var(--ink)}
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- CUSTOM DESIGN -->
+  <section id="design">
+    <div class="wrap">
+      <div class="head">
+        <span class="label" data-i18n="ds.label"></span>
+        <h2 class="display" data-i18n="ds.title"></h2>
+        <p data-i18n="ds.lede"></p>
+      </div>
+      <div class="gallery" id="gallery"></div>
+      <ol class="steps" style="margin-top:56px">
+        <li class="step"><h3 data-i18n="ds.s1"></h3><p data-i18n="ds.s1p"></p></li>
+        <li class="step"><h3 data-i18n="ds.s2"></h3><p data-i18n="ds.s2p"></p></li>
+        <li class="step"><h3 data-i18n="ds.s3"></h3><p data-i18n="ds.s3p"></p></li>
+      </ol>
     </div>
   </section>
 
@@ -400,7 +421,7 @@ footer .lang button[aria-pressed="true"]{background:#fff;color:var(--ink)}
 <script>
 I18N.add({
   it: {
-    'nav.how': 'Come funziona', 'nav.try': 'Prova', 'nav.help': 'Cosa facciamo noi', 'nav.pricing': 'Prezzi',
+    'nav.how': 'Come funziona', 'nav.try': 'Prova', 'nav.help': 'Design su misura', 'nav.pricing': 'Prezzi',
     'nav.login': 'Accedi', 'nav.start': 'Prova gratis',
     'hero.a': 'La carta fedeltà che nessuno', 'hero.b': 'perde.',
     'hero.lede': 'Una carta a timbri nel Wallet dei tuoi clienti, su iPhone e Android. Senza app e senza cartoncini. E non sei da solo: la disegniamo con te, la stampiamo e ti diamo i post per farla conoscere.',
@@ -411,15 +432,21 @@ I18N.add({
     'hero.hLeft': 'Ancora {n} per il premio.', 'hero.hFull': 'Carta piena: il cliente vede "Premio pronto".',
     'hero.hDone': 'Premio dato. La carta riparte da zero, e il cliente torna.',
     'how.label': 'Come funziona', 'how.title': 'Tre passi e sei pronto.',
-    'how.s1': 'Crea la carta', 'how.s1p': 'Nome, premio, numero di timbri. Ti guidiamo passo passo, oppure la disegniamo noi per te.', 'how.s1w': 'Tu, una volta',
+    'how.s1': 'Disegniamo la tua carta', 'how.s1p': 'Ci racconti il locale e il premio. Noi disegniamo carta, timbro e poster su misura.', 'how.s1w': 'Tu, una volta',
     'how.s2': 'Il cliente inquadra il QR', 'how.s2p': 'Il poster alla cassa fa il lavoro. In 10 secondi la carta è sul suo telefono.', 'how.s2w': 'Il cliente, 10 secondi',
     'how.s3': 'Timbri dal telefono', 'how.s3p': 'Il barista inquadra la carta del cliente e tocca una volta. Carta piena? Si offre il premio.', 'how.s3w': 'Il barista, a ogni visita',
     'b.label': 'Prova con il tuo locale', 'b.title': 'Scrivi il nome. Ecco la tua carta.',
     'b.lede': 'Così la vedranno i tuoi clienti: sul telefono, alla cassa e su Instagram. Cambia quello che vuoi, si aggiorna subito.',
     'b.name': 'Nome del locale', 'b.namePh': 'Es. Bar Centrale', 'b.type': 'Che tipo di locale è?', 'b.style': 'Che stile?', 'b.reward': 'Il premio', 'b.stamps': 'Timbri per il premio',
-    'b.go': 'Crea questa carta', 'b.note': 'Gratis per 30 giorni. Non serve la carta di credito.',
+    'b.go': 'Crea questa carta', 'b.note': 'Questa è un\'anteprima. Il design definitivo lo disegniamo noi, su misura per il tuo locale.',
     'b.tPhone': 'Sul telefono', 'b.tPoster': 'Poster per la cassa', 'b.tInsta': 'Post Instagram',
     'b.cPhone': 'Nel Wallet del cliente, accanto ai biglietti e alle carte d\'imbarco.', 'b.cPoster': 'Formato A5. Te lo spediamo stampato, oppure lo stampi tu.', 'b.cInsta': 'Pronto da pubblicare. Lo scarichi con un tocco.',
+    'ds.label': 'Design su misura', 'ds.title': 'Ogni carta la disegniamo noi.',
+    'ds.lede': 'Niente modelli uguali per tutti: carta, timbro e poster nascono dal tuo locale. Vuoi cambiare il logo o i colori? Lo fai tu dalla tua area, e noi controlliamo prima che lo vedano i clienti.',
+    'ds.s1': 'Ci racconti il locale', 'ds.s1p': 'Logo, colori, qualche foto e il premio. Bastano dieci minuti, anche al bancone.',
+    'ds.s2': 'Ti mandiamo la proposta', 'ds.s2p': 'Disegniamo la carta e il timbro su misura. La vedi sul telefono prima che parta.',
+    'ds.s3': 'Tu cambi, noi controlliamo', 'ds.s3p': 'Puoi cambiare logo, colori e sfondo quando vuoi. Ogni modifica la approviamo noi, così la carta resta sempre curata.',
+    'ds.g1': 'The Coffee, Milano: sigilli giapponesi', 'ds.g2': 'Esempio: bottega di quartiere', 'ds.g3': 'Esempio: cocktail bar',
     'h.label': 'Cosa facciamo noi', 'h.title': 'Non serve essere grafici. Né esperti di marketing.',
     'h.lede': 'Gli altri ti danno uno strumento e ti lasciano da solo. Con Timbro hai qualcuno che ti aiuta, dall\'idea al primo cliente.',
     'h.1': 'Disegniamo la carta con te', 'h.1p': 'Con il tuo logo e i tuoi colori, per Apple Wallet e Google Wallet. Scegli tu il premio, al resto pensiamo noi.',
@@ -448,7 +475,7 @@ I18N.add({
     'ft.dash': 'Area locale', 'ft.stamper': 'Timbratore per baristi', 'ft.example': 'Esempio: The Coffee'
   },
   en: {
-    'nav.how': 'How it works', 'nav.try': 'Try it', 'nav.help': 'What we do', 'nav.pricing': 'Pricing',
+    'nav.how': 'How it works', 'nav.try': 'Try it', 'nav.help': 'Custom design', 'nav.pricing': 'Pricing',
     'nav.login': 'Log in', 'nav.start': 'Try it free',
     'hero.a': 'The loyalty card nobody', 'hero.b': 'loses.',
     'hero.lede': 'A stamp card in your customers\' Wallet, on iPhone and Android. No app, no paper cards. And you\'re not on your own: we design it with you, print it and hand you the posts to promote it.',
@@ -459,15 +486,21 @@ I18N.add({
     'hero.hLeft': '{n} more to the reward.', 'hero.hFull': 'Full card: the customer sees "Reward ready".',
     'hero.hDone': 'Reward given. The card starts again, and the customer comes back.',
     'how.label': 'How it works', 'how.title': 'Three steps and you\'re ready.',
-    'how.s1': 'Create the card', 'how.s1p': 'Name, reward, number of stamps. We guide you step by step, or design it for you.', 'how.s1w': 'You, once',
+    'how.s1': 'We design your card', 'how.s1p': 'Tell us about your place and the reward. We design the card, the stamp and the poster for you.', 'how.s1w': 'You, once',
     'how.s2': 'Customers scan the QR', 'how.s2p': 'The poster at the till does the work. In 10 seconds the card is on their phone.', 'how.s2w': 'Your customer, 10 seconds',
     'how.s3': 'Stamp from your phone', 'how.s3p': 'Staff scan the customer\'s card and tap once. Full card? Hand over the reward.', 'how.s3w': 'Your staff, every visit',
     'b.label': 'Try it with your place', 'b.title': 'Type your name. Here\'s your card.',
     'b.lede': 'This is how your customers will see it: on their phone, at the till and on Instagram. Change anything, it updates right away.',
     'b.name': 'Name of your place', 'b.namePh': 'E.g. Corner Café', 'b.type': 'What kind of place is it?', 'b.style': 'Which style?', 'b.reward': 'The reward', 'b.stamps': 'Stamps for the reward',
-    'b.go': 'Create this card', 'b.note': 'Free for 30 days. No credit card needed.',
+    'b.go': 'Create this card', 'b.note': 'This is a preview. We design the final card for your place.',
     'b.tPhone': 'On the phone', 'b.tPoster': 'Poster for the till', 'b.tInsta': 'Instagram post',
     'b.cPhone': 'In your customer\'s Wallet, next to their tickets and boarding passes.', 'b.cPoster': 'A5 size. We post it to you printed, or you print it yourself.', 'b.cInsta': 'Ready to publish. Download it in one tap.',
+    'ds.label': 'Custom design', 'ds.title': 'We design every card.',
+    'ds.lede': 'No one-size-fits-all templates: the card, the stamp and the poster come from your place. Want to change the logo or colours? Do it from your account, and we check it before your customers see it.',
+    'ds.s1': 'Tell us about your place', 'ds.s1p': 'Logo, colours, a few photos and the reward. Ten minutes is enough, even at the counter.',
+    'ds.s2': 'We send you a proposal', 'ds.s2p': 'We design the card and the stamp for you. You see it on your phone before it goes live.',
+    'ds.s3': 'You change, we check', 'ds.s3p': 'Change the logo, colours and background whenever you like. We approve every change, so the card always looks right.',
+    'ds.g1': 'The Coffee, Milan: Japanese seals', 'ds.g2': 'Example: neighbourhood bakery', 'ds.g3': 'Example: cocktail bar',
     'h.label': 'What we do for you', 'h.title': 'You don\'t need to be a designer. Or a marketer.',
     'h.lede': 'Other services hand you a tool and leave you to it. With Timbro you get someone who helps, from the idea to your first customer.',
     'h.1': 'We design the card with you', 'h.1p': 'With your logo and colours, for Apple Wallet and Google Wallet. You choose the reward, we handle the rest.',
@@ -529,6 +562,7 @@ I18N.add({
       `<input type="radio" name="type" id="ty-${tp.id}" value="${tp.id}" ${tp.id === typeId ? 'checked' : ''}><label for="ty-${tp.id}">${UI.icon(tp.icon)}${UI.esc(I18N.pick(tp).type)}</label>`).join('');
   }
   function drawStyles() {
+    if (!document.getElementById('bstyles')) return;
     document.getElementById('bstyles').innerHTML = CONFIG.styles.map(st =>
       `<input type="radio" name="bstyle" id="bs-${st.id}" value="${st.id}" ${st.id === styleId ? 'checked' : ''}><label for="bs-${st.id}"><span style="width:14px;height:14px;border-radius:50%;background:${st.look.ink};box-shadow:0 0 0 2px ${st.look.color === '#FFFFFF' ? '#3A3A3F' : st.look.color}"></span>${UI.esc(I18N.pick(st))}</label>`).join('');
   }
@@ -631,11 +665,21 @@ I18N.add({
     document.getElementById('contact').innerHTML = out.join('');
   }
 
+  // ---------- custom design examples ----------
+  function gallery() {
+    const ex = [
+      [Store.getCard('the-coffee'), 'ds.g1'],
+      [{ business: 'Forno Bottega', title: 'Carta pane', reward: 'una focaccia gratis', titleEn: 'Bread card', rewardEn: 'a free focaccia', stampsNeeded: 8, icon: 'cake', ...CONFIG.styles.find(x => x.id === 'bottega').look, tagline: 'dal 1962' }, 'ds.g2'],
+      [{ business: 'Bar Brera', title: 'Carta aperitivo', reward: 'uno spritz gratis', titleEn: 'Aperitivo card', rewardEn: 'a free spritz', stampsNeeded: 8, icon: 'glass', ...CONFIG.styles.find(x => x.id === 'milano').look }, 'ds.g3']
+    ];
+    document.getElementById('gallery').innerHTML = ex.map(([c, k]) => `<figure>${UI.renderPass(c, null, { stamps: 5, platform: 'apple' })}<figcaption>${I18N.t(k)}</figcaption></figure>`).join('');
+  }
+
   function all() {
     I18N.apply();
     hero(); drawTypes(); drawStyles();
     if (!rewardTouched) form.reward.value = I18N.pick(tpl()).reward;
-    builder(); kit(); plans(); contact();
+    builder(); kit(); plans(); contact(); gallery();
     document.title = L() === 'it' ? 'Timbro · La carta fedeltà digitale per il tuo bar' : 'Timbro · The digital loyalty card for your café';
   }
   // ?bar=Name (used by the brochure QR) opens the builder with that name.

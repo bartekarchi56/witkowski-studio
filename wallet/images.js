@@ -21,7 +21,7 @@ const iconPath = (name, x, y, size, colour) => PATHS[name]
   : '';
 
 const ANGLES = [-8, 5, -3, 9, -6, 3, -10, 7, -2, 6, -7, 4, -4, 8, -9, 2, -5, 10, -1, 5];
-const pngData = v => /^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(v || '') && v.length < 200000 ? v : '';
+const pngData = (v, max = 200000) => /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(v || '') && v.length < max ? v : '';
 
 /**
  * The stamp grid, in the card's own style (shape, mark, empty boxes,
@@ -60,6 +60,8 @@ export async function strip(card, have, { w = 375, h = 123, scale = 1 } = {}) {
         : box(x + 0.75, y + 0.75, d - 1.5, `fill="none" stroke="${faint}${empty === 'dashed' ? '0.4' : '0.28'})" stroke-width="1.5"${empty === 'dashed' ? ' stroke-dasharray="3 3"' : ''}`);
       continue;
     }
+    const art = pngData(card.stampImage, 400000);
+    if (art) { out += `<image href="${art}" x="${x}" y="${y}" width="${d}" height="${d}" preserveAspectRatio="xMidYMid meet" transform="rotate(${ANGLES[i]} ${x + d / 2} ${y + d / 2})"/>`; continue; }
     let g = '';
     if (shape === 'ring') g += box(x + 1.25, y + 1.25, d - 2.5, `fill="none" stroke="${ink}" stroke-width="2.5"`);
     else if (shape === 'hanko') g += box(x + 1.25, y + 1.25, d - 2.5, `fill="none" stroke="${ink}" stroke-width="2.5"`) + box(x + 5, y + 5, d - 10, `fill="none" stroke="${ink}" stroke-width="1"`);
@@ -71,7 +73,7 @@ export async function strip(card, have, { w = 375, h = 123, scale = 1 } = {}) {
     out += shape === 'hanko' ? `<g opacity="0.92" transform="rotate(${ANGLES[i]} ${x + d / 2} ${y + d / 2})">${g}</g>` : g;
   }
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${w * scale}" height="${h * scale}" viewBox="0 0 ${w} ${h}">
-    <rect width="${w}" height="${h}" fill="${stripBg}"/>${out}</svg>`;
+    <rect width="${w}" height="${h}" fill="${stripBg}"/>${pngData(card.stripImage, 900000) ? `<image href="${card.stripImage}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice"/>` : ''}${out}</svg>`;
   return sharp(Buffer.from(svg)).png().toBuffer();
 }
 

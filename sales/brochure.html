@@ -259,7 +259,7 @@ const COPY = {
         <div class="plan${p.popular ? ' pop-plan' : ''}">
           <div><b>${esc(tx.name)}</b>${p.popular ? `<span class="tag">${esc(L.popular)}</span>` : ''}<div style="color:var(--ink-2)">${esc(tx.for)}</div></div>
           <div class="pp">${fmt(p.month)} <small>${esc(L.month)}</small></div>
-          <div class="lim">${lim(p.locations, L.loc1, L.loc)} · ${lim(p.cards, L.cards1, L.cards)} · ${p.staff} ${L.staff} · ${esc(tx.extras[tx.extras.length > 3 ? 1 : 0])}</div>
+          <div class="lim">${lim(p.locations, L.loc1, L.loc)} · ${lim(p.cards, L.cards1, L.cards)} · ${p.staff} ${L.staff} · ${esc(tx.extras[p.id === 'start' ? 0 : 1])}</div>
         </div>`; }).join('')}</div>
       <p class="note">${esc(L.note.replace('{d}', CONFIG.trialDays))}</p>
       <p class="lbl" style="margin-top:7mm">${esc(L.startLbl)}</p>

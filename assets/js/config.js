@@ -27,11 +27,11 @@ window.CONFIG = {
 
   plans: [
     { id: 'start', month: 19, locations: 1, cards: 1, staff: 3,
-      it: { name: 'Start', for: 'Un bar, una sede', extras: ['Poster e QR da stampare', 'Piano di lancio di 7 giorni', 'Post Instagram pronti'] },
-      en: { name: 'Start', for: 'One café, one location', extras: ['Printable poster and QR code', '7-day launch plan', 'Ready-made Instagram posts'] } },
+      it: { name: 'Start', for: 'Un bar, una sede', extras: ['Carta disegnata su misura', 'Poster e QR da stampare', 'Piano di lancio di 7 giorni', 'Post Instagram pronti'] },
+      en: { name: 'Start', for: 'One café, one location', extras: ['Card designed for you', 'Printable poster and QR code', '7-day launch plan', 'Ready-made Instagram posts'] } },
     { id: 'plus', month: 35, locations: 3, cards: 3, staff: 10, popular: true,
-      it: { name: 'Plus', for: 'Vuoi che ci pensiamo noi', extras: ['Tutto di Start', 'Disegniamo noi la tua carta', 'Kit stampato a casa tua', 'Nuovi post e messaggi ogni mese'] },
-      en: { name: 'Plus', for: 'You want us to handle it', extras: ['Everything in Start', 'We design your card for you', 'Printed kit sent to you', 'New posts and messages every month'] } },
+      it: { name: 'Plus', for: 'Vuoi che ci pensiamo noi', extras: ['Tutto di Start', 'Kit stampato a casa tua', 'Poster e timbro su misura', 'Nuovi post e messaggi ogni mese'] },
+      en: { name: 'Plus', for: 'You want us to handle it', extras: ['Everything in Start', 'Printed kit sent to you', 'Custom poster and stamp', 'New posts and messages every month'] } },
     { id: 'pro', month: 69, locations: 10, cards: 10, staff: 50,
       it: { name: 'Pro', for: 'Più sedi o una catena', extras: ['Tutto di Plus', 'Statistiche per sede', 'Esporta i clienti in Excel', 'Assistenza prioritaria su WhatsApp'] },
       en: { name: 'Pro', for: 'Several locations or a chain', extras: ['Everything in Plus', 'Stats per location', 'Export customers to Excel', 'Priority WhatsApp support'] } }
