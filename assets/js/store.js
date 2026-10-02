@@ -132,11 +132,10 @@
       return c;
     },
 
-    // Applies a design at once (Start plan's simple customisation).
-    applyDesign(cardId, design) {
+    // Plus/Pro: the café asks Witkowski Design for a change in words.
+    requestDesign(cardId, note) {
       const db = load(); const card = db.cards[cardId];
-      DESIGN_KEYS.forEach(k => { if (design[k] !== undefined) card[k] = design[k]; });
-      delete card.review; card.updatedAt = Date.now();
+      card.review = { status: 'pending', kind: 'request', design: {}, note: (note || '').trim(), sentAt: Date.now(), reply: '' };
       save(db); return card;
     },
 

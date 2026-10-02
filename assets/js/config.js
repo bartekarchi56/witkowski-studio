@@ -25,12 +25,13 @@ window.CONFIG = {
   trialDays: 30,
   yearlyMonths: 10,       // pay 10 months, get 12
 
-  // design: 'simple' = the café customises with ready-made options, live at once;
-  //         'custom' = Witkowski Design designs it, changes need approval.
+  // design: 'self'   = the café customises logo, colours, background and stamp;
+  //                    every change is approved by Witkowski Design first.
+  //         'custom' = Witkowski Design designs the card; the café asks for changes.
   plans: [
-    { id: 'start', design: 'simple', month: 19, locations: 1, cards: 1, staff: 3,
-      it: { name: 'Start', for: 'Un bar, una sede', extras: ['Personalizzi tu: stili pronti, logo e colori', 'Poster e QR da stampare', 'Piano di lancio di 7 giorni', 'Post Instagram pronti'] },
-      en: { name: 'Start', for: 'One café, one location', extras: ['Customise it yourself: ready styles, logo and colours', 'Printable poster and QR code', '7-day launch plan', 'Ready-made Instagram posts'] } },
+    { id: 'start', design: 'self', month: 19, locations: 1, cards: 1, staff: 3,
+      it: { name: 'Start', for: 'Un bar, una sede', extras: ['Personalizzi tu logo, colori, sfondo e timbro', 'Poster e QR da stampare', 'Piano di lancio di 7 giorni', 'Post Instagram pronti'] },
+      en: { name: 'Start', for: 'One café, one location', extras: ['Customise logo, colours, background and stamp', 'Printable poster and QR code', '7-day launch plan', 'Ready-made Instagram posts'] } },
     { id: 'plus', design: 'custom', month: 35, locations: 3, cards: 3, staff: 10, popular: true,
       it: { name: 'Plus', for: 'Vuoi che ci pensiamo noi', extras: ['Tutto di Start', 'Carta disegnata su misura da noi', 'Kit stampato a casa tua', 'Nuovi post e messaggi ogni mese'] },
       en: { name: 'Plus', for: 'You want us to handle it', extras: ['Everything in Start', 'Card custom-designed by us', 'Printed kit sent to you', 'New posts and messages every month'] } },

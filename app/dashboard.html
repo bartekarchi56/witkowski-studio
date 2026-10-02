@@ -59,6 +59,9 @@ details.en[open]{padding-bottom:4px}
 .review b{display:block;margin-bottom:2px}
 .which button{font-size:12px}
 .dhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.by-us{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border:1.5px solid var(--ink);border-radius:14px;margin-bottom:20px}
+.by-us p{font-size:15px;color:var(--ink-2)}
+.by-us b{color:var(--ink)}
 .plan-pick{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
 .plan-pick select{width:auto;min-height:38px;padding:6px 10px;font-weight:600;color:var(--ink)}
 
@@ -196,6 +199,7 @@ td code{font:500 13px var(--mono);background:var(--wash);padding:3px 7px;border-
         <p class="sec-sub" id="d-sub"></p>
         <div class="review" id="review" hidden></div>
         <div id="editor"></div>
+        <div class="by-us" id="by-us" hidden><span class="brand-mark" aria-hidden="true"></span><p data-i18n-html="d.byUs"></p></div>
         <label class="field" id="note-field"><span data-i18n="d.note"></span><textarea name="note" rows="3" data-i18n-attr="placeholder:d.notePh"></textarea></label>
         <div class="actions">
           <button class="btn pop" type="submit" id="design-submit"></button>
@@ -292,13 +296,16 @@ I18N.add({
     'd.empty': 'Caselle vuote', 'emSoft': 'Grigie', 'emOutline': 'Contorno', 'emDashed': 'Tratteggio', 'sameAsCard': 'Uguale alla carta',
     'd.logo': 'Logo (facoltativo)', 'd.logoPick': 'Carica il logo', 'd.logoRemove': 'Togli il logo', 'd.logoHint': 'PNG con sfondo trasparente, orizzontale. Prende il posto del nome in cima alla carta.',
     'd.dTitle': 'Il design', 'd.dSub': 'La grafica la disegna Witkowski Design su misura. Puoi cambiare logo, colori, sfondo e timbro: ogni modifica la controlliamo noi prima che la vedano i clienti.',
-    'd.dSubSimple': 'Scegli uno stile pronto, carica il logo e scegli i colori. Le modifiche sono subito sulla carta dei clienti.',
-    'd.plan': 'Piano', 'd.saveDesign': 'Salva il design', 'd.designSaved': 'Design salvato. I clienti lo vedono subito.',
-    'd.upsell': '<span><b>Vuoi una carta unica?</b> Con il piano Plus la disegna Witkowski Design su misura per il tuo locale, con timbro e sfondo personalizzati.</span>',
+    'd.dSubSelf': 'Puoi cambiare logo, colori, sfondo e timbro. Ogni modifica la controlla Witkowski Design prima che la vedano i clienti.',
+    'd.dSubCustom': 'Con il tuo piano la carta la disegna Witkowski Design su misura per te.',
+    'd.byUs': '<b>Disegnata da Witkowski Design.</b> Vuoi cambiare qualcosa? Scrivici qui sotto: aggiorniamo noi il design e te lo mostriamo prima di pubblicarlo.',
+    'd.noteCustom': 'Cosa vorresti cambiare?', 'd.sendRequest': 'Invia la richiesta', 'd.requestSent': 'Richiesta inviata a Witkowski Design.', 'd.needNote': 'Scrivi cosa vorresti cambiare.',
+    'd.plan': 'Piano', 
+    'd.upsell': '<span><b>Vuoi una carta unica?</b> Con i piani Plus e Pro la disegna Witkowski Design su misura per il tuo locale.</span>',
     'd.note': 'Messaggio per il designer (facoltativo)', 'd.notePh': 'Es. vorrei il timbro come la nostra tazzina, e il verde del nostro logo.',
     'd.send': 'Invia per approvazione', 'd.reset': 'Torna al design attuale', 'd.sent': 'Inviato. Witkowski Design controlla e approva il nuovo design.',
     'd.rvPending': 'In attesa di approvazione', 'd.rvPendingP': 'I clienti vedono ancora il design attuale. Ti avvisiamo appena è approvato.',
-    'd.rvChanges': 'Witkowski Design chiede una modifica', 'd.rvApproved': 'Design approvato', 'd.rvApprovedP': 'È quello che vedono i tuoi clienti.',
+    'd.rvRequest': 'Richiesta inviata. Witkowski Design aggiorna il design e te lo mostra:', 'd.rvChanges': 'Witkowski Design chiede una modifica', 'd.rvApproved': 'Design approvato', 'd.rvApprovedP': 'È quello che vedono i tuoi clienti.',
     'd.vLive': 'Attuale', 'd.vDraft': 'Proposta',
     'd.icon': 'Icona', 'd.color': 'Colore della carta', 'd.ink': 'Colore del timbro',
     'd.enTitle': 'In inglese, per i turisti (facoltativo)', 'd.enHint': 'Chi ha il telefono in inglese vedrà questi testi.',
@@ -334,13 +341,16 @@ I18N.add({
     'd.empty': 'Empty boxes', 'emSoft': 'Grey', 'emOutline': 'Outline', 'emDashed': 'Dashed', 'sameAsCard': 'Same as the card',
     'd.logo': 'Logo (optional)', 'd.logoPick': 'Upload logo', 'd.logoRemove': 'Remove logo', 'd.logoHint': 'A wide PNG with a transparent background. It replaces the name at the top of the card.',
     'd.dTitle': 'The design', 'd.dSub': 'Witkowski Design designs the artwork for you. You can change the logo, colours, background and stamp: we check every change before your customers see it.',
-    'd.dSubSimple': 'Pick a ready-made style, upload your logo and choose the colours. Changes show on your customers\' cards straight away.',
-    'd.plan': 'Plan', 'd.saveDesign': 'Save design', 'd.designSaved': 'Design saved. Customers see it straight away.',
-    'd.upsell': '<span><b>Want a one-of-a-kind card?</b> On the Plus plan Witkowski Design designs it for your place, with a custom stamp and background.</span>',
+    'd.dSubSelf': 'You can change the logo, colours, background and stamp. Witkowski Design checks every change before your customers see it.',
+    'd.dSubCustom': 'On your plan, Witkowski Design designs the card for you.',
+    'd.byUs': '<b>Designed by Witkowski Design.</b> Want to change something? Tell us below: we update the design and show it to you before it goes live.',
+    'd.noteCustom': 'What would you like to change?', 'd.sendRequest': 'Send request', 'd.requestSent': 'Request sent to Witkowski Design.', 'd.needNote': 'Write what you would like to change.',
+    'd.plan': 'Plan', 
+    'd.upsell': '<span><b>Want a one-of-a-kind card?</b> On the Plus and Pro plans Witkowski Design designs it for your place.</span>',
     'd.note': 'Message for the designer (optional)', 'd.notePh': 'E.g. I\'d like the stamp to look like our cup, in the green of our logo.',
     'd.send': 'Send for approval', 'd.reset': 'Back to the current design', 'd.sent': 'Sent. Witkowski Design will check and approve the new design.',
     'd.rvPending': 'Waiting for approval', 'd.rvPendingP': 'Customers still see the current design. We\'ll let you know as soon as it\'s approved.',
-    'd.rvChanges': 'Witkowski Design asked for a change', 'd.rvApproved': 'Design approved', 'd.rvApprovedP': 'This is what your customers see.',
+    'd.rvRequest': 'Request sent. Witkowski Design will update the design and show you:', 'd.rvChanges': 'Witkowski Design asked for a change', 'd.rvApproved': 'Design approved', 'd.rvApprovedP': 'This is what your customers see.',
     'd.vLive': 'Current', 'd.vDraft': 'Proposal',
     'd.icon': 'Icon', 'd.color': 'Card colour', 'd.ink': 'Stamp colour',
     'd.enTitle': 'Second language for tourists (optional)', 'd.enHint': 'Customers whose phone is in English see these texts.',
@@ -390,22 +400,23 @@ I18N.add({
   }
 
   // ---------- design (sent for approval) ----------
-  let editor = null, editorMode = '';
+  let editor = null;
   const planOf = c => CONFIG.plans.find(p => p.id === c.plan) || CONFIG.plans[0];
-  const isSimple = () => planOf(current).design === 'simple';
-  // Start plan: simple, live at once. Plus/Pro: full owner controls, sent for approval.
+  const isCustom = () => planOf(current).design === 'custom';
+  // Start: the owner edits the design and sends it for approval.
+  // Plus/Pro: Witkowski Design designs it; the owner sends a request in words.
   function setupDesign() {
-    const mode = isSimple() ? 'simple' : 'owner';
-    if (mode !== editorMode) {
-      editor = DesignEditor.mount($('editor'), { mode, onChange: d => { draft = d; setView('draft'); } });
-      editorMode = mode;
-    }
+    const custom = isCustom();
+    if (!editor) editor = DesignEditor.mount($('editor'), { mode: 'owner', onChange: d => { draft = d; setView('draft'); } });
+    $('editor').hidden = custom;
+    $('by-us').hidden = !custom;
+    $('design-reset').hidden = custom;
     $('sub-plan').innerHTML = CONFIG.plans.map(p => `<option value="${p.id}">${UI.esc(I18N.pick(p).name)}</option>`).join('');
     $('sub-plan').value = planOf(current).id;
-    $('d-sub').textContent = I18N.t(isSimple() ? 'd.dSubSimple' : 'd.dSub');
-    $('design-submit').textContent = I18N.t(isSimple() ? 'd.saveDesign' : 'd.send');
-    $('note-field').hidden = isSimple();
-    $('upsell').hidden = !isSimple();
+    $('d-sub').textContent = I18N.t(custom ? 'd.dSubCustom' : 'd.dSubSelf');
+    $('design-submit').textContent = I18N.t(custom ? 'd.sendRequest' : 'd.send');
+    $('note-field').querySelector('span').textContent = I18N.t(custom ? 'd.noteCustom' : 'd.note');
+    $('upsell').hidden = custom;
   }
   $('sub-plan').addEventListener('change', e => {
     // Prototype: the plan is chosen here. With payments it comes from the subscription.
@@ -419,13 +430,14 @@ I18N.add({
     if (!r) { box.hidden = true; return; }
     box.hidden = false;
     box.className = 'review ' + r.status;
-    box.innerHTML = r.status === 'pending' ? `<b>${I18N.t('d.rvPending')}</b>${I18N.t('d.rvPendingP')}`
+    box.innerHTML = r.status === 'pending' && r.kind === 'request' ? `<b>${I18N.t('d.rvRequest')}</b>${UI.esc(r.note)}`
+      : r.status === 'pending' ? `<b>${I18N.t('d.rvPending')}</b>${I18N.t('d.rvPendingP')}`
       : r.status === 'changes' ? `<b>${I18N.t('d.rvChanges')}</b>${UI.esc(r.reply)}`
       : `<b>${I18N.t('d.rvApproved')}</b>${I18N.t('d.rvApprovedP')}`;
   }
   function setView(v) {
     view = v;
-    $('which').hidden = !(designDiffers() || (current.review && current.review.status === 'pending'));
+    $('which').hidden = isCustom() || !(designDiffers() || (current.review && current.review.status === 'pending'));
     $('which').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === view)));
     preview();
   }
@@ -441,10 +453,13 @@ I18N.add({
 
   $('design-form').addEventListener('submit', e => {
     e.preventDefault();
-    if (isSimple()) {
-      current = Store.applyDesign(current.id, draft);
-      renderReview(); setView('draft'); renderPrint(); renderPromote();
-      UI.toast(I18N.t('d.designSaved'));
+    if (isCustom()) {
+      const note = e.target.note.value.trim();
+      if (!note) { UI.toast(I18N.t('d.needNote')); e.target.note.focus(); return; }
+      current = Store.requestDesign(current.id, note);
+      e.target.note.value = '';
+      renderReview(); setView('live');
+      UI.toast(I18N.t('d.requestSent'));
       return;
     }
     current = Store.proposeDesign(current.id, draft, e.target.note.value);

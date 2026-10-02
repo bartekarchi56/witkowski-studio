@@ -54,10 +54,10 @@ Open http://localhost:8080. The stamper camera needs `localhost` or HTTPS.
 
 It depends on the plan (`design` in `assets/js/config.js`):
 
-- **Start, simple customisation:** the owner picks a ready-made style, uploads a logo and chooses the card and stamp colours. Changes go live at once, since the options are limited.
-- **Plus and Pro, custom design:** Witkowski Design designs the card in the **Studio** (`studio/`): styles, fonts, stamp shape and mark, colours, and your own stamp artwork and background images.
+- **Start, self customisation:** the owner changes the logo, colours, background (colour or photo) and stamp (shape or their own artwork), with a message for you. Each change is a **proposal**: customers keep seeing the current design until you open the Studio and press "Approva e pubblica", or send it back with "Chiedi una modifica".
+- **Plus and Pro, custom design:** Witkowski Design designs the card in the **Studio** (`studio/`): styles, fonts, stamp shape and mark, colours, and your own stamp artwork and background images. Owners have no design controls; they send you a request in words from the dashboard, which appears in the Studio's "To review" list.
 
-On Plus and Pro, owners can still change their logo, colours, background and stamp from the dashboard, with a message for you. Those changes are a **proposal**: customers keep seeing the current design until you open the Studio and press "Approva e pubblica", or send it back with "Chiedi una modifica". Text changes (name, reward, number of stamps) save straight away.
+Text changes (name, reward, number of stamps) always save straight away.
 
 In the prototype the Studio has no login and reads proposals from the same browser. With the server, it gets a login and sees every café's proposals.
 

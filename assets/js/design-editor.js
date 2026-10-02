@@ -5,8 +5,7 @@
  *   const ed = DesignEditor.mount(el, { mode: 'owner' | 'designer', onChange });
  *   ed.set(design); ed.get();
  *
- * 'simple' (Start plan): ready-made styles, logo, card and stamp colour.
- * 'owner' (Plus/Pro, sent for approval): logo, colours, background, stamp.
+ * 'owner' (Start plan, sent for approval): logo, colours, background, stamp.
  * 'designer' (Studio): everything, including fonts, marks and empty boxes. Needs config.js, i18n.js, ui.js.
  */
 (function () {
@@ -22,7 +21,7 @@
 
   I18N.add({
     it: {
-      'de.style': 'Stile di partenza', 'de.styleReady': 'Stile pronto', 'de.logo': 'Logo', 'de.logoHint': 'PNG con sfondo trasparente, orizzontale. Prende il posto del nome.',
+      'de.style': 'Stile di partenza', 'de.logo': 'Logo', 'de.logoHint': 'PNG con sfondo trasparente, orizzontale. Prende il posto del nome.',
       'de.upload': 'Carica', 'de.remove': 'Togli', 'de.tagline': 'Sottotitolo sotto il nome', 'de.font': 'Carattere del nome',
       'de.fSans': 'Moderno', 'de.fWide': 'Largo', 'de.fSerif': 'Classico', 'de.fMono': 'Macchina',
       'de.color': 'Colore della carta', 'de.strip': 'Sfondo dei timbri', 'de.stripImg': 'oppure un\'immagine di sfondo', 'de.stripHint': 'Una foto o una texture, larga e bassa (circa 3:1).',
@@ -32,7 +31,7 @@
       'de.ink': 'Colore del timbro', 'de.empty': 'Caselle vuote', 'de.emSoft': 'Grigie', 'de.emOutline': 'Contorno', 'de.emDashed': 'Tratteggio', 'de.same': 'Uguale alla carta'
     },
     en: {
-      'de.style': 'Starting style', 'de.styleReady': 'Ready-made style', 'de.logo': 'Logo', 'de.logoHint': 'A wide PNG with a transparent background. It replaces the name.',
+      'de.style': 'Starting style', 'de.logo': 'Logo', 'de.logoHint': 'A wide PNG with a transparent background. It replaces the name.',
       'de.upload': 'Upload', 'de.remove': 'Remove', 'de.tagline': 'Tagline under the name', 'de.font': 'Name font',
       'de.fSans': 'Modern', 'de.fWide': 'Wide', 'de.fSerif': 'Classic', 'de.fMono': 'Typewriter',
       'de.color': 'Card colour', 'de.strip': 'Behind the stamps', 'de.stripImg': 'or a background image', 'de.stripHint': 'A photo or texture, wide and short (about 3:1).',
@@ -65,7 +64,6 @@
     const id = 'de' + (++n);
     const t = k => I18N.t(k);
     const designer = mode === 'designer';
-    const simple = mode === 'simple';
     let images = { logo: '', stampImage: '', stripImage: '' };
     let current = {};
 
@@ -81,13 +79,13 @@
 
     function draw() {
       root.innerHTML = `
-        ${designer || simple ? field(t(simple ? 'de.styleReady' : 'de.style'), radios('style', CONFIG.styles.map(st => [st.id, `<span class="sw" style="background:${st.look.color}"></span><span class="sw" style="background:${st.look.ink}"></span>${UI.esc(I18N.pick(st))}`]))) : ''}
+        ${designer ? field(t('de.style'), radios('style', CONFIG.styles.map(st => [st.id, `<span class="sw" style="background:${st.look.color}"></span><span class="sw" style="background:${st.look.ink}"></span>${UI.esc(I18N.pick(st))}`]))) : ''}
         ${field(t('de.logo'), upload('logo', 'de.logoHint'))}
         ${designer ? field(t('de.tagline'), `<input type="text" data-k="tagline" maxlength="24">`) : ''}
         ${designer ? field(t('de.font'), radios('font', [['sans', t('de.fSans')], ['wide', `<span style="font-stretch:125%;text-transform:uppercase;letter-spacing:.14em;font-size:13px">${t('de.fWide')}</span>`], ['serif', `<span style="font-family:'EB Garamond',serif;font-style:italic;font-size:17px">${t('de.fSerif')}</span>`], ['mono', `<span style="font-family:var(--mono);font-size:13px">${t('de.fMono')}</span>`]])) : ''}
         ${field(t('de.color'), swatches('color', COLORS))}
-        ${simple ? '' : field(t('de.strip'), swatches('strip', STRIPS) + `<small class="muted" style="margin-top:8px">${t('de.stripImg')}</small>` + upload('stripImage', 'de.stripHint'))}
-        ${simple ? '' : field(t('de.shape'), radios('shape', SHAPES.map(([v, k, svg]) => [v, `<svg viewBox="0 0 24 24" aria-hidden="true">${svg}</svg>${t(k)}`])) + `<small class="muted" style="margin-top:8px">${t('de.art')}</small>` + upload('stampImage', 'de.artHint'))}
+        ${field(t('de.strip'), swatches('strip', STRIPS) + `<small class="muted" style="margin-top:8px">${t('de.stripImg')}</small>` + upload('stripImage', 'de.stripHint'))}
+        ${field(t('de.shape'), radios('shape', SHAPES.map(([v, k, svg]) => [v, `<svg viewBox="0 0 24 24" aria-hidden="true">${svg}</svg>${t(k)}`])) + `<small class="muted" style="margin-top:8px">${t('de.art')}</small>` + upload('stampImage', 'de.artHint'))}
         ${designer ? field(t('de.mark'), radios('mark', [['icon', t('de.mkIcon')], ['text', t('de.mkText')], ['none', t('de.mkNone')]]) +
           `<div class="chips de-icons" style="margin-top:10px">${UI.ICONS.map(ic => `<input type="radio" name="${id}-icon" id="${id}-icon-${ic}" value="${ic}"><label for="${id}-icon-${ic}" title="${ICON_NAMES[I18N.lang][ic]}">${UI.icon(ic)}<span class="sr-only">${ICON_NAMES[I18N.lang][ic]}</span></label>`).join('')}</div>
            <input type="text" data-k="markText" maxlength="2" class="de-marktext" placeholder="C">`) : ''}
