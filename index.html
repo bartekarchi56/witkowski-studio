@@ -87,10 +87,9 @@ section{padding:104px 0}
 
 /* ---------- what we do ---------- */
 .help-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
-.dolist{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink)}
-.dolist li{display:grid;grid-template-columns:28px 1fr;gap:14px;padding:22px 0;border-bottom:1.5px solid var(--line)}
-.dolist li::before{content:"";width:20px;height:20px;margin-top:3px;border-radius:50%;border:2px solid var(--ink)}
-.dolist li.paper::before{background:var(--pop);border-color:var(--pop)}
+.dolist{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink);counter-reset:do}
+.dolist li{display:grid;grid-template-columns:36px 1fr;gap:10px;padding:22px 0;border-bottom:1.5px solid var(--line);counter-increment:do}
+.dolist li::before{content:counter(do, decimal-leading-zero);font:600 14px/1 var(--mono);color:var(--muted);margin-top:6px}
 .dolist h3{font-size:19px;font-weight:700;letter-spacing:-.01em}
 .dolist p{color:var(--ink-2);margin-top:4px;font-size:16px}
 .kit{margin:0;padding:20px 0 0}
@@ -336,7 +335,7 @@ footer .lang button[aria-pressed="true"]{background:#fff;color:var(--ink)}
         </div>
         <ul class="dolist">
           <li><div><h3 data-i18n="h.1"></h3><p data-i18n="h.1p"></p></div></li>
-          <li class="paper"><div><h3 data-i18n="h.2"></h3><p data-i18n="h.2p"></p></div></li>
+          <li><div><h3 data-i18n="h.2"></h3><p data-i18n="h.2p"></p></div></li>
           <li><div><h3 data-i18n="h.3"></h3><p data-i18n="h.3p"></p></div></li>
           <li><div><h3 data-i18n="h.4"></h3><p data-i18n="h.4p"></p></div></li>
           <li><div><h3 data-i18n="h.5"></h3><p data-i18n="h.5p"></p></div></li>
