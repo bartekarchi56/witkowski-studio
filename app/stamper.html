@@ -255,6 +255,7 @@ I18N.add({
   I18N.switchers();
   I18N.apply();
   document.addEventListener('langchange', () => { if (state) draw(); if (lastErr) $('err').textContent = t(lastErr.key, lastErr.v); showLinked(); });
+  if (Remote.demo) document.querySelector('a[href="dashboard.html"]').href = 'dashboard.html?card=the-coffee';
   if (Remote.enabled) {
     const code = new URLSearchParams(location.search).get('link');
     if (code) $('link-form').code.value = code;

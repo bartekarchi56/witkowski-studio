@@ -7,7 +7,12 @@
  */
 (function () {
   const cfg = (window.CONFIG && CONFIG.supabase) || {};
-  const enabled = Boolean(cfg.url && cfg.anonKey && window.supabase);
+  // The Coffee's example card stays a browser demo even when the database is
+  // connected, so the QR codes on the printed brochures keep working.
+  // Any page can also be opened as a demo with ?demo.
+  const q = new URLSearchParams(location.search);
+  const demo = q.has('demo') || (CONFIG.demoCards || []).includes((q.get('card') || '').toLowerCase());
+  const enabled = Boolean(cfg.url && cfg.anonKey && window.supabase) && !demo;
   // Timbro's tables and functions live in their own schema (see supabase/schema.sql).
   const sb = enabled ? supabase.createClient(cfg.url, cfg.anonKey, { db: { schema: 'timbro' } }) : null;
   const DEVICE = 'timbro:device';
@@ -22,6 +27,7 @@
 
   window.Remote = {
     enabled,
+    demo,
 
     // ---- customers ----
     getCard: id => rpc('get_card', { p_card_id: id }),

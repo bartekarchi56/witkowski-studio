@@ -717,7 +717,7 @@ I18N.add({
   let isAdmin = false, devices = [], linkTimer;
   function renderDevices() {
     $('till-demo').hidden = Store.remote; $('link-new').hidden = !Store.remote;
-    $('devices').innerHTML = !Store.remote ? `<li class="empty-dev"><a class="link" href="stamper.html">${I18N.t('d.openStamper')}</a></li>`
+    $('devices').innerHTML = !Store.remote ? `<li class="empty-dev"><a class="link" href="stamper.html${Remote.demo ? '?demo' : ''}">${I18N.t('d.openStamper')}</a></li>`
       : devices.length ? devices.map(d => `<li><span>${UI.esc(d.name)}<small>${I18N.t('d.lastUsed', { ago: UI.timeAgo(d.lastUsed) })}</small></span><button class="btn line small" type="button" data-dev="${d.id}">${I18N.t('d.remove')}</button></li>`).join('')
       : `<li class="empty-dev">${I18N.t('d.noDevices')}</li>`;
   }
@@ -756,6 +756,8 @@ I18N.add({
     controls();
     const q = new URLSearchParams(location.search);
     const startTab = ['design', 'print', 'promote', 'customers', 'till'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'design';
+    // In the demo, keep the till and the dashboard in the demo too.
+    if (Remote.demo) document.querySelectorAll('a[href="stamper.html"]').forEach(a => a.href = 'stamper.html?demo');
     if (Remote.enabled) {
       if (!await Remote.requireLogin()) return;
       let data;

@@ -12,9 +12,12 @@ window.CONFIG = {
 
   // Your Supabase project (Settings → API). Leave empty to run the
   // browser-only demo, where data stays on one device.
+  // Example cards that always run as a browser demo (printed brochures point to them).
+  demoCards: ['the-coffee'],
+
   supabase: {
-    url: '',        // e.g. 'https://abcdefgh.supabase.co'
-    anonKey: ''     // the "anon public" key (safe to publish: the database checks every call)
+    url: 'https://xchpnvadjxonhnknywis.supabase.co',
+    anonKey: 'sb_publishable_7zczBoBp11UwHVLlIz8XuA_XnrAigOn'  // publishable/anon key (safe to publish: the database checks every call)
   },
 
   // Address of the wallet server (wallet/server.js) once it is deployed,

@@ -72,6 +72,8 @@ In the prototype the Studio has no login and reads proposals from the same brows
 - till phones are linked once from the dashboard's **Cassa** tab (QR code, no account), and can be unlinked;
 - customers' cards are protected by a secret kept on their phone.
 
+The database is connected (project `xchpnvadjxonhnknywis`). The Coffee's example (`?card=the-coffee`, listed in `demoCards`) always stays a browser demo, so the QR codes on the printed brochures keep working. Add `?demo` to any page to open it as a demo.
+
  The cards are drawn exactly like Apple Wallet and Google Wallet passes, and `wallet/` creates the real ones; it switches on once you add your Apple and Google accounts (see `wallet/README.md`). Live stamp updates inside Wallet and reminder messages need the database. See [docs/HOW-IT-WORKS.md](docs/HOW-IT-WORKS.md) for how the service works and the roadmap to launch (server, wallets, payments).
 
 ## Editing

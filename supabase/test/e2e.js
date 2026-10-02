@@ -133,6 +133,21 @@ await d.selectOption('#w-plan', 'plus'); await d.waitForTimeout(600);
 assert.equal((await pool.query('select plan from timbro.cards where id = $1', [cardId])).rows[0].plan, 'plus');
 ok('Witkowski Design sets the café\'s plan to Plus from the Studio');
 
+// ---- the poster shows this café's card; The Coffee's printed example stays a demo ----
+const pp = await owner.newPage();
+await pp.goto(SITE + 'app/poster.html?card=' + cardId);
+await pp.waitForFunction(() => /Bar Prova/.test(document.getElementById('sheet').textContent));
+const demo = await context({ viewport: { width: 390, height: 844 } });
+const dm = await demo.newPage();
+let calls = 0; dm.on('request', r => { if (r.url().startsWith(SUPABASE)) calls++; });
+await dm.goto(SITE + 'app/card.html?card=the-coffee');
+await dm.fill('input[name=name]', 'Demo'); await dm.click('#join button[type=submit]');
+await dm.waitForSelector('.wp-code small');
+await dm.goto(SITE + 'app/stamper.html?demo'); await dm.waitForSelector('#code-form');
+assert.equal(calls, 0, 'demo pages never call the database');
+await demo.close();
+ok('the poster shows the café\'s own card; The Coffee\'s brochure QR still opens the demo');
+
 // ---- unlinking the till phone ----
 await o.reload(); await o.waitForSelector('#card-form input[name=business]', { state: 'attached' }); await o.waitForTimeout(800);
 await o.click('#t-till');
