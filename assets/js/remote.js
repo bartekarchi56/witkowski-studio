@@ -8,7 +8,8 @@
 (function () {
   const cfg = (window.CONFIG && CONFIG.supabase) || {};
   const enabled = Boolean(cfg.url && cfg.anonKey && window.supabase);
-  const sb = enabled ? supabase.createClient(cfg.url, cfg.anonKey) : null;
+  // Timbro's tables and functions live in their own schema (see supabase/schema.sql).
+  const sb = enabled ? supabase.createClient(cfg.url, cfg.anonKey, { db: { schema: 'timbro' } }) : null;
   const DEVICE = 'timbro:device';
   const ROOT = new URL('../../', document.currentScript.src);
 

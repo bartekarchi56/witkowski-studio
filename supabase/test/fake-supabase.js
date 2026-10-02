@@ -46,7 +46,9 @@ http.createServer(async (req, res) => {
     const who = claims ? { role: 'authenticated', sub: claims.sub } : { role: 'anon' };
 
     if (req.method === 'POST' && url.pathname.startsWith('/rest/v1/rpc/')) {
-      const fn = url.pathname.split('/').pop().replace(/[^a-z_]/g, '');
+      // Like Supabase: the schema comes from the Content-Profile header (default public).
+      const schema = (req.headers['content-profile'] || 'public').replace(/[^a-z_]/g, '');
+      const fn = schema + '.' + url.pathname.split('/').pop().replace(/[^a-z_]/g, '');
       const args = await body(req);
       try { return send(res, 200, await call(who, fn, args)); }
       catch (e) { return send(res, 400, { message: e.message, code: e.code, details: null, hint: null }); }

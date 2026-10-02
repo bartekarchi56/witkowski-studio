@@ -4,6 +4,10 @@
 -- Run this once in Supabase: Dashboard → SQL Editor → paste → Run.
 -- It is safe to run again: it replaces the functions and keeps your data.
 --
+-- Everything lives in its own schema, `timbro`, so it can share a Supabase
+-- project with another app without touching that app's tables (`public`).
+-- In Supabase: Project Settings → API (Data API) → Exposed schemas → add `timbro`.
+--
 -- Security model: nobody reads or writes the tables directly (row level
 -- security is on with no policies). Everything goes through the functions
 -- below, and each function checks who is calling:
@@ -14,6 +18,8 @@
 -- ============================================================================
 
 create extension if not exists pgcrypto with schema extensions;
+create schema if not exists timbro;
+set search_path = timbro, extensions;
 
 -- ---------------------------------------------------------------- tables --
 
@@ -92,12 +98,12 @@ alter table admins     enable row level security;
 -- --------------------------------------------------------------- helpers --
 
 create or replace function _hash(t text) returns text
-language sql immutable set search_path = public, extensions
+language sql immutable set search_path = timbro, extensions
 as $$ select encode(digest(t, 'sha256'), 'hex') $$;
 
 -- Random code from an alphabet without look-alike characters (no 0/O, 1/I).
 create or replace function _code(len int) returns text
-language plpgsql volatile set search_path = public, extensions
+language plpgsql volatile set search_path = timbro, extensions
 as $$
 declare
   chars text := 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -111,15 +117,15 @@ begin
 end $$;
 
 create or replace function _token() returns text
-language sql volatile set search_path = public, extensions
+language sql volatile set search_path = timbro, extensions
 as $$ select encode(gen_random_bytes(24), 'hex') $$;
 
 create or replace function _is_admin() returns boolean
-language sql stable security definer set search_path = public
+language sql stable security definer set search_path = timbro
 as $$ select exists (select 1 from admins where user_id = auth.uid()) $$;
 
 create or replace function _my_business() returns uuid
-language sql stable security definer set search_path = public
+language sql stable security definer set search_path = timbro
 as $$ select id from businesses where owner_id = auth.uid() $$;
 
 -- The design keys the website uses (assets/js/store.js DESIGN_KEYS).
@@ -160,7 +166,7 @@ as $$
 $$;
 
 create or replace function _device(p_token text) returns devices
-language plpgsql security definer set search_path = public
+language plpgsql security definer set search_path = timbro
 as $$
 declare d devices;
 begin
@@ -173,11 +179,11 @@ end $$;
 -- ------------------------------------------------------ customers (anon) --
 
 create or replace function get_card(p_card_id text) returns jsonb
-language sql stable security definer set search_path = public
+language sql stable security definer set search_path = timbro
 as $$ select _card_json(c) from cards c where c.id = lower(p_card_id) $$;
 
 create or replace function join_card(p_card_id text, p_name text) returns jsonb
-language plpgsql security definer set search_path = public
+language plpgsql security definer set search_path = timbro
 as $$
 declare
   v_code text; v_secret text := _token();
@@ -196,7 +202,7 @@ begin
 end $$;
 
 create or replace function get_my_card(p_code text, p_secret text) returns jsonb
-language sql stable security definer set search_path = public
+language sql stable security definer set search_path = timbro
 as $$
   select jsonb_build_object('customer', _customer_json(m), 'card', _card_json(c))
   from customers m join cards c on c.id = m.card_id
@@ -206,7 +212,7 @@ $$;
 -- -------------------------------------------------------- cashiers (anon) --
 
 create or replace function device_link(p_code text, p_name text) returns jsonb
-language plpgsql security definer set search_path = public
+language plpgsql security definer set search_path = timbro
 as $$
 declare
   v_biz uuid; v_token text := _token(); v_name text;
@@ -220,7 +226,7 @@ begin
 end $$;
 
 create or replace function stamper_lookup(p_token text, p_code text) returns jsonb
-language plpgsql security definer set search_path = public
+language plpgsql security definer set search_path = timbro
 as $$
 declare d devices := _device(p_token); r jsonb;
 begin
@@ -231,7 +237,7 @@ begin
 end $$;
 
 create or replace function stamper_stamp(p_token text, p_code text, p_delta int) returns jsonb
-language plpgsql security definer set search_path = public
+language plpgsql security definer set search_path = timbro
 as $$
 declare d devices := _device(p_token); m customers; c cards; v_next int;
 begin
@@ -248,7 +254,7 @@ begin
 end $$;
 
 create or replace function stamper_redeem(p_token text, p_code text) returns jsonb
-language plpgsql security definer set search_path = public
+language plpgsql security definer set search_path = timbro
 as $$
 declare d devices := _device(p_token); m customers; c cards;
 begin
@@ -266,7 +272,7 @@ end $$;
 
 -- Everything the dashboard needs: the owner's cards, customers and phones.
 create or replace function owner_data() returns jsonb
-language plpgsql stable security definer set search_path = public
+language plpgsql stable security definer set search_path = timbro
 as $$
 declare v_biz uuid := _my_business();
 begin
@@ -281,7 +287,7 @@ end $$;
 
 -- Create or update a card's texts. Design and plan are not changed here.
 create or replace function owner_save_card(p_card jsonb) returns jsonb
-language plpgsql security definer set search_path = public
+language plpgsql security definer set search_path = timbro
 as $$
 declare
   v_biz uuid := _my_business(); c cards; v_id text := lower(p_card->>'id');
@@ -312,7 +318,7 @@ end $$;
 
 -- Start plan: propose a new design. Plus/Pro: ask for a change in words.
 create or replace function owner_send_design(p_card_id text, p_kind text, p_design jsonb, p_note text, p_images jsonb, p_links jsonb) returns jsonb
-language plpgsql security definer set search_path = public
+language plpgsql security definer set search_path = timbro
 as $$
 declare c cards;
 begin
@@ -334,7 +340,7 @@ end $$;
 
 -- A one-time code (valid 15 minutes) to link a cashier's phone.
 create or replace function owner_link_code() returns jsonb
-language plpgsql security definer set search_path = public
+language plpgsql security definer set search_path = timbro
 as $$
 declare v_biz uuid := _my_business(); v_code text;
 begin
@@ -346,13 +352,13 @@ begin
 end $$;
 
 create or replace function owner_remove_device(p_device_id uuid) returns void
-language sql security definer set search_path = public
+language sql security definer set search_path = timbro
 as $$ delete from devices where id = p_device_id and business_id = _my_business() $$;
 
 -- ------------------------------------------- Witkowski Design (admins) --
 
 create or replace function admin_cards() returns jsonb
-language plpgsql stable security definer set search_path = public
+language plpgsql stable security definer set search_path = timbro
 as $$
 begin
   if not _is_admin() then raise exception 'Only Witkowski Design can open the Studio.' using errcode = '42501'; end if;
@@ -361,7 +367,7 @@ end $$;
 
 -- Publish a design (approving a proposal, or the designer's own work).
 create or replace function admin_publish(p_card_id text, p_design jsonb) returns jsonb
-language plpgsql security definer set search_path = public
+language plpgsql security definer set search_path = timbro
 as $$
 declare c cards;
 begin
@@ -374,7 +380,7 @@ begin
 end $$;
 
 create or replace function admin_ask_changes(p_card_id text, p_reply text) returns jsonb
-language plpgsql security definer set search_path = public
+language plpgsql security definer set search_path = timbro
 as $$
 declare c cards;
 begin
@@ -386,7 +392,7 @@ end $$;
 
 -- Plans come from the subscription; until payments exist the designer sets them.
 create or replace function admin_set_plan(p_card_id text, p_plan text) returns jsonb
-language plpgsql security definer set search_path = public
+language plpgsql security definer set search_path = timbro
 as $$
 declare c cards;
 begin
@@ -397,8 +403,10 @@ end $$;
 
 -- ----------------------------------------------------------- permissions --
 
-revoke all on all tables in schema public from anon, authenticated;
-revoke execute on all functions in schema public from public, anon, authenticated;
+-- Only inside the timbro schema: other apps in this project are not touched.
+grant usage on schema timbro to anon, authenticated;
+revoke all on all tables in schema timbro from anon, authenticated;
+revoke execute on all functions in schema timbro from public, anon, authenticated;
 
 grant execute on function get_card(text), join_card(text, text), get_my_card(text, text),
   device_link(text, text), stamper_lookup(text, text), stamper_stamp(text, text, int), stamper_redeem(text, text)
@@ -411,4 +419,4 @@ grant execute on function owner_data(), owner_save_card(jsonb), owner_send_desig
 
 -- ---------------------------------------------------------- after setup --
 -- Make your own account a designer (run once, after signing up on the site):
---   insert into admins (user_id) select id from auth.users where email = 'you@example.com';
+--   insert into timbro.admins (user_id) select id from auth.users where email = 'you@example.com';

@@ -46,7 +46,7 @@ await o.fill('#card-form input[name=business]', 'Bar Prova');
 await o.click('#card-form button[type=submit]');
 await o.waitForTimeout(800);
 const cardId = new URL(o.url()).searchParams.get('card');
-const db1 = await pool.query('select business, plan from cards where id = $1', [cardId]);
+const db1 = await pool.query('select business, plan from timbro.cards where id = $1', [cardId]);
 assert.equal(db1.rows[0].business, 'Bar Prova'); assert.equal(db1.rows[0].plan, 'start');
 ok('owner signs up, the first card is created and saved in the database');
 
@@ -108,7 +108,7 @@ const black = await o.locator('#editor input[value="#0B0B0C"]').first().getAttri
 await o.click(`label[for="${black}"]`);
 await o.fill('#design-form textarea[name=note]', 'Vorrei la carta nera');
 await o.click('#design-submit'); await o.waitForTimeout(800);
-assert.equal((await pool.query('select review->>\'status\' s, design->>\'color\' c from cards where id = $1', [cardId])).rows[0].s, 'pending');
+assert.equal((await pool.query('select review->>\'status\' s, design->>\'color\' c from timbro.cards where id = $1', [cardId])).rows[0].s, 'pending');
 const s0 = await owner.newPage(); await s0.goto(SITE + 'studio/'); await s0.waitForTimeout(800);
 assert.match(await s0.textContent('main'), /Only Witkowski Design/);
 ok('owner sends the design for approval; owners cannot open the Studio');
@@ -120,17 +120,17 @@ await d.click('#mode button[data-m=up]');
 await d.fill('input[name=email]', `design-${stamp}@test.local`);
 await d.fill('input[name=password]', 'password123');
 await d.click('#submit'); await d.waitForURL(/dashboard\.html/);
-await pool.query(`insert into admins (user_id) select id from auth.users where email = $1`, [`design-${stamp}@test.local`]);
+await pool.query(`insert into timbro.admins (user_id) select id from auth.users where email = $1`, [`design-${stamp}@test.local`]);
 await d.goto(SITE + 'studio/?card=' + cardId);
 await d.waitForSelector('#approve');
 assert.match(await d.textContent('#w-note'), /carta nera/);
 await d.screenshot({ path: `${OUT}/e2e-studio.png`, fullPage: true });
 await d.click('#approve'); await d.waitForTimeout(800);
-assert.equal((await pool.query('select design->>\'color\' c from cards where id = $1', [cardId])).rows[0].c, '#0B0B0C');
+assert.equal((await pool.query('select design->>\'color\' c from timbro.cards where id = $1', [cardId])).rows[0].c, '#0B0B0C');
 await c.waitForFunction(() => getComputedStyle(document.querySelector('.pass')).backgroundColor === 'rgb(11, 11, 12)', null, { timeout: 12000 });
 ok('Witkowski Design approves in the Studio; the customer\'s card turns black');
 await d.selectOption('#w-plan', 'plus'); await d.waitForTimeout(600);
-assert.equal((await pool.query('select plan from cards where id = $1', [cardId])).rows[0].plan, 'plus');
+assert.equal((await pool.query('select plan from timbro.cards where id = $1', [cardId])).rows[0].plan, 'plus');
 ok('Witkowski Design sets the café\'s plan to Plus from the Studio');
 
 // ---- unlinking the till phone ----

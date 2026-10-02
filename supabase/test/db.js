@@ -10,7 +10,8 @@ export async function call(who, fn, args = {}) {
     await client.query(`set local role ${who.role || 'anon'}`);
     await client.query(`select set_config('request.jwt.claim.sub', $1, true)`, [who.sub || '']);
     const names = Object.keys(args);
-    const sql = `select ${fn}(${names.map((n, i) => `${n} => $${i + 1}`).join(', ')}) as r`;
+    const name = fn.includes('.') ? fn : 'timbro.' + fn;   // everything lives in the timbro schema
+    const sql = `select ${name}(${names.map((n, i) => `${n} => $${i + 1}`).join(', ')}) as r`;
     const vals = names.map(n => (args[n] !== null && typeof args[n] === 'object') ? JSON.stringify(args[n]) : args[n]);
     const res = await client.query(sql, vals);
     await client.query('commit');

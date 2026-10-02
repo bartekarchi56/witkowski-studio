@@ -4,20 +4,24 @@ Without this, the site is a demo: every phone keeps its own data. With it, the c
 
 About 15 minutes, once.
 
-## 1. Create the project
-1. Go to **supabase.com**, sign up (free) and click **New project**.
-2. Name it `timbro`, choose a strong database password (keep it somewhere safe) and the region **Central EU (Frankfurt)** or the nearest one to Milan.
+## 1. Pick the project
+Use one of your **existing** Supabase projects; you don't need a new one (the free plan allows 2). Timbro keeps everything in its own schema called `timbro`, separate from your other app's tables in `public`, which it never touches.
+
+(If you prefer a separate project later, the same steps work there.)
 
 ## 2. Create the tables
 1. In the project, open **SQL Editor** → **New query**.
 2. Paste the whole of [`schema.sql`](schema.sql) and press **Run**. You should see "Success".
+3. Open **Project Settings → Data API** (or **API**) → **Exposed schemas**, add `timbro` next to `public`, and save. Without this the website can't reach Timbro.
 
-You can run it again later after an update: it keeps your data.
+You can run the SQL again later after an update: it keeps your data.
+
+**Sharing a project:** logins (Supabase Auth) are shared between apps in the same project. Someone with an account in your other app could also sign in to Timbro, but they would only get an empty café of their own: they can't see any café's data or open the Studio.
 
 ## 3. Logins
 In **Authentication → URL Configuration**:
-- **Site URL:** `https://bartekarchi56.github.io/witkowskidesign/app/dashboard.html`
 - **Redirect URLs:** add `https://bartekarchi56.github.io/witkowskidesign/**`
+- **Site URL:** if the project already runs another app, leave its Site URL as it is (Timbro sends its own return links, which work because of the Redirect URL above). For a project used only by Timbro, set it to `https://bartekarchi56.github.io/witkowskidesign/app/dashboard.html`.
 
 In **Authentication → Sign In / Providers → Email**, leave email sign-up on. "Confirm email" on is safer: owners click a link in an email before their first login.
 
@@ -43,7 +47,7 @@ The anon key is meant to be public. The database checks every call itself.
 1. Open the site → **Accedi** → **Crea account** with your email, and confirm it.
 2. Back in the **SQL Editor**, run (with your email):
    ```sql
-   insert into admins (user_id) select id from auth.users where email = 'you@example.com';
+   insert into timbro.admins (user_id) select id from auth.users where email = 'you@example.com';
    ```
 Now `studio/` opens for you and shows every café's cards, proposals and requests.
 
@@ -61,7 +65,7 @@ Now `studio/` opens for you and shows every café's cards, proposals and request
 Until payments are added, you set each café's plan in the **Studio** (the "Piano" menu next to the café's name), or in SQL:
 
 ```sql
-update cards set plan = 'plus' where id = 'the-card-id';
+update timbro.cards set plan = 'plus' where id = 'the-card-id';
 ```
 
 ## Testing on your computer (optional)

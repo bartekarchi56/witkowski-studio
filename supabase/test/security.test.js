@@ -9,14 +9,14 @@ for (const name of ['ownerA', 'ownerB', 'designer']) {
   const r = await pool.query(`insert into auth.users (email) values ($1) on conflict (email) do update set email = excluded.email returning id`, [name + '@test.local']);
   users[name] = { role: 'authenticated', sub: r.rows[0].id };
 }
-await pool.query('insert into admins (user_id) values ($1) on conflict do nothing', [users.designer.sub]);
+await pool.query('insert into timbro.admins (user_id) values ($1) on conflict do nothing', [users.designer.sub]);
 const rejects = async (p, re, msg) => { await assert.rejects(p, re, msg); };
 let n = 0; const ok = m => console.log(`  ✓ ${++n}. ${m}`);
 const id = 'test-' + Date.now().toString(36);
 
 // ---- tables are closed to everyone ----
-await rejects(raw(anon, 'select * from cards'), /permission denied/, 'anon reads cards');
-await rejects(raw(users.ownerA, 'select * from customers'), /permission denied/, 'owner reads customers table');
+await rejects(raw(anon, 'select * from timbro.cards'), /permission denied/, 'anon reads cards');
+await rejects(raw(users.ownerA, 'select * from timbro.customers'), /permission denied/, 'owner reads customers table');
 ok('nobody can read the tables directly');
 
 // ---- owner A creates a card ----

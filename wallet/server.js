@@ -35,7 +35,7 @@ async function trusted(raw) {
   if (!url) return raw;
   const r = await fetch(`${url}/rest/v1/rpc/get_my_card`, {
     method: 'POST',
-    headers: { apikey: anonKey, authorization: `Bearer ${anonKey}`, 'content-type': 'application/json' },
+    headers: { apikey: anonKey, authorization: `Bearer ${anonKey}`, 'content-type': 'application/json', 'content-profile': 'timbro' },
     body: JSON.stringify({ p_code: raw?.customer?.id || '', p_secret: raw?.customer?.secret || '' })
   });
   const live = r.ok ? await r.json() : null;
