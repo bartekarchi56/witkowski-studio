@@ -59,6 +59,13 @@ details.en[open]{padding-bottom:4px}
 .review b{display:block;margin-bottom:2px}
 .which button{font-size:12px}
 .dhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.insp{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.insp figure{position:relative;margin:0;width:88px;height:88px;border-radius:12px;overflow:hidden;box-shadow:0 0 0 1.5px var(--line)}
+.insp figure img{width:100%;height:100%;object-fit:cover}
+.insp figure button{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(11,11,12,.75);color:#fff;font:600 14px/1 var(--font);cursor:pointer}
+.insp-add{width:88px;height:88px;border-radius:12px;border:1.5px dashed #B5B5B8;display:grid;place-content:center;justify-items:center;gap:2px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;text-align:center;padding:6px}
+.insp-add span:first-child{font-size:26px;line-height:1;color:var(--ink)}
+.insp-add:hover{border-color:var(--ink)}
 .by-us{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border:1.5px solid var(--ink);border-radius:14px;margin-bottom:20px}
 .by-us p{font-size:15px;color:var(--ink-2)}
 .by-us b{color:var(--ink)}
@@ -201,6 +208,15 @@ td code{font:500 13px var(--mono);background:var(--wash);padding:3px 7px;border-
         <div id="editor"></div>
         <div class="by-us" id="by-us" hidden><span class="brand-mark" aria-hidden="true"></span><p data-i18n-html="d.byUs"></p></div>
         <label class="field" id="note-field"><span data-i18n="d.note"></span><textarea name="note" rows="3" data-i18n-attr="placeholder:d.notePh"></textarea></label>
+        <div class="field">
+          <span data-i18n="d.insp"></span>
+          <small data-i18n="d.inspHint"></small>
+          <div class="insp" id="insp">
+            <label class="insp-add" for="insp-file"><span aria-hidden="true">+</span><span data-i18n="d.inspAdd"></span></label>
+          </div>
+          <input type="file" id="insp-file" accept="image/*" multiple class="sr-only">
+        </div>
+        <label class="field"><span data-i18n="d.links"></span><textarea name="links" rows="2" data-i18n-attr="placeholder:d.linksPh"></textarea></label>
         <div class="actions">
           <button class="btn pop" type="submit" id="design-submit"></button>
           <button class="link" type="button" id="design-reset" data-i18n="d.reset"></button>
@@ -299,6 +315,9 @@ I18N.add({
     'd.dSubSelf': 'Puoi cambiare logo, colori, sfondo e timbro. Ogni modifica la controlla Witkowski Design prima che la vedano i clienti.',
     'd.dSubCustom': 'Con il tuo piano la carta la disegna Witkowski Design su misura per te.',
     'd.byUs': '<b>Disegnata da Witkowski Design.</b> Vuoi cambiare qualcosa? Scrivici qui sotto: aggiorniamo noi il design e te lo mostriamo prima di pubblicarlo.',
+    'd.insp': 'Immagini e ispirazioni', 'd.inspHint': 'Foto del locale, delle tazzine, della vetrina, o carte e grafiche che ti piacciono. Fino a 8 immagini.',
+    'd.inspAdd': 'Aggiungi', 'd.inspMax': 'Massimo 8 immagini.', 'd.remove': 'Togli',
+    'd.links': 'Link di ispirazione (facoltativo)', 'd.linksPh': 'Instagram, Pinterest, siti… uno per riga',
     'd.noteCustom': 'Cosa vorresti cambiare?', 'd.sendRequest': 'Invia la richiesta', 'd.requestSent': 'Richiesta inviata a Witkowski Design.', 'd.needNote': 'Scrivi cosa vorresti cambiare.',
     'd.plan': 'Piano', 
     'd.upsell': '<span><b>Vuoi una carta unica?</b> Con i piani Plus e Pro la disegna Witkowski Design su misura per il tuo locale.</span>',
@@ -344,6 +363,9 @@ I18N.add({
     'd.dSubSelf': 'You can change the logo, colours, background and stamp. Witkowski Design checks every change before your customers see it.',
     'd.dSubCustom': 'On your plan, Witkowski Design designs the card for you.',
     'd.byUs': '<b>Designed by Witkowski Design.</b> Want to change something? Tell us below: we update the design and show it to you before it goes live.',
+    'd.insp': 'Images and inspiration', 'd.inspHint': 'Photos of your place, your cups, your window, or cards and graphics you like. Up to 8 images.',
+    'd.inspAdd': 'Add', 'd.inspMax': 'Up to 8 images.', 'd.remove': 'Remove',
+    'd.links': 'Inspiration links (optional)', 'd.linksPh': 'Instagram, Pinterest, websites… one per line',
     'd.noteCustom': 'What would you like to change?', 'd.sendRequest': 'Send request', 'd.requestSent': 'Request sent to Witkowski Design.', 'd.needNote': 'Write what you would like to change.',
     'd.plan': 'Plan', 
     'd.upsell': '<span><b>Want a one-of-a-kind card?</b> On the Plus and Pro plans Witkowski Design designs it for your place.</span>',
@@ -455,21 +477,57 @@ I18N.add({
     e.preventDefault();
     if (isCustom()) {
       const note = e.target.note.value.trim();
-      if (!note) { UI.toast(I18N.t('d.needNote')); e.target.note.focus(); return; }
-      current = Store.requestDesign(current.id, note);
-      e.target.note.value = '';
+      if (!note && !insp.length) { UI.toast(I18N.t('d.needNote')); e.target.note.focus(); return; }
+      current = Store.requestDesign(current.id, note, { images: insp, links: readLinks() });
+      e.target.note.value = ''; clearExtras();
       renderReview(); setView('live');
       UI.toast(I18N.t('d.requestSent'));
       return;
     }
-    current = Store.proposeDesign(current.id, draft, e.target.note.value);
-    e.target.note.value = '';
+    current = Store.proposeDesign(current.id, draft, e.target.note.value, { images: insp, links: readLinks() });
+    e.target.note.value = ''; clearExtras();
     renderReview(); setView('draft');
     UI.toast(I18N.t('d.sent'));
   });
   $('design-reset').addEventListener('click', () => {
     draft = Store.designOf(current); editor.set(draft); setView('live');
   });
+
+  // ---------- images and inspiration for the designer ----------
+  let insp = [];
+  const MAX_INSP = 8;
+  function shrinkPhoto(file) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const k = Math.min(1, 900 / Math.max(img.width, img.height));
+        const cv = document.createElement('canvas');
+        cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+        cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+        URL.revokeObjectURL(img.src);
+        resolve(cv.toDataURL('image/jpeg', 0.8));
+      };
+      img.onerror = reject;
+      img.src = URL.createObjectURL(file);
+    });
+  }
+  function drawInsp() {
+    const box = $('insp');
+    box.querySelectorAll('figure').forEach(f => f.remove());
+    box.insertAdjacentHTML('afterbegin', insp.map((src, i) =>
+      `<figure><img src="${src}" alt=""><button type="button" data-rm="${i}" aria-label="${I18N.t('d.remove')}">×</button></figure>`).join(''));
+    box.querySelector('.insp-add').hidden = insp.length >= MAX_INSP;
+  }
+  $('insp-file').addEventListener('change', async e => {
+    for (const f of [...e.target.files]) {
+      if (insp.length >= MAX_INSP) { UI.toast(I18N.t('d.inspMax')); break; }
+      try { insp.push(await shrinkPhoto(f)); } catch (err) {}
+    }
+    e.target.value = ''; drawInsp();
+  });
+  $('insp').addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (b) { insp.splice(+b.dataset.rm, 1); drawInsp(); } });
+  const readLinks = () => $('design-form').links.value.split(/\s+/).map(x => x.trim()).filter(x => /^https?:\/\/\S+$/.test(x) || /^www\./.test(x)).slice(0, 10);
+  const clearExtras = () => { insp = []; drawInsp(); $('design-form').links.value = ''; };
 
   function markDirty() { dirty = true; $('status').textContent = I18N.t('d.unsaved'); preview(); }
   form.addEventListener('input', e => { if (e.target.name !== 'tpl') markDirty(); });

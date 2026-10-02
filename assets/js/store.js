@@ -133,9 +133,9 @@
     },
 
     // Plus/Pro: the café asks Witkowski Design for a change in words.
-    requestDesign(cardId, note) {
+    requestDesign(cardId, note, extras = {}) {
       const db = load(); const card = db.cards[cardId];
-      card.review = { status: 'pending', kind: 'request', design: {}, note: (note || '').trim(), sentAt: Date.now(), reply: '' };
+      card.review = { status: 'pending', kind: 'request', design: {}, note: (note || '').trim(), images: extras.images || [], links: extras.links || [], sentAt: Date.now(), reply: '' };
       save(db); return card;
     },
 
@@ -144,10 +144,11 @@
     // the Studio. Customers keep seeing the live design until then.
     DESIGN_KEYS,
     designOf(card) { const d = {}; DESIGN_KEYS.forEach(k => { if (card[k] !== undefined) d[k] = card[k]; }); return d; },
-    proposeDesign(cardId, design, note) {
+    // extras: { images: [data URLs], links: [urls] } – photos and inspiration for the designer.
+    proposeDesign(cardId, design, note, extras = {}) {
       const db = load(); const card = db.cards[cardId];
       if (!card) throw new Error('No card');
-      card.review = { status: 'pending', design, note: (note || '').trim(), sentAt: Date.now(), reply: '' };
+      card.review = { status: 'pending', design, note: (note || '').trim(), images: extras.images || [], links: extras.links || [], sentAt: Date.now(), reply: '' };
       save(db); return card;
     },
     approveDesign(cardId, design) {

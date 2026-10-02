@@ -21,6 +21,12 @@ main{max-width:1320px;margin:0 auto;padding:24px 24px 72px;display:grid;grid-tem
 .work .sub{color:var(--ink-2);margin:6px 0 20px}
 .note{padding:14px 16px;border-radius:12px;background:var(--pop-wash);margin-bottom:20px;font-size:15px}
 .note b{display:block}
+.note .pics{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.note .pics a{display:block;width:96px;height:96px;border-radius:10px;overflow:hidden;box-shadow:0 0 0 1.5px rgba(0,0,0,.1)}
+.note .pics img{width:100%;height:100%;object-fit:cover}
+.note .links{margin:10px 0 0;padding-left:18px;font-size:14px;word-break:break-all}
+.note .links a{color:var(--pop)}
+.note .sec{font:500 11px/1.2 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:12px}
 .compare{position:sticky;top:84px;display:grid;gap:14px}
 .compare .pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .compare figure{margin:0;display:grid;gap:8px;justify-items:center}
@@ -88,7 +94,7 @@ I18N.add({
   it: {
     's.toReview': 'Da approvare', 's.all': 'Tutte le carte', 's.none': 'Niente da approvare.',
     's.sub': 'Qui disegni la carta su misura, oppure controlli e sistemi le modifiche proposte dal locale. I clienti vedono il nuovo design solo dopo "Approva e pubblica".',
-    's.from': 'Messaggio dal locale', 's.live': 'Ora, per i clienti', 's.new': 'Nuovo design',
+    's.from': 'Messaggio dal locale', 's.pics': 'Immagini e ispirazioni (clicca per scaricare)', 's.links': 'Link di ispirazione', 's.download': 'Scarica', 's.live': 'Ora, per i clienti', 's.new': 'Nuovo design',
     's.approve': 'Approva e pubblica', 's.ask': 'Chiedi una modifica', 's.reply': 'Risposta al locale', 's.replyPh': 'Es. Il logo è troppo piccolo, mandacelo in alta risoluzione.',
     's.published': 'Pubblicato. I clienti vedono il nuovo design.', 's.asked': 'Richiesta inviata al locale.', 's.needReply': 'Scrivi cosa cambiare, poi invia.',
     's.pending': 'Da approvare', 's.changes': 'Modifica chiesta', 's.export': 'Esporta il design', 's.import': 'Importa un design', 's.imported': 'Design importato. Controlla e pubblica.'
@@ -96,7 +102,7 @@ I18N.add({
   en: {
     's.toReview': 'To review', 's.all': 'All cards', 's.none': 'Nothing to review.',
     's.sub': 'Design the card from scratch here, or check and fix the changes a café proposed. Customers only see the new design after "Approve and publish".',
-    's.from': 'Message from the café', 's.live': 'Live now', 's.new': 'New design',
+    's.from': 'Message from the café', 's.pics': 'Images and inspiration (click to download)', 's.links': 'Inspiration links', 's.download': 'Download', 's.live': 'Live now', 's.new': 'New design',
     's.approve': 'Approve and publish', 's.ask': 'Ask for a change', 's.reply': 'Reply to the café', 's.replyPh': 'E.g. The logo is too small, please send it in high resolution.',
     's.published': 'Published. Customers see the new design.', 's.asked': 'Request sent to the café.', 's.needReply': 'Write what to change, then send.',
     's.pending': 'To review', 's.changes': 'Change asked', 's.export': 'Export design', 's.import': 'Import a design', 's.imported': 'Design imported. Check it and publish.'
@@ -128,8 +134,11 @@ I18N.add({
     design = r && r.status === 'pending' ? { ...Store.designOf(card), ...r.design } : Store.designOf(card);
     editor.set(design);
     $('w-title').textContent = card.business;
-    $('w-note').hidden = !(r && r.status === 'pending' && r.note);
-    if (r && r.note) $('w-note').innerHTML = `<b>${I18N.t('s.from')}</b>${UI.esc(r.note)}`;
+    const pics = (r && r.images) || [], links = (r && r.links) || [];
+    $('w-note').hidden = !(r && r.status === 'pending' && (r.note || pics.length || links.length));
+    if (r) $('w-note').innerHTML = `<b>${I18N.t('s.from')}</b>${UI.esc(r.note || '')}`
+      + (pics.length ? `<p class="sec">${I18N.t('s.pics')}</p><div class="pics">${pics.map((src, i) => `<a href="${src}" download="${card.id}-inspiration-${i + 1}.jpg" title="${I18N.t('s.download')}"><img src="${src}" alt=""></a>`).join('')}</div>` : '')
+      + (links.length ? `<p class="sec">${I18N.t('s.links')}</p><ul class="links">${links.map(l => { const href = /^https?:/.test(l) ? l : 'https://' + l; return `<li><a href="${UI.esc(href)}" target="_blank" rel="noopener noreferrer">${UI.esc(l)}</a></li>`; }).join('')}</ul>` : '');
     $('reply').value = '';
     lists(); previews();
   }
