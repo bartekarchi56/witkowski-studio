@@ -26,7 +26,8 @@ section{padding:104px 0}
 .hero h1{font-size:clamp(42px,6.4vw,88px);line-height:.96}
 .hero h1 .last{white-space:nowrap;position:relative}
 .ink-stamp{display:inline-block;width:.95em;height:.95em;vertical-align:-.12em;margin-left:.12em;color:var(--pop);transform:rotate(-14deg)}
-.ink-stamp.go{animation:inkin .5s cubic-bezier(.2,1.4,.5,1) .25s both}
+.ink-stamp.go{animation:inkin .5s cubic-bezier(.2,1.4,.5,1) .25s both,spin 40s linear .75s infinite}
+@keyframes spin{from{transform:rotate(-14deg)}to{transform:rotate(346deg)}}
 @keyframes inkin{0%{transform:scale(2.2) rotate(-40deg);opacity:0}55%{opacity:1}100%{transform:scale(1) rotate(-14deg)}}
 .hero .lede{font-size:20px;color:var(--ink-2);max-width:31em;margin:28px 0 34px}
 .hero .ctas{display:flex;gap:10px;flex-wrap:wrap}
