@@ -3,3 +3,4 @@ wallet/certs/
 *.pem
 *.p12
 service-account*.json
+*.whl
