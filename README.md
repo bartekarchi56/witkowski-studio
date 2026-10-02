@@ -35,10 +35,10 @@ To make a brochure for another café, open `sales/brochure.html`, type the café
 
 ## Before printing or sending anything
 
-1. **Put the site online.** Rename the GitHub repository to `witkowskidesign` (Settings → General → Repository name), then turn on GitHub Pages (Settings → Pages → Deploy from a branch → `claude/loopy-loyalty-pricing-redesign-yg54mp`, folder `/ (root)`). The site appears at https://bartekarchi56.github.io/witkowskidesign/, which is what `siteUrl` in `assets/js/config.js` and every printed QR code already point to.
+1. **The site is online** at https://timbro.witkowskidesign.com/ (GitHub Pages from `claude/loopy-loyalty-pricing-redesign-yg54mp`, custom domain in `CNAME`, DNS on Cloudflare). `siteUrl` in `assets/js/config.js` and every printed QR code point there. The old address (bartekarchi56.github.io/witkowskidesign/) forwards to it.
 2. **Fill in `contact`** (phone, email) in `assets/js/config.js`, or type them into the brochure page before printing.
 3. **Check the prices and plans** in `config.js`: €19 / €35 / €69 a month, 30 days free, yearly = 10 months. These are placeholders.
-4. Regenerate the PDFs after any change (open the brochure page and save as PDF).
+4. Regenerate the PDFs after any change: `node print/make-pdfs.js` (or open the brochure page and save as PDF).
 
 ## Run it locally
 

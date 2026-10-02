@@ -24,8 +24,8 @@ You can run the SQL again later after an update: it keeps your data.
 
 ## 3. Logins
 In **Authentication → URL Configuration**:
-- **Redirect URLs:** add `https://bartekarchi56.github.io/witkowskidesign/**`
-- **Site URL:** if the project already runs another app, leave its Site URL as it is (Timbro sends its own return links, which work because of the Redirect URL above). For a project used only by Timbro, set it to `https://bartekarchi56.github.io/witkowskidesign/app/dashboard.html`.
+- **Redirect URLs:** add `https://timbro.witkowskidesign.com/**`
+- **Site URL:** if the project already runs another app, leave its Site URL as it is (Timbro sends its own return links, which work because of the Redirect URL above). For a project used only by Timbro, set it to `https://timbro.witkowskidesign.com/app/dashboard.html`.
 
 In **Authentication → Sign In / Providers → Email**, leave email sign-up on. "Confirm email" on is safer: owners click a link in an email before their first login.
 

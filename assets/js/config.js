@@ -8,7 +8,7 @@ window.CONFIG = {
 
   // Where the site is published. Printed QR codes point here, so set it
   // before printing anything (e.g. https://timbro.it/).
-  siteUrl: 'https://bartekarchi56.github.io/witkowskidesign/',
+  siteUrl: 'https://timbro.witkowskidesign.com/',
 
   // Your Supabase project (Settings → API). Leave empty to run the
   // browser-only demo, where data stays on one device.
