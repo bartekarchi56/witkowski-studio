@@ -26,7 +26,7 @@ window.CONFIG = {
 
   contact: {
     name: 'Bartek Witkowski',
-    phone: '',            // e.g. '+39 333 123 4567' (also used for WhatsApp)
+    phone: '+48 530 340 988',  // also used for WhatsApp
     email: '',            // e.g. 'ciao@timbro.it'
     city: 'Milano'
   },
