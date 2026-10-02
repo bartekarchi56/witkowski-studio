@@ -58,6 +58,9 @@ details.en[open]{padding-bottom:4px}
 .review.approved{background:var(--wash)}
 .review b{display:block;margin-bottom:2px}
 .which button{font-size:12px}
+.dhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.plan-pick{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.plan-pick select{width:auto;min-height:38px;padding:6px 10px;font-weight:600;color:var(--ink)}
 
 /* print */
 .print{display:grid;grid-template-columns:340px 1fr;gap:40px;align-items:start}
@@ -188,15 +191,17 @@ td code{font:500 13px var(--mono);background:var(--wash);padding:3px 7px;border-
       </form>
 
       <form class="panel" id="design-form" autocomplete="off" style="grid-column:1">
-        <h2 class="sec" data-i18n="d.dTitle"></h2>
-        <p class="sec-sub" data-i18n="d.dSub"></p>
+        <div class="dhead"><h2 class="sec" data-i18n="d.dTitle"></h2>
+          <label class="plan-pick"><span data-i18n="d.plan"></span><select id="sub-plan"></select></label></div>
+        <p class="sec-sub" id="d-sub"></p>
         <div class="review" id="review" hidden></div>
         <div id="editor"></div>
-        <label class="field"><span data-i18n="d.note"></span><textarea name="note" rows="3" data-i18n-attr="placeholder:d.notePh"></textarea></label>
+        <label class="field" id="note-field"><span data-i18n="d.note"></span><textarea name="note" rows="3" data-i18n-attr="placeholder:d.notePh"></textarea></label>
         <div class="actions">
-          <button class="btn pop" type="submit" data-i18n="d.send"></button>
+          <button class="btn pop" type="submit" id="design-submit"></button>
           <button class="link" type="button" id="design-reset" data-i18n="d.reset"></button>
         </div>
+        <p class="help" id="upsell" style="margin-top:20px" hidden><span data-i18n-html="d.upsell"></span></p>
       </form>
       <div class="preview">
         <span class="label" data-i18n="d.preview"></span>
@@ -287,6 +292,9 @@ I18N.add({
     'd.empty': 'Caselle vuote', 'emSoft': 'Grigie', 'emOutline': 'Contorno', 'emDashed': 'Tratteggio', 'sameAsCard': 'Uguale alla carta',
     'd.logo': 'Logo (facoltativo)', 'd.logoPick': 'Carica il logo', 'd.logoRemove': 'Togli il logo', 'd.logoHint': 'PNG con sfondo trasparente, orizzontale. Prende il posto del nome in cima alla carta.',
     'd.dTitle': 'Il design', 'd.dSub': 'La grafica la disegna Witkowski Design su misura. Puoi cambiare logo, colori, sfondo e timbro: ogni modifica la controlliamo noi prima che la vedano i clienti.',
+    'd.dSubSimple': 'Scegli uno stile pronto, carica il logo e scegli i colori. Le modifiche sono subito sulla carta dei clienti.',
+    'd.plan': 'Piano', 'd.saveDesign': 'Salva il design', 'd.designSaved': 'Design salvato. I clienti lo vedono subito.',
+    'd.upsell': '<span><b>Vuoi una carta unica?</b> Con il piano Plus la disegna Witkowski Design su misura per il tuo locale, con timbro e sfondo personalizzati.</span>',
     'd.note': 'Messaggio per il designer (facoltativo)', 'd.notePh': 'Es. vorrei il timbro come la nostra tazzina, e il verde del nostro logo.',
     'd.send': 'Invia per approvazione', 'd.reset': 'Torna al design attuale', 'd.sent': 'Inviato. Witkowski Design controlla e approva il nuovo design.',
     'd.rvPending': 'In attesa di approvazione', 'd.rvPendingP': 'I clienti vedono ancora il design attuale. Ti avvisiamo appena è approvato.',
@@ -326,6 +334,9 @@ I18N.add({
     'd.empty': 'Empty boxes', 'emSoft': 'Grey', 'emOutline': 'Outline', 'emDashed': 'Dashed', 'sameAsCard': 'Same as the card',
     'd.logo': 'Logo (optional)', 'd.logoPick': 'Upload logo', 'd.logoRemove': 'Remove logo', 'd.logoHint': 'A wide PNG with a transparent background. It replaces the name at the top of the card.',
     'd.dTitle': 'The design', 'd.dSub': 'Witkowski Design designs the artwork for you. You can change the logo, colours, background and stamp: we check every change before your customers see it.',
+    'd.dSubSimple': 'Pick a ready-made style, upload your logo and choose the colours. Changes show on your customers\' cards straight away.',
+    'd.plan': 'Plan', 'd.saveDesign': 'Save design', 'd.designSaved': 'Design saved. Customers see it straight away.',
+    'd.upsell': '<span><b>Want a one-of-a-kind card?</b> On the Plus plan Witkowski Design designs it for your place, with a custom stamp and background.</span>',
     'd.note': 'Message for the designer (optional)', 'd.notePh': 'E.g. I\'d like the stamp to look like our cup, in the green of our logo.',
     'd.send': 'Send for approval', 'd.reset': 'Back to the current design', 'd.sent': 'Sent. Witkowski Design will check and approve the new design.',
     'd.rvPending': 'Waiting for approval', 'd.rvPendingP': 'Customers still see the current design. We\'ll let you know as soon as it\'s approved.',
@@ -379,7 +390,28 @@ I18N.add({
   }
 
   // ---------- design (sent for approval) ----------
-  const editor = DesignEditor.mount($('editor'), { mode: 'owner', onChange: d => { draft = d; setView('draft'); } });
+  let editor = null, editorMode = '';
+  const planOf = c => CONFIG.plans.find(p => p.id === c.plan) || CONFIG.plans[0];
+  const isSimple = () => planOf(current).design === 'simple';
+  // Start plan: simple, live at once. Plus/Pro: full owner controls, sent for approval.
+  function setupDesign() {
+    const mode = isSimple() ? 'simple' : 'owner';
+    if (mode !== editorMode) {
+      editor = DesignEditor.mount($('editor'), { mode, onChange: d => { draft = d; setView('draft'); } });
+      editorMode = mode;
+    }
+    $('sub-plan').innerHTML = CONFIG.plans.map(p => `<option value="${p.id}">${UI.esc(I18N.pick(p).name)}</option>`).join('');
+    $('sub-plan').value = planOf(current).id;
+    $('d-sub').textContent = I18N.t(isSimple() ? 'd.dSubSimple' : 'd.dSub');
+    $('design-submit').textContent = I18N.t(isSimple() ? 'd.saveDesign' : 'd.send');
+    $('note-field').hidden = isSimple();
+    $('upsell').hidden = !isSimple();
+  }
+  $('sub-plan').addEventListener('change', e => {
+    // Prototype: the plan is chosen here. With payments it comes from the subscription.
+    current = Store.saveCard({ ...current, plan: e.target.value });
+    loadCard(current.id);
+  });
   const designDiffers = () => JSON.stringify(Store.designOf({ ...current, ...draft })) !== JSON.stringify(Store.designOf(current));
 
   function renderReview() {
@@ -409,6 +441,12 @@ I18N.add({
 
   $('design-form').addEventListener('submit', e => {
     e.preventDefault();
+    if (isSimple()) {
+      current = Store.applyDesign(current.id, draft);
+      renderReview(); setView('draft'); renderPrint(); renderPromote();
+      UI.toast(I18N.t('d.designSaved'));
+      return;
+    }
     current = Store.proposeDesign(current.id, draft, e.target.note.value);
     e.target.note.value = '';
     renderReview(); setView('draft');
@@ -449,6 +487,7 @@ I18N.add({
     fillSelect(); fillTexts(current);
     // Show a pending proposal in the editor so the owner can see what they sent.
     draft = current.review && current.review.status === 'pending' ? { ...Store.designOf(current), ...current.review.design } : Store.designOf(current);
+    setupDesign();
     editor.set(draft); renderReview(); setView('draft');
     dirty = false; $('status').textContent = '';
     renderPrint(); renderPromote(); renderCustomers();
@@ -462,7 +501,7 @@ I18N.add({
     const reward = opts.reward || main.reward;
     const card = Store.saveCard({
       business: opts.name || (current && current.id !== 'the-coffee' ? current.business : I18N.t('d.business')),
-      type: tp.id, title: main.title, reward, stampsNeeded: +opts.stamps || tp.stamps,
+      plan: 'start', type: tp.id, title: main.title, reward, stampsNeeded: +opts.stamps || tp.stamps,
       titleEn: lang === 'it' ? tp.en.title : '', rewardEn: lang === 'it' && reward === tp.it.reward ? tp.en.reward : '',
       icon: tp.icon, ...(() => { const st = CONFIG.styles.find(x => x.id === opts.style) || CONFIG.styles[0]; return { style: st.id, ...st.look }; })()
     });
@@ -557,7 +596,7 @@ I18N.add({
   I18N.switchers();
   document.addEventListener('langchange', () => {
     const keep = readTexts();
-    controls(); fillTexts({ ...current, ...keep }); editor.redraw(); renderReview(); preview();
+    controls(); fillTexts({ ...current, ...keep }); setupDesign(); editor.redraw(); renderReview(); preview();
     if (dirty) $('status').textContent = I18N.t('d.unsaved');
     instaLang = I18N.lang;
     renderPrint(); renderPromote(); renderCustomers();

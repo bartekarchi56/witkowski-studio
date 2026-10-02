@@ -17,7 +17,7 @@
         const db = JSON.parse(raw);
         // Browsers that saw the older example get The Coffee's new look.
         const tc = db.cards['the-coffee'];
-        if (tc && !tc.shape) { Object.assign(tc, COFFEE_LOOK); save(db); }
+        if (tc && (!tc.shape || !tc.plan)) { Object.assign(tc, COFFEE_LOOK); save(db); }
         return db;
       }
     } catch (e) { if (memory) return memory; }
@@ -31,7 +31,7 @@
 
   // The Coffee, Viale Piave 20: Japanese minimalism (white, beige, stone,
   // light wood) and the name in katakana. Stamps are red hanko seals with 珈.
-  const COFFEE_LOOK = { style: 'giappone', color: '#FFFFFF', ink: '#B5442E', shape: 'hanko', mark: 'text', markText: '珈',
+  const COFFEE_LOOK = { plan: 'plus', style: 'giappone', color: '#FFFFFF', ink: '#B5442E', shape: 'hanko', mark: 'text', markText: '珈',
     empty: 'outline', font: 'wide', strip: '#EEE9E1', tagline: 'ザ・コーヒー' };
 
   // Every fresh browser starts with the example card for The Coffee, so a
@@ -130,6 +130,14 @@
       c.history.push({ t: Date.now(), type: 'redeem' });
       save(db);
       return c;
+    },
+
+    // Applies a design at once (Start plan's simple customisation).
+    applyDesign(cardId, design) {
+      const db = load(); const card = db.cards[cardId];
+      DESIGN_KEYS.forEach(k => { if (design[k] !== undefined) card[k] = design[k]; });
+      delete card.review; card.updatedAt = Date.now();
+      save(db); return card;
     },
 
     // ---- design review ----

@@ -25,14 +25,16 @@ window.CONFIG = {
   trialDays: 30,
   yearlyMonths: 10,       // pay 10 months, get 12
 
+  // design: 'simple' = the café customises with ready-made options, live at once;
+  //         'custom' = Witkowski Design designs it, changes need approval.
   plans: [
-    { id: 'start', month: 19, locations: 1, cards: 1, staff: 3,
-      it: { name: 'Start', for: 'Un bar, una sede', extras: ['Carta disegnata su misura', 'Poster e QR da stampare', 'Piano di lancio di 7 giorni', 'Post Instagram pronti'] },
-      en: { name: 'Start', for: 'One café, one location', extras: ['Card designed for you', 'Printable poster and QR code', '7-day launch plan', 'Ready-made Instagram posts'] } },
-    { id: 'plus', month: 35, locations: 3, cards: 3, staff: 10, popular: true,
-      it: { name: 'Plus', for: 'Vuoi che ci pensiamo noi', extras: ['Tutto di Start', 'Kit stampato a casa tua', 'Poster e timbro su misura', 'Nuovi post e messaggi ogni mese'] },
-      en: { name: 'Plus', for: 'You want us to handle it', extras: ['Everything in Start', 'Printed kit sent to you', 'Custom poster and stamp', 'New posts and messages every month'] } },
-    { id: 'pro', month: 69, locations: 10, cards: 10, staff: 50,
+    { id: 'start', design: 'simple', month: 19, locations: 1, cards: 1, staff: 3,
+      it: { name: 'Start', for: 'Un bar, una sede', extras: ['Personalizzi tu: stili pronti, logo e colori', 'Poster e QR da stampare', 'Piano di lancio di 7 giorni', 'Post Instagram pronti'] },
+      en: { name: 'Start', for: 'One café, one location', extras: ['Customise it yourself: ready styles, logo and colours', 'Printable poster and QR code', '7-day launch plan', 'Ready-made Instagram posts'] } },
+    { id: 'plus', design: 'custom', month: 35, locations: 3, cards: 3, staff: 10, popular: true,
+      it: { name: 'Plus', for: 'Vuoi che ci pensiamo noi', extras: ['Tutto di Start', 'Carta disegnata su misura da noi', 'Kit stampato a casa tua', 'Nuovi post e messaggi ogni mese'] },
+      en: { name: 'Plus', for: 'You want us to handle it', extras: ['Everything in Start', 'Card custom-designed by us', 'Printed kit sent to you', 'New posts and messages every month'] } },
+    { id: 'pro', design: 'custom', month: 69, locations: 10, cards: 10, staff: 50,
       it: { name: 'Pro', for: 'Più sedi o una catena', extras: ['Tutto di Plus', 'Statistiche per sede', 'Esporta i clienti in Excel', 'Assistenza prioritaria su WhatsApp'] },
       en: { name: 'Pro', for: 'Several locations or a chain', extras: ['Everything in Plus', 'Stats per location', 'Export customers to Excel', 'Priority WhatsApp support'] } }
   ],
