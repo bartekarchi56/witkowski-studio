@@ -12,6 +12,8 @@ Use one of your **existing** Supabase projects; you don't need a new one (the fr
 ## 2. Create the tables
 1. In the project, open **SQL Editor** → **New query**.
 2. Paste the whole of [`schema.sql`](schema.sql) and press **Run**. You should see "Success".
+
+   **If you can only paste 100 lines at a time**, use the 5 short files in [`parts/`](parts) instead: paste `1.sql`, press **Run**, then replace it with `2.sql`, **Run**, and so on up to `5.sql`. Always run them in order. Nothing can be reached from the website until part 5 has run. (They are made from `schema.sql` with `node supabase/make-parts.js`.)
 3. Open **Project Settings → Data API** (or **API**) → **Exposed schemas**, add `timbro` next to `public`, and save. Without this the website can't reach Timbro.
 
 You can run the SQL again later after an update: it keeps your data.

@@ -20,6 +20,8 @@
 create extension if not exists pgcrypto with schema extensions;
 create schema if not exists timbro;
 set search_path = timbro, extensions;
+-- New functions here are private until granted below.
+alter default privileges in schema timbro revoke execute on functions from public;
 
 -- ---------------------------------------------------------------- tables --
 
