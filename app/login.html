@@ -7,13 +7,25 @@
 <link rel="stylesheet" href="../assets/css/base.css">
 <style>
 body{background:var(--wash);min-height:100vh}
-main{max-width:420px;margin:0 auto;padding:48px 16px}
+main{max-width:440px;margin:0 auto;padding:48px 16px;transition:max-width .2s}
+main.wide{max-width:600px}
 .box{background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:28px}
 h1{font-size:28px;font-stretch:112%;font-weight:800;margin-bottom:6px}
 .sub{color:var(--ink-2);margin-bottom:22px}
 .switch{display:flex;gap:4px;border-bottom:1.5px solid var(--line);margin-bottom:22px}
 .switch button{flex:1;font:600 15px/1 var(--font);padding:12px;border:0;border-bottom:3px solid transparent;margin-bottom:-1.5px;background:none;color:var(--muted);cursor:pointer}
 .switch button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--pop)}
+fieldset{border:0;padding:0;margin:0 0 6px;min-width:0}
+legend{float:left;width:100%;font:600 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:0;margin-bottom:14px}
+legend + *{clear:both}
+#signup fieldset + fieldset,#signup:not([hidden]) + fieldset{border-top:1.5px solid var(--line);padding-top:22px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+@media (max-width:520px){.row{grid-template-columns:1fr}}
+.field > span em{font-style:normal;font-weight:400;color:var(--muted);font-size:14px}
+.pw{position:relative}
+.pw input{padding-right:84px}
+.pw button{position:absolute;right:6px;top:50%;transform:translateY(-50%);font:600 14px/1 var(--font);padding:10px 12px;border:0;border-radius:8px;background:none;color:var(--ink-2);cursor:pointer}
+.pw button:hover{background:var(--wash)}
 .msg{font-size:15px;min-height:1.4em;margin:12px 0 0}
 .msg.err{font-weight:600}
 .msg.err:not(:empty)::before{content:"!";display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--ink);color:#fff;font-size:13px;margin-right:8px}
@@ -22,7 +34,7 @@ h1{font-size:28px;font-stretch:112%;font-weight:800;margin-bottom:6px}
 </style>
 </head>
 <body>
-<main>
+<main id="main">
   <div class="top"><a class="brand" href="../index.html"><span class="brand-mark" aria-hidden="true"></span>Timbro</a><div class="lang"></div></div>
   <div class="box" id="box">
     <div class="switch" role="group" id="mode">
@@ -31,9 +43,32 @@ h1{font-size:28px;font-stretch:112%;font-weight:800;margin-bottom:6px}
     </div>
     <h1 id="title"></h1>
     <p class="sub" id="sub"></p>
-    <form id="form" autocomplete="on">
-      <label class="field"><span data-i18n="l.email"></span><input type="email" name="email" required autocomplete="email"></label>
-      <label class="field" id="pw-field"><span data-i18n="l.password"></span><input type="password" name="password" minlength="8" required autocomplete="current-password"></label>
+    <form id="form" autocomplete="on" novalidate>
+      <div id="signup" hidden>
+        <fieldset>
+          <legend data-i18n="l.gPlace"></legend>
+          <label class="field"><span data-i18n="l.business"></span><input type="text" name="business" maxlength="40" autocomplete="organization"></label>
+          <div class="row">
+            <label class="field"><span data-i18n="l.type"></span><select name="type" id="type"></select></label>
+            <label class="field"><span data-i18n="l.city"></span><input type="text" name="city" maxlength="40" autocomplete="address-level2"></label>
+          </div>
+          <label class="field"><span><span data-i18n="l.address"></span> <em data-i18n="l.optional"></em></span><input type="text" name="address" maxlength="100" autocomplete="street-address"></label>
+        </fieldset>
+        <fieldset>
+          <legend data-i18n="l.gYou"></legend>
+          <label class="field"><span data-i18n="l.name"></span><input type="text" name="name" maxlength="60" autocomplete="name"></label>
+          <div class="row">
+            <label class="field"><span data-i18n="l.phone"></span><input type="tel" name="phone" maxlength="30" autocomplete="tel" placeholder="+39"></label>
+            <label class="field"><span><span>Instagram</span> <em data-i18n="l.optional"></em></span><input type="text" name="instagram" maxlength="40" placeholder="@"></label>
+          </div>
+        </fieldset>
+      </div>
+      <fieldset id="access">
+        <legend id="access-legend" data-i18n="l.gAccess"></legend>
+        <label class="field" id="email-field"><span data-i18n="l.email"></span><input type="email" name="email" autocomplete="email"></label>
+        <label class="field" id="pw-field"><span id="pw-label"></span><span class="pw"><input type="password" name="password" autocomplete="current-password"><button type="button" class="show" data-i18n="l.show"></button></span></label>
+        <label class="field" id="pw2-field" hidden><span data-i18n="l.password2"></span><span class="pw"><input type="password" name="password2" autocomplete="new-password"><button type="button" class="show" data-i18n="l.show"></button></span></label>
+      </fieldset>
       <button class="btn pop block" type="submit" id="submit"></button>
       <p class="msg" id="msg" role="status"></p>
     </form>
@@ -48,45 +83,93 @@ h1{font-size:28px;font-stretch:112%;font-weight:800;margin-bottom:6px}
 <script>
 I18N.add({
   it: {
-    'l.in': 'Accedi', 'l.up': 'Crea account', 'l.email': 'Email', 'l.password': 'Password (almeno 8 caratteri)', 'l.forgot': 'Password dimenticata?',
-    'l.tIn': 'Bentornato', 'l.sIn': 'Accedi all\'area del tuo locale.', 'l.tUp': 'Crea il tuo account', 'l.sUp': 'Ti serve per gestire la carta del tuo locale.',
+    'l.in': 'Accedi', 'l.up': 'Crea account', 'l.email': 'Email', 'l.password': 'Password', 'l.passwordNew': 'Password (almeno 8 caratteri)', 'l.password2': 'Ripeti la password',
+    'l.show': 'Mostra', 'l.hide': 'Nascondi', 'l.forgot': 'Password dimenticata?', 'l.optional': '(facoltativo)',
+    'l.gPlace': 'Il tuo locale', 'l.gYou': 'Chi sei', 'l.gAccess': 'Accesso',
+    'l.business': 'Nome del locale', 'l.type': 'Tipo di locale', 'l.city': 'Città', 'l.address': 'Indirizzo', 'l.name': 'Nome e cognome', 'l.phone': 'Telefono o WhatsApp',
+    'l.tIn': 'Bentornato', 'l.sIn': 'Accedi all\'area del tuo locale.', 'l.tUp': 'Crea il tuo account', 'l.sUp': 'Due minuti. Con questi dati prepariamo la prima carta del tuo locale.',
     'l.tReset': 'Nuova password', 'l.sReset': 'Scegli la nuova password.', 'l.tForgot': 'Password dimenticata', 'l.sForgot': 'Ti mandiamo un link per sceglierne una nuova.',
     'l.bIn': 'Accedi', 'l.bUp': 'Crea account', 'l.bReset': 'Salva la password', 'l.bForgot': 'Mandami il link',
+    'l.need': 'Compila: {f}.', 'l.badEmail': 'Controlla l\'email.', 'l.short': 'La password deve avere almeno 8 caratteri.', 'l.diff': 'Le due password non sono uguali.',
     'l.checkEmail': 'Ti abbiamo mandato un\'email: apri il link per confermare l\'account.', 'l.sent': 'Se l\'email è giusta, troverai il link nella posta.',
-    'l.saved': 'Password salvata.', 'l.wrong': 'Email o password sbagliate.', 'l.demo': 'Questa è la versione demo: non serve accedere.', 'l.openDash': 'Apri l\'area locale'
+    'l.saved': 'Password salvata.', 'l.wrong': 'Email o password sbagliate.', 'l.exists': 'Esiste già un account con questa email. Accedi.', 'l.demo': 'Questa è la versione demo: non serve accedere.', 'l.openDash': 'Apri l\'area locale'
   },
   en: {
-    'l.in': 'Log in', 'l.up': 'Create account', 'l.email': 'Email', 'l.password': 'Password (at least 8 characters)', 'l.forgot': 'Forgot your password?',
-    'l.tIn': 'Welcome back', 'l.sIn': 'Log in to your café\'s account.', 'l.tUp': 'Create your account', 'l.sUp': 'You need it to manage your café\'s card.',
+    'l.in': 'Log in', 'l.up': 'Create account', 'l.email': 'Email', 'l.password': 'Password', 'l.passwordNew': 'Password (at least 8 characters)', 'l.password2': 'Repeat the password',
+    'l.show': 'Show', 'l.hide': 'Hide', 'l.forgot': 'Forgot your password?', 'l.optional': '(optional)',
+    'l.gPlace': 'Your place', 'l.gYou': 'About you', 'l.gAccess': 'Login details',
+    'l.business': 'Name of your café or shop', 'l.type': 'Type of business', 'l.city': 'City', 'l.address': 'Address', 'l.name': 'Full name', 'l.phone': 'Phone or WhatsApp',
+    'l.tIn': 'Welcome back', 'l.sIn': 'Log in to your café\'s account.', 'l.tUp': 'Create your account', 'l.sUp': 'Two minutes. We use these details to set up your first card.',
     'l.tReset': 'New password', 'l.sReset': 'Choose your new password.', 'l.tForgot': 'Forgot your password', 'l.sForgot': 'We\'ll send you a link to choose a new one.',
     'l.bIn': 'Log in', 'l.bUp': 'Create account', 'l.bReset': 'Save password', 'l.bForgot': 'Send me the link',
+    'l.need': 'Please fill in: {f}.', 'l.badEmail': 'Check the email address.', 'l.short': 'The password needs at least 8 characters.', 'l.diff': 'The two passwords are different.',
     'l.checkEmail': 'We sent you an email: open the link to confirm your account.', 'l.sent': 'If the email is right, the link is in your inbox.',
-    'l.saved': 'Password saved.', 'l.wrong': 'Wrong email or password.', 'l.demo': 'This is the demo: no login needed.', 'l.openDash': 'Open the dashboard'
+    'l.saved': 'Password saved.', 'l.wrong': 'Wrong email or password.', 'l.exists': 'There is already an account with this email. Log in instead.', 'l.demo': 'This is the demo: no login needed.', 'l.openDash': 'Open the dashboard'
   }
 });
 
 (async () => {
   const $ = id => document.getElementById(id);
+  const f = $('form');
   const q = new URLSearchParams(location.search);
   const next = q.get('next') && !/^(https?:)?\/\//.test(q.get('next')) ? '../' + q.get('next') : 'dashboard.html';
-  let mode = q.get('reset') ? 'reset' : 'in';
+  // Coming from the website's builder (dashboard.html?name=…&type=…): start on sign-up, pre-filled.
+  const from = new URLSearchParams((q.get('next') || '').split('?')[1] || '');
+  let mode = q.get('reset') ? 'reset' : from.get('name') || q.get('up') !== null ? 'up' : 'in';
+  if (from.get('name')) f.business.value = from.get('name');
+  f.city.value = CONFIG.contact.city || '';
+
+  function types() {
+    const v = f.type.value || from.get('type') || CONFIG.templates[0].id;
+    $('type').innerHTML = CONFIG.templates.map(tp => `<option value="${tp.id}">${(tp[I18N.lang] || tp.en).type}</option>`).join('');
+    f.type.value = v;
+  }
 
   function draw() {
     const k = { in: ['l.tIn', 'l.sIn', 'l.bIn'], up: ['l.tUp', 'l.sUp', 'l.bUp'], reset: ['l.tReset', 'l.sReset', 'l.bReset'], forgot: ['l.tForgot', 'l.sForgot', 'l.bForgot'] }[mode];
     $('title').textContent = I18N.t(k[0]); $('sub').textContent = I18N.t(k[1]); $('submit').textContent = I18N.t(k[2]);
     $('mode').hidden = mode === 'reset' || mode === 'forgot';
     $('mode').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === mode)));
+    $('main').classList.toggle('wide', mode === 'up');
+    $('signup').hidden = mode !== 'up';
+    $('access-legend').hidden = mode !== 'up';
+    $('email-field').hidden = mode === 'reset';
     $('pw-field').hidden = mode === 'forgot';
-    $('form').password.required = mode !== 'forgot';
-    $('form').email.closest('.field').hidden = mode === 'reset';
-    $('form').email.required = mode !== 'reset';
-    $('form').password.autocomplete = mode === 'in' ? 'current-password' : 'new-password';
+    $('pw2-field').hidden = mode !== 'up' && mode !== 'reset';
+    $('pw-label').textContent = I18N.t(mode === 'in' ? 'l.password' : 'l.passwordNew');
+    f.password.autocomplete = mode === 'in' ? 'current-password' : 'new-password';
     $('forgot').hidden = mode !== 'in';
+    types();
   }
-  const say = (key, err) => { $('msg').textContent = typeof key === 'string' && key.includes('.') && !key.includes(' ') ? I18N.t(key) : key; $('msg').className = 'msg' + (err ? ' err' : ''); };
+  const say = (key, err, v) => { $('msg').textContent = typeof key === 'string' && /^l\.\w+$/.test(key) ? I18N.t(key, v) : key; $('msg').className = 'msg' + (err ? ' err' : ''); };
+
+  // Show / hide password
+  f.addEventListener('click', e => {
+    const b = e.target.closest('.show'); if (!b) return;
+    const input = b.previousElementSibling, show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    b.textContent = I18N.t(show ? 'l.hide' : 'l.show');
+    input.focus();
+  });
+
+  // Checks in the page's language, before anything is sent.
+  function check() {
+    const need = [];
+    const req = mode === 'up' ? ['business', 'city', 'name', 'phone', 'email', 'password', 'password2']
+      : mode === 'in' ? ['email', 'password'] : mode === 'forgot' ? ['email'] : ['password', 'password2'];
+    req.forEach(n => { if (!f[n].value.trim()) need.push(f[n]); });
+    if (need.length) {
+      const names = need.map(el => el.closest('.field').querySelector('span').textContent.replace(/\s*\(.*\)$/, ''));
+      need[0].focus(); return ['l.need', { f: names.join(', ') }];
+    }
+    if (req.includes('email') && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email.value.trim())) { f.email.focus(); return ['l.badEmail']; }
+    if (mode !== 'in' && mode !== 'forgot' && f.password.value.length < 8) { f.password.focus(); return ['l.short']; }
+    if (req.includes('password2') && f.password.value !== f.password2.value) { f.password2.focus(); return ['l.diff']; }
+    return null;
+  }
 
   I18N.switchers(); I18N.apply();
-  document.addEventListener('langchange', draw);
+  document.addEventListener('langchange', () => { draw(); say(''); });
 
   if (!Remote.enabled) {
     $('box').innerHTML = `<h1>${I18N.t('l.in')}</h1><p class="sub">${I18N.t('l.demo')}</p><a class="btn pop block" href="dashboard.html">${I18N.t('l.openDash')}</a>`;
@@ -96,17 +179,26 @@ I18N.add({
 
   $('mode').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { mode = b.dataset.m; say(''); draw(); } });
   $('forgot').addEventListener('click', () => { mode = 'forgot'; say(''); draw(); });
-  $('form').addEventListener('submit', async e => {
+  f.addEventListener('submit', async e => {
     e.preventDefault();
-    const email = e.target.email.value.trim(), password = e.target.password.value;
+    const bad = check(); if (bad) { say(bad[0], true, bad[1]); return; }
+    const email = f.email.value.trim(), password = f.password.value;
     $('submit').disabled = true; say('');
     try {
       if (mode === 'in') { await Remote.signIn(email, password); location.replace(next); return; }
-      if (mode === 'up') { const r = await Remote.signUp(email, password); if (r.session) { location.replace(next); return; } say('l.checkEmail'); }
+      if (mode === 'up') {
+        const v = n => f[n].value.trim();
+        const r = await Remote.signUp(email, password, {
+          name: v('name'), business: v('business'), type: v('type'), city: v('city'), address: v('address'),
+          phone: v('phone'), instagram: v('instagram').replace(/^@/, ''), lang: I18N.lang
+        });
+        if (r.session) { location.replace(next); return; }
+        say('l.checkEmail');
+      }
       if (mode === 'forgot') { await Remote.resetPassword(email); say('l.sent'); }
       if (mode === 'reset') { await Remote.updatePassword(password); say('l.saved'); setTimeout(() => location.replace('dashboard.html'), 800); }
     } catch (err) {
-      say(/invalid login|credentials/i.test(err.message) ? 'l.wrong' : err.message, true);
+      say(/invalid login|credentials/i.test(err.message) ? 'l.wrong' : /already registered|already exists/i.test(err.message) ? 'l.exists' : err.message, true);
     } finally { $('submit').disabled = false; }
   });
   draw();

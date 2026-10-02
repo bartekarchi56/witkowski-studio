@@ -14,6 +14,18 @@ create table if not exists businesses (
   created_at  timestamptz not null default now()
 );
 
+alter table businesses add column if not exists contact_name text not null default '';
+
+alter table businesses add column if not exists phone        text not null default '';
+
+alter table businesses add column if not exists city         text not null default '';
+
+alter table businesses add column if not exists address      text not null default '';
+
+alter table businesses add column if not exists instagram    text not null default '';
+
+alter table businesses add column if not exists kind         text not null default '';
+
 create table if not exists cards (
   id             text primary key check (id ~ '^[a-z0-9-]{3,40}$'),
   business_id    uuid not null references businesses(id) on delete cascade,
@@ -82,11 +94,3 @@ alter table customers  enable row level security;
 alter table devices    enable row level security;
 
 alter table link_codes enable row level security;
-
-alter table events     enable row level security;
-
-alter table admins     enable row level security;
-
-create or replace function _hash(t text) returns text
-language sql immutable set search_path = timbro, extensions
-as $$ select encode(digest(t, 'sha256'), 'hex') $$;

@@ -49,8 +49,9 @@
     // ---- owner login ----
     async session() { return (await sb.auth.getSession()).data.session; },
     async signIn(email, password) { const { data, error } = await sb.auth.signInWithPassword({ email, password }); if (error) throw error; return data; },
-    async signUp(email, password) {
-      const { data, error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: new URL('dashboard.html', location.href).href } });
+    // details: name, business, type, city, address, phone, instagram (saved with the account).
+    async signUp(email, password, details = {}) {
+      const { data, error } = await sb.auth.signUp({ email, password, options: { data: details, emailRedirectTo: new URL('dashboard.html', location.href).href } });
       if (error) throw error; return data;
     },
     async resetPassword(email) { const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: new URL('login.html?reset=1', location.href).href }); if (error) throw error; },

@@ -81,7 +81,7 @@ p{margin:0}
 .field{display:grid;gap:6px;margin-bottom:18px}
 .field > span{font-size:15px;font-weight:600}
 .field small{color:var(--muted);font-size:14px}
-input[type=text],input[type=email],input[type=tel],input[type=number],select,textarea{font:inherit;font-size:16px;width:100%;min-height:48px;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+input[type=text],input[type=email],input[type=tel],input[type=number],input[type=password],input[type=url],input[type=search],select,textarea{font:inherit;font-size:16px;width:100%;min-height:48px;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
 textarea{min-height:120px;resize:vertical;line-height:1.5}
 input:hover,select:hover,textarea:hover{border-color:#C9C9C6}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink)}

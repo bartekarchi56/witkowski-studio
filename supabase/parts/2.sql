@@ -1,6 +1,14 @@
 -- Timbro database, part 2 of 5. Run the parts in order.
 set search_path = timbro, extensions;
 
+alter table events     enable row level security;
+
+alter table admins     enable row level security;
+
+create or replace function _hash(t text) returns text
+language sql immutable set search_path = timbro, extensions
+as $$ select encode(digest(t, 'sha256'), 'hex') $$;
+
 create or replace function _code(len int) returns text
 language plpgsql volatile set search_path = timbro, extensions
 as $$
@@ -26,6 +34,31 @@ as $$ select exists (select 1 from admins where user_id = auth.uid()) $$;
 create or replace function _my_business() returns uuid
 language sql stable security definer set search_path = timbro
 as $$ select id from businesses where owner_id = auth.uid() $$;
+
+create or replace function _profile() returns jsonb
+language sql stable security definer set search_path = timbro
+as $$
+  select coalesce(
+    (select jsonb_build_object('name', contact_name, 'business', name, 'type', kind, 'city', city,
+       'address', address, 'phone', phone, 'instagram', instagram) from businesses where owner_id = auth.uid()),
+    (select jsonb_build_object('name', left(m->>'name', 60), 'business', left(m->>'business', 40), 'type', left(m->>'type', 20),
+       'city', left(m->>'city', 40), 'address', left(m->>'address', 100), 'phone', left(m->>'phone', 30), 'instagram', left(m->>'instagram', 40))
+     from (select coalesce(raw_user_meta_data, '{}'::jsonb) m from auth.users where id = auth.uid()) u),
+    '{}'::jsonb)
+$$;
+
+create or replace function _new_business() returns uuid
+language plpgsql security definer set search_path = timbro
+as $$
+declare p jsonb := _profile(); v uuid;
+begin
+  insert into businesses (owner_id, name, contact_name, phone, city, address, instagram, kind)
+  values (auth.uid(), coalesce(p->>'business', ''), coalesce(p->>'name', ''), coalesce(p->>'phone', ''), coalesce(p->>'city', ''),
+          coalesce(p->>'address', ''), coalesce(p->>'instagram', ''), coalesce(p->>'type', ''))
+  on conflict (owner_id) do update set owner_id = excluded.owner_id
+  returning id into v;
+  return v;
+end $$;
 
 create or replace function _clean_design(d jsonb) returns jsonb
 language sql immutable
@@ -61,37 +94,3 @@ as $$
     ), '[]'::jsonb)
   )
 $$;
-
-create or replace function _device(p_token text) returns devices
-language plpgsql security definer set search_path = timbro
-as $$
-declare d devices;
-begin
-  select * into d from devices where token_hash = _hash(p_token);
-  if not found then raise exception 'This phone is not linked to a café any more. Ask the owner to link it again.' using errcode = '28000'; end if;
-  update devices set last_used = now() where id = d.id;
-  return d;
-end $$;
-
-create or replace function get_card(p_card_id text) returns jsonb
-language sql stable security definer set search_path = timbro
-as $$ select _card_json(c) from cards c where c.id = lower(p_card_id) $$;
-
-create or replace function join_card(p_card_id text, p_name text) returns jsonb
-language plpgsql security definer set search_path = timbro
-as $$
-declare
-  v_code text; v_secret text := _token();
-begin
-  if not exists (select 1 from cards where id = lower(p_card_id)) then
-    raise exception 'This card no longer exists.' using errcode = 'P0002';
-  end if;
-  loop
-    v_code := _code(6);
-    exit when not exists (select 1 from customers where id = v_code);
-  end loop;
-  insert into customers (id, card_id, name, secret_hash)
-  values (v_code, lower(p_card_id), coalesce(nullif(left(trim(p_name), 30), ''), 'Guest'), _hash(v_secret));
-  insert into events (customer_id, type) values (v_code, 'joined');
-  return jsonb_build_object('id', v_code, 'secret', v_secret);
-end $$;

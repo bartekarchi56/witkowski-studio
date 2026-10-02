@@ -55,10 +55,10 @@ http.createServer(async (req, res) => {
     }
 
     if (url.pathname === '/auth/v1/signup' && req.method === 'POST') {
-      const { email, password } = await body(req);
+      const { email, password, data } = await body(req);
       const exists = await pool.query('select id from auth.users where email = $1', [email]);
       if (exists.rowCount) return send(res, 422, { code: 422, error_code: 'user_already_exists', msg: 'User already registered' });
-      const r = await pool.query('insert into auth.users (email, password) values ($1, $2) returning id, email', [email, hash(password)]);
+      const r = await pool.query('insert into auth.users (email, password, raw_user_meta_data) values ($1, $2, $3) returning id, email', [email, hash(password), data || {}]);
       return send(res, 200, session(r.rows[0]));
     }
     if (url.pathname === '/auth/v1/token' && req.method === 'POST') {

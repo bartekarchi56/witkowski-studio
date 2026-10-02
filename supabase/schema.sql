@@ -31,6 +31,13 @@ create table if not exists businesses (
   name        text not null default '',
   created_at  timestamptz not null default now()
 );
+-- Contact details the owner gives when signing up.
+alter table businesses add column if not exists contact_name text not null default '';
+alter table businesses add column if not exists phone        text not null default '';
+alter table businesses add column if not exists city         text not null default '';
+alter table businesses add column if not exists address      text not null default '';
+alter table businesses add column if not exists instagram    text not null default '';
+alter table businesses add column if not exists kind         text not null default '';
 
 create table if not exists cards (
   id             text primary key check (id ~ '^[a-z0-9-]{3,40}$'),
@@ -129,6 +136,34 @@ as $$ select exists (select 1 from admins where user_id = auth.uid()) $$;
 create or replace function _my_business() returns uuid
 language sql stable security definer set search_path = timbro
 as $$ select id from businesses where owner_id = auth.uid() $$;
+
+-- The owner's details: from their café once it exists, else from what they
+-- typed when signing up (kept by Supabase Auth in raw_user_meta_data).
+create or replace function _profile() returns jsonb
+language sql stable security definer set search_path = timbro
+as $$
+  select coalesce(
+    (select jsonb_build_object('name', contact_name, 'business', name, 'type', kind, 'city', city,
+       'address', address, 'phone', phone, 'instagram', instagram) from businesses where owner_id = auth.uid()),
+    (select jsonb_build_object('name', left(m->>'name', 60), 'business', left(m->>'business', 40), 'type', left(m->>'type', 20),
+       'city', left(m->>'city', 40), 'address', left(m->>'address', 100), 'phone', left(m->>'phone', 30), 'instagram', left(m->>'instagram', 40))
+     from (select coalesce(raw_user_meta_data, '{}'::jsonb) m from auth.users where id = auth.uid()) u),
+    '{}'::jsonb)
+$$;
+
+-- Creates the logged-in owner's café, filled in with their sign-up details.
+create or replace function _new_business() returns uuid
+language plpgsql security definer set search_path = timbro
+as $$
+declare p jsonb := _profile(); v uuid;
+begin
+  insert into businesses (owner_id, name, contact_name, phone, city, address, instagram, kind)
+  values (auth.uid(), coalesce(p->>'business', ''), coalesce(p->>'name', ''), coalesce(p->>'phone', ''), coalesce(p->>'city', ''),
+          coalesce(p->>'address', ''), coalesce(p->>'instagram', ''), coalesce(p->>'type', ''))
+  on conflict (owner_id) do update set owner_id = excluded.owner_id
+  returning id into v;
+  return v;
+end $$;
 
 -- The design keys the website uses (assets/js/store.js DESIGN_KEYS).
 create or replace function _clean_design(d jsonb) returns jsonb
@@ -281,6 +316,7 @@ begin
   if auth.uid() is null then raise exception 'Not logged in.' using errcode = '28000'; end if;
   return jsonb_build_object(
     'isAdmin', _is_admin(),
+    'profile', _profile(),
     'cards', coalesce((select jsonb_agg(_card_json(c, true) order by c.created_at) from cards c where c.business_id = v_biz), '[]'::jsonb),
     'customers', coalesce((select jsonb_agg(_customer_json(m, 200)) from customers m join cards c on c.id = m.card_id where c.business_id = v_biz), '[]'::jsonb),
     'devices', coalesce((select jsonb_agg(jsonb_build_object('id', d.id, 'name', d.name, 'lastUsed', (extract(epoch from d.last_used) * 1000)::bigint) order by d.created_at) from devices d where d.business_id = v_biz), '[]'::jsonb)
@@ -296,7 +332,7 @@ declare
 begin
   if auth.uid() is null then raise exception 'Not logged in.' using errcode = '28000'; end if;
   if v_biz is null then
-    insert into businesses (owner_id, name) values (auth.uid(), coalesce(p_card->>'business', '')) returning id into v_biz;
+    v_biz := _new_business();
   end if;
   select * into c from cards where id = v_id;
   if found and c.business_id <> v_biz then raise exception 'This card belongs to another café.' using errcode = '42501'; end if;
@@ -364,7 +400,11 @@ language plpgsql stable security definer set search_path = timbro
 as $$
 begin
   if not _is_admin() then raise exception 'Only Witkowski Design can open the Studio.' using errcode = '42501'; end if;
-  return coalesce((select jsonb_agg(_card_json(c, true) order by c.created_at) from cards c), '[]'::jsonb);
+  -- Each card comes with its owner's contact details, so you can get in touch.
+  return coalesce((select jsonb_agg(_card_json(c, true) || jsonb_build_object('contact', jsonb_build_object(
+      'name', b.contact_name, 'email', u.email, 'phone', b.phone, 'city', b.city, 'address', b.address, 'instagram', b.instagram))
+    order by c.created_at)
+    from cards c join businesses b on b.id = c.business_id left join auth.users u on u.id = b.owner_id), '[]'::jsonb);
 end $$;
 
 -- Publish a design (approving a proposal, or the designer's own work).

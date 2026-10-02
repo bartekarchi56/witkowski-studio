@@ -18,6 +18,8 @@ Use one of your **existing** Supabase projects; you don't need a new one (the fr
 
 You can run the SQL again later after an update: it keeps your data.
 
+**Already installed?** Run only the new files in [`updates/`](updates), in order (each is under 100 lines). `updates/1a` and `1b` add the sign-up details (name, café, phone, address, Instagram), which you see in the Studio.
+
 **Sharing a project:** logins (Supabase Auth) are shared between apps in the same project. Someone with an account in your other app could also sign in to Timbro, but they would only get an empty café of their own: they can't see any café's data or open the Studio.
 
 ## 3. Logins

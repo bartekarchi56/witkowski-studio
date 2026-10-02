@@ -622,7 +622,7 @@ I18N.add({
     const reward = opts.reward || main.reward;
     const card = Store.saveCard({
       business: opts.name || (current && current.id !== 'the-coffee' ? current.business : I18N.t('d.business')),
-      plan: 'start', type: tp.id, title: main.title, reward, stampsNeeded: +opts.stamps || tp.stamps,
+      plan: 'start', type: tp.id, ...(opts.city ? { city: opts.city } : {}), title: main.title, reward, stampsNeeded: +opts.stamps || tp.stamps,
       titleEn: lang === 'it' ? tp.en.title : '', rewardEn: lang === 'it' && reward === tp.it.reward ? tp.en.reward : '',
       icon: tp.icon, ...(() => { const st = CONFIG.styles.find(x => x.id === opts.style) || CONFIG.styles[0]; return { style: st.id, ...st.look }; })()
     });
@@ -751,6 +751,7 @@ I18N.add({
   });
   Store.onChange(() => { current = Store.getCard(current.id) || current; renderCustomers(); renderReview(); setView(view); });
 
+  let profile = {};   // what the owner typed when signing up
   async function start() {
     I18N.apply();
     controls();
@@ -764,7 +765,7 @@ I18N.add({
       try { data = await Remote.ownerData(); }
       catch (err) { document.querySelector('main').innerHTML = `<p class="help">${UI.esc(I18N.t('d.loadErr', { msg: err.message }))}</p>`; return; }
       Store.attachRemote(data);
-      isAdmin = data.isAdmin; devices = data.devices;
+      isAdmin = data.isAdmin; devices = data.devices; profile = data.profile || {};
       $('logout').hidden = false;
       // Keep customers, phones and design replies up to date.
       setInterval(async () => {
@@ -775,7 +776,7 @@ I18N.add({
     renderDevices();
     if (q.get('new') || !Store.listCards().length) {
       current = Store.listCards()[0] || null;
-      createCard({ name: q.get('name'), type: q.get('type'), style: q.get('style'), reward: q.get('reward'), stamps: q.get('stamps'), lang: q.get('lang') });
+      createCard({ name: q.get('name') || profile.business, type: q.get('type') || profile.type, city: profile.city, style: q.get('style'), reward: q.get('reward'), stamps: q.get('stamps'), lang: q.get('lang') });
     } else {
       loadCard(q.get('card'));
       showTab(startTab);
