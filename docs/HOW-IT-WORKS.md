@@ -59,7 +59,7 @@ All data access goes through `assets/js/store.js`, so moving to a real server me
 
 ## Roadmap to launch
 
-1. **Backend and database.** Suggested: Supabase (Postgres + auth + hosting for functions), or Node.js on a small server. Tables:
+1. **Backend and database.** Done in `supabase/` (schema, security rules and tests); connect it with `supabase/README.md`. The original plan was: Suggested: Supabase (Postgres + auth + hosting for functions), or Node.js on a small server. Tables:
    - `businesses` (id, owner, plan)
    - `locations` (id, business_id, name, address, lat, lng)
    - `cards` (id, business_id, title, reward, stamps_needed, color, icon)

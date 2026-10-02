@@ -27,6 +27,8 @@ h1{font-size:24px;font-stretch:112%;font-weight:800}
 .big{font-size:19px;padding:20px;white-space:normal}
 .minor{display:flex;gap:8px;width:100%}
 .minor .btn{flex:1}
+.linked{font-size:14px;color:var(--muted);margin-top:24px}
+.linked button{margin-left:6px;font-size:14px}
 @media (max-width:420px){.appbar{padding:10px 16px}.appbar .right .btn{display:none}}
 </style>
 </head>
@@ -37,6 +39,18 @@ h1{font-size:24px;font-stretch:112%;font-weight:800}
 </header>
 
 <main>
+  <!-- step 0 (connected mode): link this phone to the café once -->
+  <section id="link" hidden>
+    <h1 style="margin-bottom:8px" data-i18n="s.linkT"></h1>
+    <p class="muted" style="margin-bottom:18px" data-i18n="s.linkP"></p>
+    <form id="link-form" autocomplete="off">
+      <label class="field"><span data-i18n="s.linkCode"></span><input type="text" name="code" maxlength="8" placeholder="AB7K2M9Q" autocapitalize="characters" spellcheck="false" style="font:500 20px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase"></label>
+      <label class="field"><span data-i18n="s.linkName"></span><input type="text" name="name" maxlength="40" data-i18n-attr="placeholder:s.linkNamePh"></label>
+      <button class="btn pop block" type="submit" data-i18n="s.linkBtn"></button>
+      <p class="err" id="link-err" role="alert"></p>
+    </form>
+  </section>
+
   <!-- step 1: find the customer -->
   <section id="find">
     <h1 style="margin-bottom:14px" data-i18n="s.scan"></h1>
@@ -52,6 +66,7 @@ h1{font-size:24px;font-stretch:112%;font-weight:800}
       <button class="btn" type="submit" data-i18n="s.find"></button>
     </form>
     <p class="err" id="err" role="alert"></p>
+    <p class="linked" id="linked" hidden></p>
   </section>
 
   <!-- step 2: stamp -->
@@ -69,10 +84,12 @@ h1{font-size:24px;font-stretch:112%;font-weight:800}
 </main>
 
 <script src="../assets/vendor/qrcode.js"></script>
+<script src="../assets/vendor/supabase.js"></script>
 <script src="../assets/js/config.js"></script>
 <script src="../assets/js/i18n.js"></script>
 <script src="../assets/js/store.js"></script>
 <script src="../assets/js/ui.js"></script>
+<script src="../assets/js/remote.js"></script>
 <script>
 I18N.add({
   it: {
@@ -82,6 +99,9 @@ I18N.add({
     's.notFound': 'Nessuna carta con il codice "{code}". Controlla le lettere e riprova.',
     's.camBlocked': 'La fotocamera è bloccata. Consenti l\'accesso nel browser, oppure scrivi il codice qui sotto.',
     's.add': 'Aggiungi un timbro', 's.give': 'Dai il premio: {reward}', 's.sub': '{title} · premi ricevuti: {n}',
+    's.linkT': 'Collega questo telefono', 's.linkP': 'Il titolare trova il codice nella sua area, sezione "Cassa". Basta farlo una volta.',
+    's.linkCode': 'Codice di collegamento', 's.linkName': 'Nome di questo telefono', 's.linkNamePh': 'Es. Cassa 1, oppure il nome del barista', 's.linkBtn': 'Collega',
+    's.linkedTo': 'Collegato a {business} · {name}.', 's.unlink': 'Scollega', 's.unlinkQ': 'Scollegare questo telefono? Per timbrare servirà un nuovo codice.', 's.offline': 'Nessuna connessione. Controlla internet e riprova.',
     's.tAdded': 'Timbro aggiunto ({have}/{need})', 's.tFull': 'Carta piena. Dai il premio!', 's.tGiven': 'Premio dato. La carta riparte.', 's.tRemoved': 'Timbro tolto'
   },
   en: {
@@ -91,6 +111,9 @@ I18N.add({
     's.notFound': 'No card with code "{code}". Check the letters and try again.',
     's.camBlocked': 'The camera is blocked. Allow camera access in your browser, or type the code below.',
     's.add': 'Add a stamp', 's.give': 'Give the reward: {reward}', 's.sub': '{title} · rewards received: {n}',
+    's.linkT': 'Link this phone', 's.linkP': 'The owner finds the code in their account, under "Till". You only do this once.',
+    's.linkCode': 'Link code', 's.linkName': 'Name for this phone', 's.linkNamePh': 'E.g. Till 1, or the barista\'s name', 's.linkBtn': 'Link',
+    's.linkedTo': 'Linked to {business} · {name}.', 's.unlink': 'Unlink', 's.unlinkQ': 'Unlink this phone? You will need a new code to stamp.', 's.offline': 'No connection. Check the internet and try again.',
     's.tAdded': 'Stamp added ({have}/{need})', 's.tFull': 'Card full. Give the reward!', 's.tGiven': 'Reward given. The card starts again.', 's.tRemoved': 'Stamp removed'
   }
 });
@@ -98,21 +121,56 @@ I18N.add({
 (() => {
   const $ = id => document.getElementById(id);
   const t = (k, v) => I18N.t(k, v);
-  let customerId = null, stream = null, scanning = false, lastErr = null;
+  let state = null, stream = null, scanning = false, lastErr = null, busy = false;
+
+  // Same calls in both modes; each returns { customer, card } or null.
+  const api = Remote.enabled ? {
+    lookup: code => Remote.lookup(code), stamp: (code, d) => Remote.stamp(code, d), redeem: code => Remote.redeem(code)
+  } : {
+    lookup: async code => { const c = Store.getCustomer(code); return c ? { customer: c, card: Store.getCard(c.cardId) } : null; },
+    stamp: async (code, d) => { Store.stamp(code, d); return api.lookup(code); },
+    redeem: async code => { Store.redeem(code); return api.lookup(code); }
+  };
+  const fail = err => { lastErr = null; $('err').textContent = navigator.onLine === false ? t('s.offline') : err.message; UI.toast(navigator.onLine === false ? t('s.offline') : err.message); };
 
   // ---------- find ----------
-  function open(code) {
-    const c = Store.getCustomer(code);
-    if (!c) { lastErr = { key: 's.notFound', v: { code: (code || '').toUpperCase() } }; $('err').textContent = t(lastErr.key, lastErr.v); return false; }
+  async function open(code) {
+    let r;
+    try { r = await api.lookup((code || '').trim()); } catch (err) { if (/not linked/i.test(err.message)) return showLink(err.message); fail(err); return false; }
+    if (!r) { lastErr = { key: 's.notFound', v: { code: (code || '').toUpperCase() } }; $('err').textContent = t(lastErr.key, lastErr.v); return false; }
     lastErr = null; $('err').textContent = '';
     stopCamera();
-    customerId = c.id;
+    state = r;
     $('find').hidden = true; $('stamp').hidden = false;
     draw();
     $('main-action').focus();
     return true;
   }
   $('code-form').addEventListener('submit', e => { e.preventDefault(); open(e.target.code.value); });
+
+  // ---------- linking the phone (connected mode) ----------
+  function showLink(message) {
+    stopCamera();
+    $('link').hidden = false; $('find').hidden = true; $('stamp').hidden = true;
+    $('link-err').textContent = typeof message === 'string' ? message : '';
+    return false;
+  }
+  function showLinked() {
+    const d = Remote.device();
+    $('linked').hidden = !d;
+    if (d) $('linked').innerHTML = `${UI.esc(t('s.linkedTo', { business: d.business, name: d.name || '' }))}<button class="link" type="button" id="unlink">${t('s.unlink')}</button>`;
+  }
+  $('link-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    try {
+      await Remote.linkDevice(e.target.code.value.trim(), e.target.name.value.trim());
+      history.replaceState(null, '', location.pathname);
+      $('link').hidden = true; $('find').hidden = false; showLinked();
+    } catch (err) { $('link-err').textContent = err.message; }
+  });
+  document.addEventListener('click', e => {
+    if (e.target.id === 'unlink' && confirm(t('s.unlinkQ'))) { Remote.unlinkDevice(); showLink(); }
+  });
 
   // ---------- camera (BarcodeDetector where available, jsQR otherwise) ----------
   let detector = null;
@@ -145,7 +203,7 @@ I18N.add({
           const r = jsQR(ctx.getImageData(0, 0, canvas.width, canvas.height).data, canvas.width, canvas.height);
           text = r && r.data;
         }
-        if (text && open(text.trim())) { navigator.vibrate && navigator.vibrate(40); return; }
+        if (text && !busy) { busy = true; const found = await open(text.trim()); busy = false; if (found) { navigator.vibrate && navigator.vibrate(40); return; } }
       }
       requestAnimationFrame(tick);
     };
@@ -163,35 +221,47 @@ I18N.add({
 
   // ---------- stamp ----------
   function draw(pop) {
-    const c = Store.getCustomer(customerId);
-    const card = Store.getCard(c.cardId);
+    const { customer: c, card } = state;
     const reward = (I18N.lang === 'en' && card.rewardEn) || card.reward;
     const title = (I18N.lang === 'en' && card.titleEn) || card.title;
     const full = c.stamps >= card.stampsNeeded;
     $('who-name').textContent = c.name;
     $('who-sub').textContent = t('s.sub', { title, n: c.redeemed });
-    $('who-pass').innerHTML = UI.renderPass(card, { ...c, stamps: c.stamps }, { pop, compact: true });
+    $('who-pass').innerHTML = UI.renderPass(card, c, { pop, compact: true });
     $('main-action').textContent = full ? t('s.give', { reward }) : t('s.add');
     $('main-action').dataset.mode = full ? 'redeem' : 'stamp';
     $('undo').disabled = c.stamps === 0;
   }
-  $('main-action').addEventListener('click', e => {
-    if (e.currentTarget.dataset.mode === 'redeem') { Store.redeem(customerId); draw(); UI.toast(t('s.tGiven')); return; }
-    const c = Store.stamp(customerId, 1);
-    const card = Store.getCard(c.cardId);
+  async function act(fn) {
+    if (busy) return; busy = true;
+    $('main-action').disabled = $('undo').disabled = true;
+    try { return await fn(); } catch (err) { fail(err); } finally { busy = false; $('main-action').disabled = false; if (state) $('undo').disabled = state.customer.stamps === 0; }
+  }
+  $('main-action').addEventListener('click', e => act(async () => {
+    const code = state.customer.id;
+    if (e.currentTarget.dataset.mode === 'redeem') { state = await api.redeem(code); draw(); UI.toast(t('s.tGiven')); return; }
+    state = await api.stamp(code, 1);
+    const { customer: c, card } = state;
     draw(c.stamps - 1);
+    navigator.vibrate && navigator.vibrate(30);
     UI.toast(c.stamps >= card.stampsNeeded ? t('s.tFull') : t('s.tAdded', { have: c.stamps, need: card.stampsNeeded }));
-  });
-  $('undo').addEventListener('click', () => { Store.stamp(customerId, -1); draw(); UI.toast(t('s.tRemoved')); });
+  }));
+  $('undo').addEventListener('click', () => act(async () => { state = await api.stamp(state.customer.id, -1); draw(); UI.toast(t('s.tRemoved')); }));
   $('next').addEventListener('click', () => {
-    customerId = null; $('stamp').hidden = true; $('find').hidden = false;
+    state = null; $('stamp').hidden = true; $('find').hidden = false;
     const input = document.querySelector('#code-form input'); input.value = ''; input.focus();
   });
 
   I18N.switchers();
   I18N.apply();
-  document.addEventListener('langchange', () => { if (customerId) draw(); if (lastErr) $('err').textContent = t(lastErr.key, lastErr.v); });
-  Store.onChange(() => { if (customerId) draw(); });
+  document.addEventListener('langchange', () => { if (state) draw(); if (lastErr) $('err').textContent = t(lastErr.key, lastErr.v); showLinked(); });
+  if (Remote.enabled) {
+    const code = new URLSearchParams(location.search).get('link');
+    if (code) $('link-form').code.value = code;
+    if (!Remote.device() || code) showLink(); else showLinked();
+  } else {
+    Store.onChange(async () => { if (state) { state = await api.lookup(state.customer.id); if (state) draw(); } });
+  }
 })();
 </script>
 </body>

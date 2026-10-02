@@ -56,7 +56,10 @@ main{max-width:1320px;margin:0 auto;padding:24px 24px 72px;display:grid;grid-tem
 
   <section class="work" id="work">
     <div>
-      <h1 id="w-title"></h1>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <h1 id="w-title"></h1>
+        <label style="display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted)"><span data-i18n="s.plan"></span><select id="w-plan" style="width:auto;min-height:38px;padding:6px 10px;font-weight:600"></select></label>
+      </div>
       <p class="sub" data-i18n="s.sub"></p>
       <div class="note" id="w-note" hidden></div>
       <div class="panel"><div id="editor"></div></div>
@@ -84,15 +87,17 @@ main{max-width:1320px;margin:0 auto;padding:24px 24px 72px;display:grid;grid-tem
 </main>
 
 <script src="../assets/vendor/qrcode.js"></script>
+<script src="../assets/vendor/supabase.js"></script>
 <script src="../assets/js/config.js"></script>
 <script src="../assets/js/i18n.js"></script>
 <script src="../assets/js/store.js"></script>
 <script src="../assets/js/ui.js"></script>
+<script src="../assets/js/remote.js"></script>
 <script src="../assets/js/design-editor.js"></script>
 <script>
 I18N.add({
   it: {
-    's.toReview': 'Da approvare', 's.all': 'Tutte le carte', 's.none': 'Niente da approvare.',
+    's.plan': 'Piano', 's.planSet': 'Piano aggiornato.', 's.toReview': 'Da approvare', 's.all': 'Tutte le carte', 's.none': 'Niente da approvare.',
     's.sub': 'Qui disegni la carta su misura, oppure controlli e sistemi le modifiche proposte dal locale. I clienti vedono il nuovo design solo dopo "Approva e pubblica".',
     's.from': 'Messaggio dal locale', 's.pics': 'Immagini e ispirazioni (clicca per scaricare)', 's.links': 'Link di ispirazione', 's.download': 'Scarica', 's.live': 'Ora, per i clienti', 's.new': 'Nuovo design',
     's.approve': 'Approva e pubblica', 's.ask': 'Chiedi una modifica', 's.reply': 'Risposta al locale', 's.replyPh': 'Es. Il logo è troppo piccolo, mandacelo in alta risoluzione.',
@@ -100,7 +105,7 @@ I18N.add({
     's.pending': 'Da approvare', 's.changes': 'Modifica chiesta', 's.export': 'Esporta il design', 's.import': 'Importa un design', 's.imported': 'Design importato. Controlla e pubblica.'
   },
   en: {
-    's.toReview': 'To review', 's.all': 'All cards', 's.none': 'Nothing to review.',
+    's.plan': 'Plan', 's.planSet': 'Plan updated.', 's.toReview': 'To review', 's.all': 'All cards', 's.none': 'Nothing to review.',
     's.sub': 'Design the card from scratch here, or check and fix the changes a café proposed. Customers only see the new design after "Approve and publish".',
     's.from': 'Message from the café', 's.pics': 'Images and inspiration (click to download)', 's.links': 'Inspiration links', 's.download': 'Download', 's.live': 'Live now', 's.new': 'New design',
     's.approve': 'Approve and publish', 's.ask': 'Ask for a change', 's.reply': 'Reply to the café', 's.replyPh': 'E.g. The logo is too small, please send it in high resolution.',
@@ -134,6 +139,8 @@ I18N.add({
     design = r && r.status === 'pending' ? { ...Store.designOf(card), ...r.design } : Store.designOf(card);
     editor.set(design);
     $('w-title').textContent = card.business;
+    $('w-plan').innerHTML = CONFIG.plans.map(p => `<option value="${p.id}">${UI.esc(I18N.pick(p).name)}</option>`).join('');
+    $('w-plan').value = card.plan || 'start';
     const pics = (r && r.images) || [], links = (r && r.links) || [];
     $('w-note').hidden = !(r && r.status === 'pending' && (r.note || pics.length || links.length));
     if (r) $('w-note').innerHTML = `<b>${I18N.t('s.from')}</b>${UI.esc(r.note || '')}`
@@ -148,11 +155,13 @@ I18N.add({
     $('next').innerHTML = UI.renderPass({ ...card, ...design }, null, { stamps: 4 });
   }
 
+  // Until payments exist, Witkowski Design sets each café's plan here.
+  $('w-plan').addEventListener('change', e => { card = Store.setPlan(card.id, e.target.value); UI.toast(I18N.t('s.planSet')); });
   $('approve').addEventListener('click', () => { card = Store.approveDesign(card.id, design); UI.toast(I18N.t('s.published')); open(card.id); });
   $('ask').addEventListener('click', () => {
     const reply = $('reply').value.trim();
     if (!reply) { UI.toast(I18N.t('s.needReply')); $('reply').focus(); return; }
-    if (!card.review) Store.proposeDesign(card.id, design, '');
+    if (!card.review && !Store.remote) Store.proposeDesign(card.id, design, '');
     Store.askChanges(card.id, reply); UI.toast(I18N.t('s.asked')); open(card.id);
   });
   document.addEventListener('click', e => { const b = e.target.closest('.list button'); if (b) open(b.dataset.id); });
@@ -174,9 +183,23 @@ I18N.add({
   I18N.switchers();
   I18N.apply();
   document.addEventListener('langchange', () => { editor.redraw(); lists(); previews(); });
+  document.addEventListener('storeerror', e => UI.toast(e.detail));
   Store.onChange(() => { lists(); });
-  const first = new URLSearchParams(location.search).get('card') || (Store.listPending()[0] || Store.listCards()[0]).id;
-  open(first);
+
+  async function start() {
+    if (Remote.enabled) {
+      if (!await Remote.requireLogin()) return;
+      try { Store.attachRemote({ cards: await Remote.adminCards(), customers: [] }); }
+      catch (err) { document.querySelector('main').innerHTML = `<p class="help" style="grid-column:1/-1">${UI.esc(err.message)}</p>`; return; }
+      // New proposals and requests appear without reloading.
+      setInterval(async () => { if (document.visibilityState === 'visible') try { Store.refresh({ cards: await Remote.adminCards(), customers: [] }); } catch (e) {} }, 30000);
+    }
+    const cards = Store.listCards();
+    if (!cards.length) { document.getElementById('work').innerHTML = `<p class="muted">${I18N.t('s.none')}</p>`; return; }
+    const first = new URLSearchParams(location.search).get('card') || (Store.listPending()[0] || cards[0]).id;
+    open(first);
+  }
+  start();
 })();
 </script>
 </body>

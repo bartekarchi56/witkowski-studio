@@ -58,6 +58,18 @@ details.en[open]{padding-bottom:4px}
 .review.approved{background:var(--wash)}
 .review b{display:block;margin-bottom:2px}
 .which button{font-size:12px}
+.till{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.till-steps{margin:0 0 22px;padding-left:20px;color:var(--ink-2)}
+.till-steps li{padding:4px 0}
+.link-box{margin-top:20px;border:1.5px solid var(--ink);border-radius:16px;padding:20px;display:grid;grid-template-columns:150px 1fr;gap:20px;align-items:center}
+.link-box .qr svg{width:100%;height:auto}
+.link-box b{display:block;font:500 30px/1.1 var(--mono);letter-spacing:.14em;margin:6px 0}
+.link-box small{color:var(--muted)}
+.devices{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink)}
+.devices li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1.5px solid var(--line)}
+.devices li span small{display:block;color:var(--muted);font-size:13px}
+.devices .empty-dev{color:var(--muted)}
+@media (max-width:860px){.till{grid-template-columns:1fr}.link-box{grid-template-columns:110px 1fr}}
 .dhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .insp{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
 .insp figure{position:relative;margin:0;width:88px;height:88px;border-radius:12px;overflow:hidden;box-shadow:0 0 0 1.5px var(--line)}
@@ -139,6 +151,7 @@ td code{font:500 13px var(--mono);background:var(--wash);padding:3px 7px;border-
   <a class="brand" href="../index.html"><span class="brand-mark" aria-hidden="true"></span>Timbro</a>
   <div class="right">
     <div class="lang"></div>
+    <button class="btn line small" type="button" id="logout" hidden data-i18n="d.logout"></button>
     <a class="btn small" href="stamper.html"><span class="hide-sm" data-i18n="d.openStamper"></span><span aria-hidden="true">→</span></a>
   </div>
 </header>
@@ -162,6 +175,7 @@ td code{font:500 13px var(--mono);background:var(--wash);padding:3px 7px;border-
     <button role="tab" id="t-print" aria-controls="tab-print" data-tab="print" data-i18n="d.tPrint"></button>
     <button role="tab" id="t-promote" aria-controls="tab-promote" data-tab="promote" data-i18n="d.tPromote"></button>
     <button role="tab" id="t-customers" aria-controls="tab-customers" data-tab="customers" data-i18n="d.tCustomers"></button>
+    <button role="tab" id="t-till" aria-controls="tab-till" data-tab="till" data-i18n="d.tTill"></button>
   </div>
 
   <!-- CARD DESIGN -->
@@ -282,6 +296,24 @@ td code{font:500 13px var(--mono);background:var(--wash);padding:3px 7px;border-
     </div>
   </section>
 
+  <!-- TILL: the cashiers' phones -->
+  <section role="tabpanel" id="tab-till" aria-labelledby="t-till" hidden>
+    <div class="till">
+      <div>
+        <h2 class="sec" data-i18n="d.tillT"></h2>
+        <p class="sec-sub" data-i18n="d.tillP"></p>
+        <ol class="till-steps"><li data-i18n="d.till1"></li><li data-i18n="d.till2"></li><li data-i18n="d.till3"></li></ol>
+        <button class="btn pop" type="button" id="link-new" data-i18n="d.linkNew"></button>
+        <div class="link-box" id="link-box" hidden></div>
+        <p class="help" id="till-demo" hidden><span data-i18n-html="d.tillDemo"></span></p>
+      </div>
+      <div>
+        <h3 class="subhead" style="margin-top:0" data-i18n="d.devices"></h3>
+        <ul class="devices" id="devices"></ul>
+      </div>
+    </div>
+  </section>
+
   <!-- CUSTOMERS -->
   <section role="tabpanel" id="tab-customers" aria-labelledby="t-customers" hidden>
     <div class="stats" id="stats"></div>
@@ -290,10 +322,12 @@ td code{font:500 13px var(--mono);background:var(--wash);padding:3px 7px;border-
 </main>
 
 <script src="../assets/vendor/qrcode.js"></script>
+<script src="../assets/vendor/supabase.js"></script>
 <script src="../assets/js/config.js"></script>
 <script src="../assets/js/i18n.js"></script>
 <script src="../assets/js/store.js"></script>
 <script src="../assets/js/ui.js"></script>
+<script src="../assets/js/remote.js"></script>
 <script src="../assets/js/marketing.js"></script>
 <script src="../assets/js/design-editor.js"></script>
 <script>
@@ -326,6 +360,12 @@ I18N.add({
     'd.rvPending': 'In attesa di approvazione', 'd.rvPendingP': 'I clienti vedono ancora il design attuale. Ti avvisiamo appena è approvato.',
     'd.rvRequest': 'Richiesta inviata. Witkowski Design aggiorna il design e te lo mostra:', 'd.rvChanges': 'Witkowski Design chiede una modifica', 'd.rvApproved': 'Design approvato', 'd.rvApprovedP': 'È quello che vedono i tuoi clienti.',
     'd.vLive': 'Attuale', 'd.vDraft': 'Proposta',
+    'd.logout': 'Esci', 'd.tTill': 'Cassa', 'd.loadErr': 'Non riesco a caricare i dati: {msg}', 'd.planFixed': 'Piano: {plan}',
+    'd.tillT': 'I telefoni della cassa', 'd.tillP': 'Ogni telefono o tablet che timbra va collegato una volta. Il barista non ha bisogno di un account.',
+    'd.till1': 'Tocca "Collega un telefono" qui sotto.', 'd.till2': 'Sul telefono della cassa inquadra il QR con la fotocamera (oppure apri il timbratore e scrivi il codice).', 'd.till3': 'Dai un nome al telefono, per esempio "Cassa 1". Fatto.',
+    'd.linkNew': 'Collega un telefono', 'd.linkCode': 'Codice di collegamento', 'd.linkValid': 'Valido 15 minuti, una sola volta.',
+    'd.devices': 'Telefoni collegati', 'd.noDevices': 'Ancora nessun telefono collegato.', 'd.lastUsed': 'Usato {ago}', 'd.remove': 'Scollega', 'd.removeQ': 'Scollegare "{name}"? Non potrà più timbrare.',
+    'd.tillDemo': '<span><b>Versione demo.</b> Il timbratore funziona su questo dispositivo, senza collegamento. Con il database ogni telefono della cassa si collega con un codice.</span>',
     'd.icon': 'Icona', 'd.color': 'Colore della carta', 'd.ink': 'Colore del timbro',
     'd.enTitle': 'In inglese, per i turisti (facoltativo)', 'd.enHint': 'Chi ha il telefono in inglese vedrà questi testi.',
     'd.titleEn': 'Nome della carta in inglese', 'd.rewardEn': 'Premio in inglese',
@@ -374,6 +414,12 @@ I18N.add({
     'd.rvPending': 'Waiting for approval', 'd.rvPendingP': 'Customers still see the current design. We\'ll let you know as soon as it\'s approved.',
     'd.rvRequest': 'Request sent. Witkowski Design will update the design and show you:', 'd.rvChanges': 'Witkowski Design asked for a change', 'd.rvApproved': 'Design approved', 'd.rvApprovedP': 'This is what your customers see.',
     'd.vLive': 'Current', 'd.vDraft': 'Proposal',
+    'd.logout': 'Log out', 'd.tTill': 'Till', 'd.loadErr': 'Can\'t load your data: {msg}', 'd.planFixed': 'Plan: {plan}',
+    'd.tillT': 'The till phones', 'd.tillP': 'Each phone or tablet that stamps is linked once. Baristas don\'t need an account.',
+    'd.till1': 'Tap "Link a phone" below.', 'd.till2': 'On the till phone, scan the QR code with the camera (or open the stamper and type the code).', 'd.till3': 'Give the phone a name, like "Till 1". Done.',
+    'd.linkNew': 'Link a phone', 'd.linkCode': 'Link code', 'd.linkValid': 'Valid for 15 minutes, once.',
+    'd.devices': 'Linked phones', 'd.noDevices': 'No phones linked yet.', 'd.lastUsed': 'Used {ago}', 'd.remove': 'Unlink', 'd.removeQ': 'Unlink "{name}"? It won\'t be able to stamp any more.',
+    'd.tillDemo': '<span><b>Demo version.</b> The stamper works on this device without linking. With the database, each till phone links with a code.</span>',
     'd.icon': 'Icon', 'd.color': 'Card colour', 'd.ink': 'Stamp colour',
     'd.enTitle': 'Second language for tourists (optional)', 'd.enHint': 'Customers whose phone is in English see these texts.',
     'd.titleEn': 'Card name in English', 'd.rewardEn': 'Reward in English',
@@ -435,6 +481,8 @@ I18N.add({
     $('design-reset').hidden = custom;
     $('sub-plan').innerHTML = CONFIG.plans.map(p => `<option value="${p.id}">${UI.esc(I18N.pick(p).name)}</option>`).join('');
     $('sub-plan').value = planOf(current).id;
+    // In connected mode the plan comes from the subscription: only Witkowski Design can change it here.
+    $('sub-plan').disabled = Store.remote && !isAdmin;
     $('d-sub').textContent = I18N.t(custom ? 'd.dSubCustom' : 'd.dSubSelf');
     $('design-submit').textContent = I18N.t(custom ? 'd.sendRequest' : 'd.send');
     $('note-field').querySelector('span').textContent = I18N.t(custom ? 'd.noteCustom' : 'd.note');
@@ -442,7 +490,7 @@ I18N.add({
   }
   $('sub-plan').addEventListener('change', e => {
     // Prototype: the plan is chosen here. With payments it comes from the subscription.
-    current = Store.saveCard({ ...current, plan: e.target.value });
+    current = Store.setPlan(current.id, e.target.value);
     loadCard(current.id);
   });
   const designDiffers = () => JSON.stringify(Store.designOf({ ...current, ...draft })) !== JSON.stringify(Store.designOf(current));
@@ -553,7 +601,7 @@ I18N.add({
   function fillSelect() {
     $('card-select').innerHTML = Store.listCards().map(c => `<option value="${c.id}">${UI.esc(c.business)} · ${UI.esc(c.title)}</option>`).join('');
     $('card-select').value = current.id;
-    $('example').hidden = current.id !== 'the-coffee';
+    $('example').hidden = Store.remote || current.id !== 'the-coffee';
   }
   function loadCard(id) {
     current = Store.getCard(id) || Store.listCards()[0];
@@ -665,6 +713,33 @@ I18N.add({
     });
   });
 
+  // ---------- till phones ----------
+  let isAdmin = false, devices = [], linkTimer;
+  function renderDevices() {
+    $('till-demo').hidden = Store.remote; $('link-new').hidden = !Store.remote;
+    $('devices').innerHTML = !Store.remote ? `<li class="empty-dev"><a class="link" href="stamper.html">${I18N.t('d.openStamper')}</a></li>`
+      : devices.length ? devices.map(d => `<li><span>${UI.esc(d.name)}<small>${I18N.t('d.lastUsed', { ago: UI.timeAgo(d.lastUsed) })}</small></span><button class="btn line small" type="button" data-dev="${d.id}">${I18N.t('d.remove')}</button></li>`).join('')
+      : `<li class="empty-dev">${I18N.t('d.noDevices')}</li>`;
+  }
+  $('link-new').addEventListener('click', async () => {
+    try {
+      const r = await Remote.linkCode();
+      const url = new URL('stamper.html?link=' + r.code, location.href).href;
+      $('link-box').hidden = false;
+      $('link-box').innerHTML = `<div class="qr">${UI.qrSvg(url)}</div><div><small>${I18N.t('d.linkCode')}</small><b>${r.code}</b><small>${I18N.t('d.linkValid')}</small></div>`;
+      clearTimeout(linkTimer);
+      linkTimer = setTimeout(() => { $('link-box').hidden = true; }, r.expiresAt - Date.now());
+    } catch (err) { UI.toast(err.message); }
+  });
+  $('devices').addEventListener('click', async e => {
+    const b = e.target.closest('[data-dev]'); if (!b) return;
+    const d = devices.find(x => x.id === b.dataset.dev);
+    if (!confirm(I18N.t('d.removeQ', { name: d.name }))) return;
+    try { await Remote.removeDevice(d.id); devices = devices.filter(x => x.id !== d.id); renderDevices(); } catch (err) { UI.toast(err.message); }
+  });
+  $('logout').addEventListener('click', async () => { await Remote.signOut(); location.href = 'login.html'; });
+  document.addEventListener('storeerror', e => UI.toast(e.detail));
+
   // ---------- start ----------
   I18N.switchers();
   document.addEventListener('langchange', () => {
@@ -672,21 +747,39 @@ I18N.add({
     controls(); fillTexts({ ...current, ...keep }); setupDesign(); editor.redraw(); renderReview(); preview();
     if (dirty) $('status').textContent = I18N.t('d.unsaved');
     instaLang = I18N.lang;
-    renderPrint(); renderPromote(); renderCustomers();
+    renderPrint(); renderPromote(); renderCustomers(); renderDevices();
   });
   Store.onChange(() => { current = Store.getCard(current.id) || current; renderCustomers(); renderReview(); setView(view); });
 
-  I18N.apply();
-  controls();
-  const q = new URLSearchParams(location.search);
-  const startTab = ['design', 'print', 'promote', 'customers'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'design';
-  if (q.get('new')) {
-    current = Store.getCard('the-coffee');
-    createCard({ name: q.get('name'), type: q.get('type'), style: q.get('style'), reward: q.get('reward'), stamps: q.get('stamps'), lang: q.get('lang') });
-  } else {
-    loadCard(q.get('card'));
-    showTab(startTab);
+  async function start() {
+    I18N.apply();
+    controls();
+    const q = new URLSearchParams(location.search);
+    const startTab = ['design', 'print', 'promote', 'customers', 'till'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'design';
+    if (Remote.enabled) {
+      if (!await Remote.requireLogin()) return;
+      let data;
+      try { data = await Remote.ownerData(); }
+      catch (err) { document.querySelector('main').innerHTML = `<p class="help">${UI.esc(I18N.t('d.loadErr', { msg: err.message }))}</p>`; return; }
+      Store.attachRemote(data);
+      isAdmin = data.isAdmin; devices = data.devices;
+      $('logout').hidden = false;
+      // Keep customers, phones and design replies up to date.
+      setInterval(async () => {
+        if (document.visibilityState !== 'visible') return;
+        try { const d = await Remote.ownerData(); devices = d.devices; Store.refresh(d); renderDevices(); } catch (err) {}
+      }, 30000);
+    }
+    renderDevices();
+    if (q.get('new') || !Store.listCards().length) {
+      current = Store.listCards()[0] || null;
+      createCard({ name: q.get('name'), type: q.get('type'), style: q.get('style'), reward: q.get('reward'), stamps: q.get('stamps'), lang: q.get('lang') });
+    } else {
+      loadCard(q.get('card'));
+      showTab(startTab);
+    }
   }
+  start();
 })();
 </script>
 </body>

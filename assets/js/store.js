@@ -1,16 +1,20 @@
 /*
  * Data layer for the loyalty service.
  *
- * This prototype keeps everything in the browser (localStorage), so the
- * dashboard, customer card and stamper only share data on the same device.
- * Every screen talks to this object only, so swapping it for API calls to a
- * real server (see docs/HOW-IT-WORKS.md) does not touch the UI code.
+ * Two modes:
+ *  • Demo (default): everything lives in this browser (localStorage).
+ *  • Connected: the dashboard and Studio call Store.attachRemote() with data
+ *    from Supabase (remote.js). Reads come from that copy; every change is
+ *    also sent to the database. Errors fire a 'storeerror' event.
+ * The customer card and the stamper talk to Remote directly.
  */
 (function () {
   const KEY = 'timbro:v1';
-  let memory = null; // fallback when localStorage is blocked
+  let memory = null;   // fallback when localStorage is blocked
+  let remoteDb = null; // connected mode: the data loaded from Supabase
 
   function load() {
+    if (remoteDb) return remoteDb;
     try {
       const raw = localStorage.getItem(KEY);
       if (raw) {
@@ -25,6 +29,7 @@
   }
 
   function save(db) {
+    if (remoteDb) { remoteDb = db; return; }
     memory = db;
     try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) { /* memory only */ }
   }
@@ -69,7 +74,21 @@
     return s;
   }
 
+  // Connected mode: send a change to the database in the background.
+  function sync(call) {
+    if (!remoteDb) return;
+    call().then(r => {
+      if (r && r.id && remoteDb.cards[r.id]) Object.assign(remoteDb.cards[r.id], r);
+    }).catch(err => document.dispatchEvent(new CustomEvent('storeerror', { detail: err.message })));
+  }
+  const byId = list => Object.fromEntries((list || []).map(x => [x.id, x]));
+
   const Store = {
+    get remote() { return Boolean(remoteDb); },
+    attachRemote(data) { remoteDb = { cards: byId(data.cards), customers: byId(data.customers) }; },
+    // New data from the database (e.g. a timed refresh): screens redraw.
+    refresh(data) { if (!remoteDb) return; this.attachRemote(data); document.dispatchEvent(new CustomEvent('storechange')); },
+
     // ---- cards (what the business designs) ----
     listCards() { return Object.values(load().cards).sort((a, b) => a.createdAt - b.createdAt); },
     getCard(id) { return load().cards[id] || null; },
@@ -77,9 +96,12 @@
       const db = load();
       if (!card.id) { card.id = code(6).toLowerCase(); card.createdAt = Date.now(); }
       card.updatedAt = Date.now();
+      const isNew = !db.cards[card.id];
       db.cards[card.id] = { ...db.cards[card.id], ...card };
       save(db);
-      return db.cards[card.id];
+      const saved = db.cards[card.id];
+      sync(() => Remote.saveCard({ ...saved, design: isNew ? this.designOf(saved) : undefined }));
+      return saved;
     },
 
     // ---- customers (one per person per card) ----
@@ -136,7 +158,9 @@
     requestDesign(cardId, note, extras = {}) {
       const db = load(); const card = db.cards[cardId];
       card.review = { status: 'pending', kind: 'request', design: {}, note: (note || '').trim(), images: extras.images || [], links: extras.links || [], sentAt: Date.now(), reply: '' };
-      save(db); return card;
+      save(db);
+      sync(() => Remote.sendDesign(cardId, 'request', {}, card.review.note, card.review.images, card.review.links));
+      return card;
     },
 
     // ---- design review ----
@@ -148,8 +172,10 @@
     proposeDesign(cardId, design, note, extras = {}) {
       const db = load(); const card = db.cards[cardId];
       if (!card) throw new Error('No card');
-      card.review = { status: 'pending', design, note: (note || '').trim(), images: extras.images || [], links: extras.links || [], sentAt: Date.now(), reply: '' };
-      save(db); return card;
+      card.review = { status: 'pending', kind: 'proposal', design, note: (note || '').trim(), images: extras.images || [], links: extras.links || [], sentAt: Date.now(), reply: '' };
+      save(db);
+      sync(() => Remote.sendDesign(cardId, 'proposal', design, card.review.note, card.review.images, card.review.links));
+      return card;
     },
     approveDesign(cardId, design) {
       const db = load(); const card = db.cards[cardId];
@@ -157,13 +183,22 @@
       DESIGN_KEYS.forEach(k => { if (d[k] !== undefined) card[k] = d[k]; });
       card.review = { status: 'approved', at: Date.now(), reply: '' };
       card.updatedAt = Date.now();
-      save(db); return card;
+      save(db);
+      sync(() => Remote.publish(cardId, d));
+      return card;
     },
     askChanges(cardId, reply) {
       const db = load(); const card = db.cards[cardId];
-      if (!card.review) return card;
-      card.review.status = 'changes'; card.review.reply = (reply || '').trim(); card.review.at = Date.now();
-      save(db); return card;
+      card.review = { ...(card.review || {}), status: 'changes', reply: (reply || '').trim(), at: Date.now() };
+      save(db);
+      sync(() => Remote.askChanges(cardId, card.review.reply));
+      return card;
+    },
+    // The plan comes from the subscription; in connected mode only the designer can set it.
+    setPlan(cardId, plan) {
+      const db = load(); db.cards[cardId].plan = plan; save(db);
+      sync(() => Remote.setPlan(cardId, plan));
+      return db.cards[cardId];
     },
     listPending() { return Object.values(load().cards).filter(c => c.review && c.review.status === 'pending').sort((a, b) => a.review.sentAt - b.review.sentAt); },
 
@@ -180,7 +215,10 @@
     },
 
     // Re-render when another tab (e.g. the stamper) changes data.
-    onChange(fn) { window.addEventListener('storage', e => { if (e.key === KEY) fn(); }); },
+    onChange(fn) {
+      window.addEventListener('storage', e => { if (e.key === KEY && !remoteDb) fn(); });
+      document.addEventListener('storechange', fn);
+    },
 
     reset() { try { localStorage.removeItem(KEY); } catch (e) {} memory = null; }
   };

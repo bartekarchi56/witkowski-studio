@@ -41,6 +41,7 @@ The customer's card page (`app/card.html`) shows an "Add to Apple Wallet" or "Ad
 | `APPLE_WWDR_CERT` | path to `wwdr.pem`, or the PEM text |
 | `GOOGLE_ISSUER_ID` | `3388000000012345678` |
 | `GOOGLE_SERVICE_ACCOUNT` | path to the JSON key, or the JSON text |
+| `SUPABASE_URL` / `SUPABASE_ANON_KEY` | your Supabase project. When set, the server reads the card and stamps from the database (using the customer's secret) instead of trusting the phone |
 
 Never commit certificates or keys. `.gitignore` already excludes `*.pem`, `*.p12` and `service-account*.json`.
 
@@ -66,6 +67,6 @@ Wallet apps draw text in their own font, so the website turns the name and the s
 - **Live updates.** A saved pass shows the stamps it had when it was added. To update it on every stamp:
   - Apple: add `webServiceURL` + `authenticationToken` to the pass, implement Apple's PassKit web service endpoints (register device, list updated passes, send latest pass) and send an APNs push with the pass certificate after each stamp.
   - Google: after each stamp, `PATCH` the loyalty object through the Google Wallet REST API.
-- **Trusting the browser.** Right now the card page sends the card's details, because the prototype keeps data in the browser. With a database, look up the card and customer by ID in `input.js` instead. Until then, keep `ALLOWED_ORIGINS` set.
+- **Trusting the browser.** Solved when `SUPABASE_URL` is set: the card and stamps come from the database. In demo mode the page still sends them, so keep `ALLOWED_ORIGINS` set.
 - **Uploaded logos on Google Wallet.** Google needs the logo at a public URL, so it uses the card's icon for now. Apple uses the uploaded logo.
 - **Official buttons.** Apple and Google publish official "Add to Wallet" badge artwork with usage rules. Swap them in for the buttons in `app/card.html` before launch.

@@ -10,6 +10,12 @@ export const settings = {
   // Only pages from these sites may ask for passes (comma separated).
   allowedOrigins: (process.env.ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean),
   brand: process.env.BRAND || 'Timbro',
+  // When set, the card and stamps are read from the database (trusted)
+  // instead of from what the customer's phone sends.
+  supabase: {
+    url: (process.env.SUPABASE_URL || '').replace(/\/$/, ''),
+    anonKey: process.env.SUPABASE_ANON_KEY || ''
+  },
   apple: {
     passTypeIdentifier: process.env.APPLE_PASS_TYPE_ID || '',
     teamIdentifier: process.env.APPLE_TEAM_ID || '',

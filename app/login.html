@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accedi · Timbro</title>
+<link rel="stylesheet" href="../assets/css/base.css">
+<style>
+body{background:var(--wash);min-height:100vh}
+main{max-width:420px;margin:0 auto;padding:48px 16px}
+.box{background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:28px}
+h1{font-size:28px;font-stretch:112%;font-weight:800;margin-bottom:6px}
+.sub{color:var(--ink-2);margin-bottom:22px}
+.switch{display:flex;gap:4px;border-bottom:1.5px solid var(--line);margin-bottom:22px}
+.switch button{flex:1;font:600 15px/1 var(--font);padding:12px;border:0;border-bottom:3px solid transparent;margin-bottom:-1.5px;background:none;color:var(--muted);cursor:pointer}
+.switch button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--pop)}
+.msg{font-size:15px;min-height:1.4em;margin:12px 0 0}
+.msg.err{font-weight:600}
+.msg.err:not(:empty)::before{content:"!";display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--ink);color:#fff;font-size:13px;margin-right:8px}
+.forgot{display:block;margin-top:16px;font-size:14px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><a class="brand" href="../index.html"><span class="brand-mark" aria-hidden="true"></span>Timbro</a><div class="lang"></div></div>
+  <div class="box" id="box">
+    <div class="switch" role="group" id="mode">
+      <button type="button" data-m="in" aria-pressed="true" data-i18n="l.in"></button>
+      <button type="button" data-m="up" aria-pressed="false" data-i18n="l.up"></button>
+    </div>
+    <h1 id="title"></h1>
+    <p class="sub" id="sub"></p>
+    <form id="form" autocomplete="on">
+      <label class="field"><span data-i18n="l.email"></span><input type="email" name="email" required autocomplete="email"></label>
+      <label class="field" id="pw-field"><span data-i18n="l.password"></span><input type="password" name="password" minlength="8" required autocomplete="current-password"></label>
+      <button class="btn pop block" type="submit" id="submit"></button>
+      <p class="msg" id="msg" role="status"></p>
+    </form>
+    <button class="link forgot" type="button" id="forgot" data-i18n="l.forgot"></button>
+  </div>
+</main>
+
+<script src="../assets/vendor/supabase.js"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/i18n.js"></script>
+<script src="../assets/js/remote.js"></script>
+<script>
+I18N.add({
+  it: {
+    'l.in': 'Accedi', 'l.up': 'Crea account', 'l.email': 'Email', 'l.password': 'Password (almeno 8 caratteri)', 'l.forgot': 'Password dimenticata?',
+    'l.tIn': 'Bentornato', 'l.sIn': 'Accedi all\'area del tuo locale.', 'l.tUp': 'Crea il tuo account', 'l.sUp': 'Ti serve per gestire la carta del tuo locale.',
+    'l.tReset': 'Nuova password', 'l.sReset': 'Scegli la nuova password.', 'l.tForgot': 'Password dimenticata', 'l.sForgot': 'Ti mandiamo un link per sceglierne una nuova.',
+    'l.bIn': 'Accedi', 'l.bUp': 'Crea account', 'l.bReset': 'Salva la password', 'l.bForgot': 'Mandami il link',
+    'l.checkEmail': 'Ti abbiamo mandato un\'email: apri il link per confermare l\'account.', 'l.sent': 'Se l\'email è giusta, troverai il link nella posta.',
+    'l.saved': 'Password salvata.', 'l.wrong': 'Email o password sbagliate.', 'l.demo': 'Questa è la versione demo: non serve accedere.', 'l.openDash': 'Apri l\'area locale'
+  },
+  en: {
+    'l.in': 'Log in', 'l.up': 'Create account', 'l.email': 'Email', 'l.password': 'Password (at least 8 characters)', 'l.forgot': 'Forgot your password?',
+    'l.tIn': 'Welcome back', 'l.sIn': 'Log in to your café\'s account.', 'l.tUp': 'Create your account', 'l.sUp': 'You need it to manage your café\'s card.',
+    'l.tReset': 'New password', 'l.sReset': 'Choose your new password.', 'l.tForgot': 'Forgot your password', 'l.sForgot': 'We\'ll send you a link to choose a new one.',
+    'l.bIn': 'Log in', 'l.bUp': 'Create account', 'l.bReset': 'Save password', 'l.bForgot': 'Send me the link',
+    'l.checkEmail': 'We sent you an email: open the link to confirm your account.', 'l.sent': 'If the email is right, the link is in your inbox.',
+    'l.saved': 'Password saved.', 'l.wrong': 'Wrong email or password.', 'l.demo': 'This is the demo: no login needed.', 'l.openDash': 'Open the dashboard'
+  }
+});
+
+(async () => {
+  const $ = id => document.getElementById(id);
+  const q = new URLSearchParams(location.search);
+  const next = q.get('next') && !/^(https?:)?\/\//.test(q.get('next')) ? '../' + q.get('next') : 'dashboard.html';
+  let mode = q.get('reset') ? 'reset' : 'in';
+
+  function draw() {
+    const k = { in: ['l.tIn', 'l.sIn', 'l.bIn'], up: ['l.tUp', 'l.sUp', 'l.bUp'], reset: ['l.tReset', 'l.sReset', 'l.bReset'], forgot: ['l.tForgot', 'l.sForgot', 'l.bForgot'] }[mode];
+    $('title').textContent = I18N.t(k[0]); $('sub').textContent = I18N.t(k[1]); $('submit').textContent = I18N.t(k[2]);
+    $('mode').hidden = mode === 'reset' || mode === 'forgot';
+    $('mode').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === mode)));
+    $('pw-field').hidden = mode === 'forgot';
+    $('form').password.required = mode !== 'forgot';
+    $('form').email.closest('.field').hidden = mode === 'reset';
+    $('form').email.required = mode !== 'reset';
+    $('form').password.autocomplete = mode === 'in' ? 'current-password' : 'new-password';
+    $('forgot').hidden = mode !== 'in';
+  }
+  const say = (key, err) => { $('msg').textContent = typeof key === 'string' && key.includes('.') && !key.includes(' ') ? I18N.t(key) : key; $('msg').className = 'msg' + (err ? ' err' : ''); };
+
+  I18N.switchers(); I18N.apply();
+  document.addEventListener('langchange', draw);
+
+  if (!Remote.enabled) {
+    $('box').innerHTML = `<h1>${I18N.t('l.in')}</h1><p class="sub">${I18N.t('l.demo')}</p><a class="btn pop block" href="dashboard.html">${I18N.t('l.openDash')}</a>`;
+    return;
+  }
+  if (mode !== 'reset' && await Remote.session()) { location.replace(next); return; }
+
+  $('mode').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { mode = b.dataset.m; say(''); draw(); } });
+  $('forgot').addEventListener('click', () => { mode = 'forgot'; say(''); draw(); });
+  $('form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = e.target.email.value.trim(), password = e.target.password.value;
+    $('submit').disabled = true; say('');
+    try {
+      if (mode === 'in') { await Remote.signIn(email, password); location.replace(next); return; }
+      if (mode === 'up') { const r = await Remote.signUp(email, password); if (r.session) { location.replace(next); return; } say('l.checkEmail'); }
+      if (mode === 'forgot') { await Remote.resetPassword(email); say('l.sent'); }
+      if (mode === 'reset') { await Remote.updatePassword(password); say('l.saved'); setTimeout(() => location.replace('dashboard.html'), 800); }
+    } catch (err) {
+      say(/invalid login|credentials/i.test(err.message) ? 'l.wrong' : err.message, true);
+    } finally { $('submit').disabled = false; }
+  });
+  draw();
+})();
+</script>
+</body>
+</html>

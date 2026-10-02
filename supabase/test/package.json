@@ -1,0 +1,8 @@
+{
+  "name": "timbro-db-tests",
+  "private": true,
+  "type": "module",
+  "description": "Tests supabase/schema.sql against a local Postgres (see README).",
+  "scripts": { "test": "node security.test.js" },
+  "dependencies": { "pg": "^8.13.0" }
+}

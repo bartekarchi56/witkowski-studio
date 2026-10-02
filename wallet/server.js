@@ -28,6 +28,22 @@ function parse(req, body) {
   return JSON.parse(new URLSearchParams(body).get('data') || '{}');
 }
 
+// With the database connected, take the card and stamps from Supabase, using
+// the customer's own secret; only the images drawn by the website are kept.
+async function trusted(raw) {
+  const { url, anonKey } = settings.supabase;
+  if (!url) return raw;
+  const r = await fetch(`${url}/rest/v1/rpc/get_my_card`, {
+    method: 'POST',
+    headers: { apikey: anonKey, authorization: `Bearer ${anonKey}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ p_code: raw?.customer?.id || '', p_secret: raw?.customer?.secret || '' })
+  });
+  const live = r.ok ? await r.json() : null;
+  if (!live) throw new Error('Card not found');
+  const art = raw.card || {};
+  return { lang: raw.lang, customer: live.customer, card: { ...live.card, logoAuto: art.logoAuto, markImage: art.markImage } };
+}
+
 const send = (res, status, body, headers = {}) => { res.writeHead(status, { 'content-type': 'text/plain; charset=utf-8', ...headers }); res.end(body); };
 
 function originAllowed(req) {
@@ -53,7 +69,7 @@ export const server = http.createServer(async (req, res) => {
 
     if (req.method === 'POST' && (url.pathname === '/apple' || url.pathname === '/google')) {
       if (!originAllowed(req)) return send(res, 403, 'This site is not allowed to create passes.');
-      const data = readPassRequest(parse(req, await readBody(req)));
+      const data = readPassRequest(await trusted(parse(req, await readBody(req))));
 
       if (url.pathname === '/apple') {
         if (!appleReady()) return send(res, 503, 'Apple Wallet is not set up yet. See wallet/README.md.');

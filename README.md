@@ -21,6 +21,8 @@ Digital stamp cards for cafés, bakeries and shops, with help on the design and 
 | **Sales kit**: in-person script, emails in IT/EN/ES/FR/DE, schedule | You | `sales/outreach.html` |
 | **Ready-to-print PDFs** | Print shop or home printer | `print/` |
 | **Wallet server**: real Apple Wallet `.pkpass` and Google Wallet passes | Deployed once, used by every card | `wallet/` ([setup](wallet/README.md)) |
+| **Database** (Supabase): tables, security rules, tests | Shared by every page once connected | `supabase/` ([setup](supabase/README.md)) |
+| Login for owners and you | Café owners, Witkowski Design | `app/login.html` |
 
 ### Print files (`print/`)
 
@@ -65,7 +67,12 @@ In the prototype the Studio has no login and reads proposals from the same brows
 
 ## Status
 
-Working prototype. Data is saved in the browser only, so the dashboard, customer card and stamper share data only on the same device. The cards are drawn exactly like Apple Wallet and Google Wallet passes, and `wallet/` creates the real ones; it switches on once you add your Apple and Google accounts (see `wallet/README.md`). Live stamp updates inside Wallet and reminder messages need the database. See [docs/HOW-IT-WORKS.md](docs/HOW-IT-WORKS.md) for how the service works and the roadmap to launch (server, wallets, payments).
+**Demo or connected.** With `supabase` empty in `assets/js/config.js`, the site is a demo: data stays in each browser. Fill it in (see [supabase/README.md](supabase/README.md)) and the customer card, the till phones, the dashboard and the Studio share one database, with logins:
+- owners sign up with email; you are the designer via the `admins` table;
+- till phones are linked once from the dashboard's **Cassa** tab (QR code, no account), and can be unlinked;
+- customers' cards are protected by a secret kept on their phone.
+
+ The cards are drawn exactly like Apple Wallet and Google Wallet passes, and `wallet/` creates the real ones; it switches on once you add your Apple and Google accounts (see `wallet/README.md`). Live stamp updates inside Wallet and reminder messages need the database. See [docs/HOW-IT-WORKS.md](docs/HOW-IT-WORKS.md) for how the service works and the roadmap to launch (server, wallets, payments).
 
 ## Editing
 

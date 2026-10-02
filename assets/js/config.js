@@ -10,6 +10,13 @@ window.CONFIG = {
   // before printing anything (e.g. https://timbro.it/).
   siteUrl: 'https://bartekarchi56.github.io/witkowskidesign/',
 
+  // Your Supabase project (Settings → API). Leave empty to run the
+  // browser-only demo, where data stays on one device.
+  supabase: {
+    url: '',        // e.g. 'https://abcdefgh.supabase.co'
+    anonKey: ''     // the "anon public" key (safe to publish: the database checks every call)
+  },
+
   // Address of the wallet server (wallet/server.js) once it is deployed,
   // e.g. 'https://wallet.timbro.it'. Empty = "Add to Wallet" stays switched off.
   walletApi: '',
