@@ -160,7 +160,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink)}
 .wp-ready{margin:4px 18px 0;padding:9px 12px;border-radius:8px;background:var(--s);color:#fff;font-weight:600;font-size:13px;text-align:center}
 
 /* Apple Wallet store card */
-.pass.apple{border-radius:12px;display:flex;flex-direction:column;box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 10px 30px -10px rgba(0,0,0,.5)}
+.pass.apple{border-radius:18px;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.18),0 10px 30px -14px rgba(0,0,0,.4)}
 .apple .wp-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:14px 16px 0;min-height:52px}
 .apple .wp-logo{display:flex;align-items:center;gap:8px;min-width:0;font-size:20px;font-weight:500;letter-spacing:-.01em;line-height:1.1}
 .apple .wp-logo img{max-height:44px;max-width:200px;object-fit:contain;object-position:left center}
@@ -191,8 +191,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink)}
 .google .wp-ready{margin:12px 18px 0}
 
 /* wallet app backgrounds behind the pass */
-.phone-screen:has(.pass.apple){background:#000}
-.phone-screen:has(.pass.apple)::before{background:#1c1c1e}
+.phone-screen:has(.pass.apple){background:#F2F2F7}  /* Apple Wallet, light mode */
 .phone-screen:has(.pass.google){background:#f1f3f4}
 
 /* iPhone / Android switch */
