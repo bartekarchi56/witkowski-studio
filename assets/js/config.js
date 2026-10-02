@@ -8,7 +8,7 @@ window.CONFIG = {
 
   // Where the site is published. Printed QR codes point here, so set it
   // before printing anything (e.g. https://timbro.it/).
-  siteUrl: 'https://bartekarchi56.github.io/witkowski-studio/',
+  siteUrl: 'https://bartekarchi56.github.io/witkowskidesign/',
 
   // Address of the wallet server (wallet/server.js) once it is deployed,
   // e.g. 'https://wallet.timbro.it'. Empty = "Add to Wallet" stays switched off.
