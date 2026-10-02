@@ -13,6 +13,8 @@ const FILES = [
   ['sales/brochure.html?cafe=The%20Coffee&lang=it&format=fold', 'brochure-the-coffee-it-a4-da-piegare.pdf'],
   ['sales/brochure.html?cafe=&lang=it&format=a5', 'brochure-generale-it.pdf'],
   ['sales/brochure.html?cafe=&lang=en&format=a5', 'brochure-general-en.pdf'],
+  ['sales/brochure.html?cafe=Orsonero%20Coffee&lang=en&format=a5', 'brochure-orsonero-en.pdf'],
+  ['sales/brochure.html?cafe=Orsonero%20Coffee&lang=it&format=a5', 'brochure-orsonero-it.pdf'],
   ['app/poster.html?card=the-coffee&lang=it&size=A5', 'poster-the-coffee-a5.pdf']
 ];
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.json': 'application/json' };
