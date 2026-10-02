@@ -14,6 +14,8 @@
 .poster-dots{display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:1.6cqw;margin:6cqw 0 0;max-width:80%}
 .poster-dots i{aspect-ratio:1;border-radius:50%;border:.4cqw dashed #B5B5B8}
 .poster-dots i.on{background:var(--s);border:0}
+.poster-dots i.p-art.on{background:none}
+.poster-dots i.p-art img{width:100%;height:100%;object-fit:contain;display:block}
 .poster-scan{display:grid;grid-template-columns:38% 1fr;gap:5cqw;align-items:center;margin-top:auto;padding-top:6cqw}
 .poster-qr{border:.5cqw solid #0B0B0C;border-radius:3cqw;padding:2.2cqw}
 .poster-qr svg{width:100%;height:auto}

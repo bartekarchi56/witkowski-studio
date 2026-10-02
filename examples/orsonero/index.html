@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orsonero Coffee · Loyalty card · Timbro</title>
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/poster.css">
+<style>
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 24px;border-bottom:1.5px solid var(--ink)}
+.hero{padding-block:72px 56px;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+.hero h1{font-size:clamp(40px,6vw,80px);line-height:.96}
+.hero h1 em{font-style:normal;color:var(--pop)}
+.hero p{font-size:19px;color:var(--ink-2);max-width:32em;margin-top:22px}
+.hero .stamp{width:min(280px,60vw);color:var(--pop);transform:rotate(-12deg);justify-self:center}
+.block{padding:72px 0;border-top:1.5px solid var(--ink)}
+.block-head{display:grid;grid-template-columns:200px 1fr;gap:24px;margin-bottom:32px}
+.block-head .label{padding-top:8px}
+.block-head h2{font-size:clamp(28px,3.4vw,42px)}
+.block-head p{color:var(--ink-2);margin-top:12px;max-width:38em}
+.grid{display:grid;grid-template-columns:200px 1fr;gap:24px}
+.demo{display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:center}
+.demo .phone-screen{min-height:0;padding-bottom:28px}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.steps-mini{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--line)}
+.steps-mini li{padding:14px 0;border-bottom:1.5px solid var(--line)}
+.steps-mini b{display:block}
+.steps-mini span{color:var(--ink-2);font-size:15px}
+.paper{display:grid;grid-template-columns:320px 1fr;gap:40px;align-items:start}
+.paper .poster{box-shadow:0 0 0 1.5px var(--line),0 24px 40px -24px rgba(0,0,0,.35)}
+.items{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink)}
+.items li{display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1.5px solid var(--line)}
+.items li span:last-child{font:500 13px/1.5 var(--mono);color:var(--muted);text-align:right}
+.insta{display:grid;grid-template-columns:320px 1fr;gap:40px;align-items:start}
+.insta img{width:100%;border-radius:6px;box-shadow:0 0 0 1.5px var(--line)}
+.insta pre{white-space:pre-wrap;font:400 16px/1.6 var(--font);margin:0;padding:20px;border:1.5px solid var(--line);border-radius:14px;color:var(--ink-2)}
+.week{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+.week li{border-top:3px solid var(--ink);padding-top:10px;font-size:15px}
+.week li:first-child,.week li:nth-child(2){border-color:var(--pop)}
+.week b{display:block;font:500 12px/1 var(--mono);text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.offer{background:var(--ink);color:#fff;border-radius:24px;padding:40px;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center}
+.offer h3{font-size:30px;font-stretch:118%;font-weight:800}
+.offer p{color:#C9C9CD;margin-top:10px;max-width:34em}
+.offer ul{margin:16px 0 0;padding:0;list-style:none;display:grid;gap:6px}
+.offer li::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--pop);margin-right:10px}
+.offer .price{text-align:right}
+.offer .price b{display:block;font-size:56px;font-weight:800;font-stretch:112%;letter-spacing:-.04em;line-height:1}
+.offer .price span{color:#A9A9AE}
+.offer .btn{margin-top:18px}
+.fine{font-size:14px;color:var(--muted);padding:32px 0 48px}
+@media (max-width:900px){
+  .hero,.demo,.paper,.insta,.offer{grid-template-columns:1fr}
+  .block-head,.grid{grid-template-columns:1fr;gap:8px}
+  .week{grid-template-columns:1fr 1fr}
+  .offer .price{text-align:left}
+  .hero .stamp{justify-self:start;width:180px}
+  .paper > :first-child,.insta > :first-child{max-width:340px}
+}
+@media (max-width:560px){ .wrap{padding:0 16px} .top{padding:12px 16px} .block{padding:56px 0} .offer{padding:28px 22px} }
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"></span>Timbro</a>
+  <div class="lang"></div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <div>
+      <span class="label" data-i18n="x.label"></span>
+      <h1 class="display" style="margin-top:14px" data-i18n-html="x.title"></h1>
+      <p data-i18n="x.lede"></p>
+    </div>
+    <div class="stamp" id="stamp"></div>
+  </div>
+
+  <section class="block">
+    <div class="block-head"><span class="label" data-i18n="x.l1"></span><div><h2 class="display" data-i18n="x.h1"></h2><p data-i18n="x.p1"></p></div></div>
+    <div class="grid"><span></span>
+      <div class="demo">
+        <div style="display:grid;justify-items:center;gap:14px"><div class="platform" id="plat"></div><div class="phone"><div class="phone-screen" id="pass"></div></div></div>
+        <div>
+          <ol class="steps-mini">
+            <li><b data-i18n="x.s1"></b><span data-i18n="x.s1p"></span></li>
+            <li><b data-i18n="x.s2"></b><span data-i18n="x.s2p"></span></li>
+            <li><b data-i18n="x.s3"></b><span data-i18n="x.s3p"></span></li>
+          </ol>
+          <div class="acts">
+            <button class="btn pop" type="button" id="stamp-btn"></button>
+            <a class="btn line" href="../../app/card.html?card=orsonero" target="_blank" rel="noopener" data-i18n="x.asCustomer"></a>
+            <a class="btn line" href="../../app/stamper.html?demo" target="_blank" rel="noopener" data-i18n="x.asStaff"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head"><span class="label" data-i18n="x.l2"></span><div><h2 class="display" data-i18n="x.h2"></h2><p data-i18n="x.p2"></p></div></div>
+    <div class="grid"><span></span>
+      <div class="paper">
+        <div id="poster"></div>
+        <div>
+          <ul class="items">
+            <li><span data-i18n="x.i1"></span><span>A5 · 148×210 mm</span></li>
+            <li><span data-i18n="x.i2"></span><span>⌀ 12 cm</span></li>
+            <li><span data-i18n="x.i3"></span><span>A6 · ×10</span></li>
+            <li><span data-i18n="x.i4"></span><span>A5 · 4 pp.</span></li>
+          </ul>
+          <div class="acts">
+            <a class="btn pop" href="../../app/poster.html?card=orsonero&lang=en" target="_blank" rel="noopener" data-i18n="x.printPoster"></a>
+            <a class="btn line" href="../../print/brochure-orsonero-it.pdf" target="_blank" rel="noopener" data-i18n="x.pdfIt"></a>
+            <a class="btn line" href="../../print/brochure-orsonero-en.pdf" target="_blank" rel="noopener" data-i18n="x.pdfEn"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head"><span class="label" data-i18n="x.l3"></span><div><h2 class="display" data-i18n="x.h3"></h2><p data-i18n="x.p3"></p></div></div>
+    <div class="grid"><span></span>
+      <div class="insta">
+        <img id="insta" alt="">
+        <div><pre id="caption"></pre><div class="acts"><button class="btn line" type="button" id="copy-caption" data-i18n="x.copy"></button></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head"><span class="label" data-i18n="x.l4"></span><div><h2 class="display" data-i18n="x.h4"></h2></div></div>
+    <ol class="week" id="week"></ol>
+  </section>
+
+  <section class="block">
+    <div class="offer">
+      <div>
+        <span class="label" style="color:#A9A9AE" data-i18n="x.l5"></span>
+        <h3 style="margin-top:10px" data-i18n="x.h5"></h3>
+        <p data-i18n="x.p5"></p>
+        <ul id="offer-list"></ul>
+      </div>
+      <div class="price"><b id="offer-price"></b><span data-i18n="x.month"></span><br><a class="btn pop" href="../../app/dashboard.html?card=orsonero" data-i18n="x.openDash"></a></div>
+    </div>
+  </section>
+  <p class="fine" data-i18n="x.fine"></p>
+</main>
+
+<script src="../../assets/vendor/qrcode.js"></script>
+<script src="../../assets/js/config.js"></script>
+<script src="../../assets/js/i18n.js"></script>
+<script src="../../assets/js/store.js"></script>
+<script src="../../assets/js/ui.js"></script>
+<script src="../../assets/js/marketing.js"></script>
+<script>
+I18N.add({
+  it: {
+    'x.label': 'Proposta · Milano', 'x.title': 'La carta fedeltà di <em>Orsonero.</em>',
+    'x.lede': 'Una prima idea per Orsonero Coffee: la carta sul telefono dei clienti, il kit stampato e i testi per lanciarla. Da guardare e da provare, senza impegno.',
+    'x.l1': 'Sul telefono', 'x.h1': 'La carta dei clienti', 'x.p1': 'Nello spirito di Via Broggi: pareti bianche, legno chiaro, luce naturale e niente di superfluo. Ogni timbro è un piccolo orso nero, come il nome. All\'ottavo timbro il caffè è offerto, quello che preferisci.',
+    'x.s1': 'Il cliente inquadra il QR alla cassa', 'x.s1p': 'Scrive il nome e la carta è sua. Niente app.',
+    'x.s2': 'Il barista timbra', 'x.s2p': 'Inquadra la carta con il telefono del bar e tocca "Aggiungi un timbro".',
+    'x.s3': 'All\'ottavo timbro, il caffè è offerto', 'x.s3p': 'La carta mostra "Premio pronto" e riparte da zero.',
+    'x.stamp': 'Prova: metti un timbro', 'x.redeem': 'Dai il premio', 'x.asCustomer': 'Apri come cliente', 'x.asStaff': 'Apri il timbratore',
+    'x.l2': 'Su carta', 'x.h2': 'Il kit stampato', 'x.p2': 'Arriva pronto da appendere. Le frasi sono in italiano e in inglese, per i clienti di sempre e per chi passa da Milano.',
+    'x.i1': 'Poster per la cassa', 'x.i2': 'Adesivo per la vetrina', 'x.i3': 'Cartellini per i tavoli', 'x.i4': 'Brochure per lo staff',
+    'x.printPoster': 'Stampa il poster', 'x.pdfIt': 'Brochure PDF (IT)', 'x.pdfEn': 'Brochure PDF (EN)',
+    'x.l3': 'Su Instagram', 'x.h3': 'Il post di lancio', 'x.p3': 'Formato 4:5 per il feed, con la didascalia già scritta.', 'x.copy': 'Copia la didascalia',
+    'x.l4': 'La prima settimana', 'x.h4': 'Il piano di lancio',
+    'x.l5': 'Il piano consigliato', 'x.h5': 'Plus: ci pensiamo noi.', 'x.p5': 'Per Orsonero consigliamo Plus: la carta la disegniamo noi con il vostro logo e i vostri colori, e il kit arriva stampato.',
+    'x.month': 'al mese, IVA esclusa', 'x.openDash': 'Apri l\'area di Orsonero',
+    'x.fine': 'Proposta preparata da Witkowski Design per Orsonero Coffee, Milano. L\'orso dei timbri è un nostro disegno: nella carta vera usiamo il vostro logo.'
+  },
+  en: {
+    'x.label': 'Proposal · Milan', 'x.title': 'The loyalty card for <em>Orsonero.</em>',
+    'x.lede': 'A first idea for Orsonero Coffee: the card on your customers\' phones, the printed kit and the texts to launch it. Have a look and try it, no strings attached.',
+    'x.l1': 'On the phone', 'x.h1': 'The customer\'s card', 'x.p1': 'In the spirit of Via Broggi: white walls, light wood, natural light and nothing extra. Every stamp is a little black bear, like the name. At the eighth stamp, the coffee of their choice is on you.',
+    'x.s1': 'Customers scan the QR at the till', 'x.s1p': 'They type their name and the card is theirs. No app.',
+    'x.s2': 'Staff add the stamp', 'x.s2p': 'They scan the card with the café\'s phone and tap "Add a stamp".',
+    'x.s3': 'At eight stamps, a coffee on the house', 'x.s3p': 'The card shows "Reward ready" and starts again.',
+    'x.stamp': 'Try it: add a stamp', 'x.redeem': 'Give the reward', 'x.asCustomer': 'Open as a customer', 'x.asStaff': 'Open the stamper',
+    'x.l2': 'On paper', 'x.h2': 'The printed kit', 'x.p2': 'It arrives ready to put up. Every line is in Italian and English, for your regulars and for everyone passing through Milan.',
+    'x.i1': 'Poster for the till', 'x.i2': 'Window sticker', 'x.i3': 'Table cards', 'x.i4': 'Brochure for staff',
+    'x.printPoster': 'Print the poster', 'x.pdfIt': 'Brochure PDF (IT)', 'x.pdfEn': 'Brochure PDF (EN)',
+    'x.l3': 'On Instagram', 'x.h3': 'The launch post', 'x.p3': '4:5 for the feed, with the caption already written.', 'x.copy': 'Copy the caption',
+    'x.l4': 'The first week', 'x.h4': 'The launch plan',
+    'x.l5': 'Recommended plan', 'x.h5': 'Plus: we handle it.', 'x.p5': 'For Orsonero we recommend Plus: we design the card with your logo and colours, and the kit arrives printed.',
+    'x.month': 'a month, excluding VAT', 'x.openDash': 'Open Orsonero\'s dashboard',
+    'x.fine': 'Proposal prepared by Witkowski Design for Orsonero Coffee, Milan. The bear on the stamps is our own drawing: the real card uses your logo.'
+  }
+});
+
+(() => {
+  const $ = id => document.getElementById(id);
+  const card = Store.getCard('orsonero');
+  let n = 4;
+  function pass(pop) {
+    $('pass').innerHTML = UI.renderPass(card, null, { stamps: n, pop });
+    $('stamp-btn').textContent = I18N.t(n >= card.stampsNeeded ? 'x.redeem' : 'x.stamp');
+  }
+  $('stamp-btn').addEventListener('click', () => { if (n >= card.stampsNeeded) { n = 0; pass(); } else { n++; pass(n - 1); } });
+  $('copy-caption').addEventListener('click', () => UI.copy($('caption').textContent));
+
+  async function all() {
+    I18N.apply();
+    $('stamp').style.color = card.ink;
+    $('stamp').innerHTML = UI.inkStamp(I18N.lang === 'it' ? 'ORSONERO · MILANO · ORSONERO · MILANO · ' : 'ORSONERO · MILAN · ORSONERO · MILAN · ');
+    pass();
+    $('poster').innerHTML = MARKETING.poster(card);
+    $('caption').textContent = MARKETING.copy(card, I18N.lang)[0].text;
+    $('week').innerHTML = MARKETING.plan(I18N.lang).map(([d, t]) => `<li><b>${UI.esc(d)}</b>${UI.esc(t)}</li>`).join('');
+    const plus = CONFIG.plans.find(p => p.id === 'plus');
+    $('offer-price').textContent = new Intl.NumberFormat(I18N.lang === 'it' ? 'it-IT' : 'en-IE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(plus.month);
+    $('offer-list').innerHTML = I18N.pick(plus).extras.map(x => `<li>${UI.esc(x)}</li>`).join('');
+    const cv = await MARKETING.instagram(card, I18N.lang);
+    $('insta').src = cv.toDataURL('image/png');
+    $('insta').alt = I18N.t('x.h3');
+  }
+  UI.platformSwitch($('plat'), () => pass());
+  I18N.switchers();
+  document.addEventListener('langchange', all);
+  all();
+})();
+</script>
+</body>
+</html>

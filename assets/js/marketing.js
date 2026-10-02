@@ -31,7 +31,9 @@
     const need = card.stampsNeeded;
     let dots = '';
     const shape = UI.lookOf(card).shape;
-    for (let i = 0; i < need; i++) dots += `<i class="p-${shape}${i < 3 ? ' on' : ''}"></i>`;
+    for (let i = 0; i < need; i++) dots += card.stampImage
+      ? `<i class="p-art${i < 3 ? ' on' : ''}">${i < 3 ? `<img src="${esc(card.stampImage)}" alt="">` : ''}</i>`
+      : `<i class="p-${shape}${i < 3 ? ' on' : ''}"></i>`;
     return `
       <div class="poster" lang="${lang}" style="--s:${esc(card.ink || '#2B32FF')}"><div class="poster-in">
         <div class="poster-top">
@@ -54,6 +56,8 @@
     const w = words(card, lang);
     const L = MSG[lang] || MSG.en;
     try { await Promise.all([document.fonts.load('800 80px Archivo'), document.fonts.load('500 30px "Spline Sans Mono"')]); } catch (e) {}
+    // The café's own stamp artwork, if it has one.
+    const art = card.stampImage ? await new Promise(ok => { const im = new Image(); im.onload = () => ok(im); im.onerror = () => ok(null); im.src = card.stampImage; }) : null;
     const W = 1080, H = 1350;
     const cv = document.createElement('canvas');
     cv.width = W; cv.height = H;
@@ -87,7 +91,8 @@
     font(400, 32);
     c.fillStyle = '#55555A';
     c.fillText(fit(c, I18N.t('pass.collect', { n: w.n, reward: w.reward }), W - 280), 140, top + 148);
-    const n = Math.min(10, w.n), cols = Math.min(5, n), rows = Math.ceil(n / cols);
+    // Balanced rows: 8 stamps = 4 + 4, 10 = 5 + 5.
+    const n = Math.min(10, w.n), cols = n <= 5 ? n : Math.ceil(n / 2), rows = Math.ceil(n / cols);
     const r = 46, gap = (W - 180 - 100 - cols * r * 2) / (cols - 1 || 1);
     for (let i = 0; i < n; i++) {
       const cx = 140 + r + (i % cols) * (r * 2 + gap), cy = top + 230 + Math.floor(i / cols) * (r * 2 + 22) + (rows === 1 ? 40 : 0);
@@ -95,6 +100,7 @@
       const path = (rr) => { if (shape === 'square' || shape === 'hanko') roundRect(c, cx - rr, cy - rr, rr * 2, rr * 2, rr * (shape === 'hanko' ? .24 : .36)); else { c.beginPath(); c.arc(cx, cy, rr, 0, Math.PI * 2); } };
       c.save();
       if (i < 4 && shape === 'hanko') { c.translate(cx, cy); c.rotate((i % 2 ? 5 : -7) * Math.PI / 180); c.translate(-cx, -cy); }
+      if (i < 4 && art) { c.drawImage(art, cx - r, cy - r, r * 2, r * 2); c.restore(); continue; }
       path(r);
       if (i < 4 && (shape === 'ring' || shape === 'hanko')) { c.strokeStyle = ink; c.lineWidth = 6; c.stroke(); if (shape === 'hanko') { path(r - 12); c.lineWidth = 2.5; c.stroke(); } }
       else if (i < 4) { c.fillStyle = ink; c.fill(); }

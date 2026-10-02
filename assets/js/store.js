@@ -22,6 +22,8 @@
         // Browsers that saw the older example get The Coffee's new look.
         const tc = db.cards['the-coffee'];
         if (tc && (!tc.shape || !tc.plan)) { Object.assign(tc, COFFEE_LOOK); save(db); }
+        // Browsers from before the Orsonero proposal get its example card too.
+        if (!db.cards.orsonero || db.cards.orsonero.stampImage !== ORSONERO_BEAR) { db.cards.orsonero = { ...db.cards.orsonero, ...ORSONERO }; save(db); }
         return db;
       }
     } catch (e) { if (memory) return memory; }
@@ -38,6 +40,18 @@
   // light wood) and the name in katakana. Stamps are red hanko seals with 珈.
   const COFFEE_LOOK = { plan: 'plus', style: 'giappone', color: '#FFFFFF', ink: '#B5442E', shape: 'hanko', mark: 'text', markText: '珈',
     empty: 'outline', font: 'wide', strip: '#EEE9E1', tagline: 'ザ・コーヒー' };
+
+  // Orsonero Coffee, Via Broggi 15 (proposal): the black bear of the name
+  // (Brent's Canada), light oak and white walls, Nordic-Japanese calm.
+  // The bear stamp is our own drawing, not Orsonero's logo.
+  const ORSONERO_BEAR = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZyBmaWxsPSIjMUExQTFBIj48Y2lyY2xlIGN4PSIyNCIgY3k9IjI3IiByPSIxNCIvPjxjaXJjbGUgY3g9Ijc2IiBjeT0iMjciIHI9IjE0Ii8+PGVsbGlwc2UgY3g9IjUwIiBjeT0iNTYiIHJ4PSIzNyIgcnk9IjMzIi8+PC9nPjxnIGZpbGw9IiNFQURGQ0IiPjxjaXJjbGUgY3g9IjI0IiBjeT0iMjciIHI9IjUuNSIvPjxjaXJjbGUgY3g9Ijc2IiBjeT0iMjciIHI9IjUuNSIvPjxlbGxpcHNlIGN4PSI1MCIgY3k9IjY5IiByeD0iMTUiIHJ5PSIxMSIvPjwvZz48ZWxsaXBzZSBjeD0iNTAiIGN5PSI2NCIgcng9IjUuNSIgcnk9IjMuOCIgZmlsbD0iIzFBMUExQSIvPjwvc3ZnPg==';
+  const ORSONERO = {
+    id: 'orsonero', business: 'Orsonero Coffee', city: 'Milano', type: 'caffe',
+    title: 'Carta Orsonero', reward: 'un caffè a scelta', titleEn: 'Orsonero card', rewardEn: 'any coffee, on us',
+    stampsNeeded: 8, icon: 'cup', plan: 'plus', style: 'minimal',
+    color: '#FFFFFF', ink: '#1A1A1A', shape: 'dot', mark: 'none', empty: 'outline', font: 'sans',
+    strip: '#EADFCB', tagline: 'Specialty coffee', stampImage: ORSONERO_BEAR
+  };
 
   // Every fresh browser starts with the example card for The Coffee, so a
   // QR code on the brochure opens a working card on any phone.
@@ -57,6 +71,7 @@
       ...COFFEE_LOOK,
       createdAt: Date.now()
     };
+    db.cards.orsonero = { ...ORSONERO, createdAt: Date.now() };
     save(db);
     return db;
   }
