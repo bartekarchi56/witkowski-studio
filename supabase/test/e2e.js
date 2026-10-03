@@ -54,6 +54,7 @@ await o.fill('input[name=password2]', 'password123');
 await o.click('#submit');
 await o.waitForURL(/dashboard\.html/);
 await o.waitForSelector('#card-form input[name=business]');
+await o.waitForFunction(() => document.querySelector('#card-form input[name=business]').value !== '', null, { timeout: 8000 });
 assert.equal(await o.inputValue('#card-form input[name=business]'), 'Bar Prova');   // from the sign-up form
 await o.fill('#card-form input[name=business]', 'Bar Prova');
 await o.click('#card-form button[type=submit]');
@@ -171,12 +172,15 @@ assert.match(await o.textContent('#bill-plans'), /350/);   // Plus yearly = 10 m
 await o.click('#bill-plans [data-buy=plus]');
 await o.waitForURL(/billing=success|#plan/); await o.waitForSelector('#toast, .toast', { state: 'attached' }).catch(() => {});
 assert.deepEqual(asked, { plan: 'plus', interval: 'year' });
-await pool.query(`update timbro.businesses b set stripe_customer = 'cus_e2e', billing_status = 'trialing', billing_plan = 'plus', billing_interval = 'year',
-  billing_period_end = now() + interval '30 days' from auth.users u where u.id = b.owner_id and u.email = $1`, [`owner-${stamp}@test.local`]);
+await pool.query(`update timbro.businesses b set stripe_customer = 'cus_e2e_' || $2, billing_status = 'trialing', billing_plan = 'plus', billing_interval = 'year',
+  billing_period_end = now() + interval '30 days' from auth.users u where u.id = b.owner_id and u.email = $1`, [`owner-${stamp}@test.local`, stamp]);
 await o.reload(); await o.waitForSelector('#card-form input[name=business]', { state: 'attached' }); await o.waitForTimeout(800);
 await o.click('#t-plan');
-assert.match(await o.textContent('#bill-status'), /Prova gratuita di Plus fino al/);
+assert.match(await o.textContent('#bill-status'), /Prova gratuita di Plus \(annuale\) fino al/);
+assert.match(await o.textContent('#bill-status'), /Plus \(annuale\)/);
 assert.equal(await o.isVisible('#bill-manage'), true); assert.equal(await o.locator('[data-buy]').count(), 0);
+assert.equal(await o.isVisible('#bill-interval'), false);   // no monthly/yearly switch once subscribed
+assert.match(await o.textContent('#bill-plans'), /350/);    // prices shown for their own (yearly) period
 ok('the Plan tab opens Stripe Checkout for the chosen plan and shows the trial afterwards');
 
 // ---- unlinking the till phone ----

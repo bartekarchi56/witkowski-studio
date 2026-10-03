@@ -340,6 +340,7 @@ td code{font:500 13px var(--mono);background:var(--wash);padding:3px 7px;border-
       <button class="btn line small" type="button" id="bill-manage" hidden data-i18n="d.manage"></button>
     </div>
     <div class="bill-plans" id="bill-plans"></div>
+    <p class="sec-sub" id="bill-hint" hidden style="margin-top:16px" data-i18n="d.manageHint"></p>
     <p class="help" data-i18n="d.billFine"></p>
   </section>
 
@@ -389,12 +390,13 @@ I18N.add({
     'd.rvPending': 'In attesa di approvazione', 'd.rvPendingP': 'I clienti vedono ancora il design attuale. Ti avvisiamo appena è approvato.',
     'd.rvRequest': 'Richiesta inviata. Witkowski Design aggiorna il design e te lo mostra:', 'd.rvChanges': 'Witkowski Design chiede una modifica', 'd.rvApproved': 'Design approvato', 'd.rvApprovedP': 'È quello che vedono i tuoi clienti.',
     'd.vLive': 'Attuale', 'd.vDraft': 'Proposta',
-    'd.tPlan': 'Abbonamento', 'd.planT': 'Il tuo abbonamento', 'd.monthly': 'Mensile', 'd.yearly': 'Annuale (2 mesi gratis)', 'd.manage': 'Gestisci abbonamento',
+    'd.tPlan': 'Abbonamento', 'd.planT': 'Il tuo abbonamento', 'd.monthly': 'Mensile', 'd.yearly': 'Annuale (2 mesi gratis)', 'd.manage': 'Gestisci o disdici', 'd.monthlyShort': 'mensile', 'd.yearlyShort': 'annuale',
+    'd.manageHint': 'Per cambiare piano, cambiare carta, scaricare le fatture o disdire, usa "Gestisci o disdici".',
     'd.billNone': 'Scegli un piano: i primi {days} giorni sono gratis, poi paghi con carta o addebito SEPA. Disdici quando vuoi.',
     'd.billNoTrial': 'Scegli un piano. Paghi con carta o addebito SEPA e disdici quando vuoi.',
     'd.billTrial': 'Prova gratuita di {plan} fino al {date}. Poi si rinnova da solo; puoi disdire prima.',
     'd.billActive': 'Abbonamento {plan} attivo. Prossimo rinnovo: {date}.', 'd.billCanceling': 'Abbonamento {plan} attivo fino al {date}, poi termina.',
-    'd.billPastDue': 'Il pagamento non è riuscito. Aggiorna la carta in "Gestisci abbonamento".', 'd.billCanceled': 'Abbonamento disdetto. Puoi riattivarlo quando vuoi.',
+    'd.billPastDue': 'Il pagamento non è riuscito. Aggiorna la carta in "Gestisci o disdici".', 'd.billCanceled': 'Abbonamento disdetto. Puoi riattivarlo quando vuoi.',
     'd.billDemo': 'Questa è la demo: i pagamenti funzionano nell\'area del tuo locale, dopo aver creato l\'account.',
     'd.choose': 'Scegli {plan}', 'd.mine': 'Il tuo piano', 'd.perMonth': '/ mese', 'd.perYear': '/ anno', 'd.vat': 'IVA esclusa',
     'd.billFine': 'Il pagamento è gestito da Stripe: i dati della carta non passano da noi. Ricevi la fattura via email; inserisci la partita IVA al pagamento.',
@@ -453,12 +455,13 @@ I18N.add({
     'd.rvPending': 'Waiting for approval', 'd.rvPendingP': 'Customers still see the current design. We\'ll let you know as soon as it\'s approved.',
     'd.rvRequest': 'Request sent. Witkowski Design will update the design and show you:', 'd.rvChanges': 'Witkowski Design asked for a change', 'd.rvApproved': 'Design approved', 'd.rvApprovedP': 'This is what your customers see.',
     'd.vLive': 'Current', 'd.vDraft': 'Proposal',
-    'd.tPlan': 'Plan', 'd.planT': 'Your subscription', 'd.monthly': 'Monthly', 'd.yearly': 'Yearly (2 months free)', 'd.manage': 'Manage subscription',
+    'd.tPlan': 'Plan', 'd.planT': 'Your subscription', 'd.monthly': 'Monthly', 'd.yearly': 'Yearly (2 months free)', 'd.manage': 'Manage or cancel', 'd.monthlyShort': 'monthly', 'd.yearlyShort': 'yearly',
+    'd.manageHint': 'To change plan or card, download invoices or cancel, use "Manage or cancel".',
     'd.billNone': 'Pick a plan: the first {days} days are free, then you pay by card or SEPA direct debit. Cancel any time.',
     'd.billNoTrial': 'Pick a plan. You pay by card or SEPA direct debit and can cancel any time.',
     'd.billTrial': 'Free trial of {plan} until {date}. It then renews by itself; you can cancel before.',
     'd.billActive': '{plan} subscription active. Next renewal: {date}.', 'd.billCanceling': '{plan} subscription active until {date}, then it ends.',
-    'd.billPastDue': 'The payment didn\'t go through. Update your card in "Manage subscription".', 'd.billCanceled': 'Subscription cancelled. You can restart it any time.',
+    'd.billPastDue': 'The payment didn\'t go through. Update your card in "Manage or cancel".', 'd.billCanceled': 'Subscription cancelled. You can restart it any time.',
     'd.billDemo': 'This is the demo: payments work in your café\'s dashboard once you have an account.',
     'd.choose': 'Choose {plan}', 'd.mine': 'Your plan', 'd.perMonth': '/ month', 'd.perYear': '/ year', 'd.vat': 'excluding VAT',
     'd.billFine': 'Payments are handled by Stripe: your card details never pass through us. Invoices arrive by email; add your VAT number at checkout.',
@@ -806,13 +809,18 @@ I18N.add({
   const fmtDate = ms => new Date(ms).toLocaleDateString(I18N.lang === 'it' ? 'it-IT' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   function renderBilling() {
     const b = billing || {}, live = LIVE.includes(b.status), canPay = Store.remote && !Remote.demo;
+    // Already subscribed: show their own billing period; changes happen in Stripe's portal.
+    if (live && b.interval) interval = b.interval;
     const planName = (CONFIG.plans.find(p => p.id === b.plan) && I18N.pick(CONFIG.plans.find(p => p.id === b.plan)).name) || '';
-    const v = { plan: planName, date: b.periodEnd ? fmtDate(b.periodEnd) : '', days: CONFIG.trialDays };
+    const period = b.interval ? ` (${I18N.t(b.interval === 'year' ? 'd.yearlyShort' : 'd.monthlyShort')})` : '';
+    const v = { plan: planName + period, date: b.periodEnd ? fmtDate(b.periodEnd) : '', days: CONFIG.trialDays };
     $('bill-status').textContent = !canPay ? I18N.t('d.billDemo')
       : b.status === 'trialing' ? I18N.t('d.billTrial', v) : b.status === 'active' ? I18N.t('d.billActive', v)
       : ['past_due', 'unpaid'].includes(b.status) ? I18N.t('d.billPastDue') : b.status === 'canceled' ? I18N.t('d.billCanceled')
       : I18N.t(b.trialUsed ? 'd.billNoTrial' : 'd.billNone', v);
     $('bill-manage').hidden = !(canPay && b.customer && b.status);
+    $('bill-hint').hidden = $('bill-manage').hidden;
+    $('bill-interval').hidden = live;
     $('bill-interval').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.i === interval)));
     const money = n => new Intl.NumberFormat(I18N.lang === 'it' ? 'it-IT' : 'en-IE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
     $('bill-plans').innerHTML = CONFIG.plans.map(p => {
