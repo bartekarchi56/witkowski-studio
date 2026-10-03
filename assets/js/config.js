@@ -36,7 +36,7 @@ window.CONFIG = {
   // a highlighted "to be completed".
   legal: {
     company: 'Witkowski Design',
-    owner: 'Bartek Witkowski',
+    owner: 'Bartosz Witkowski',  // legal name (brochures use 'Bartek' from contact.name)
     address: '',          // registered address, e.g. 'ul. ..., 00-000 Warszawa, Polska'
     vat: '',              // VAT / NIP / partita IVA
     email: '',            // contact for privacy and legal requests
