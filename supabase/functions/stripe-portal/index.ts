@@ -5,7 +5,9 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const mock = Deno.env.get('STRIPE_MOCK_URL');   // tests only: a local stand-in for Stripe
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', mock ? { host: new URL(mock).hostname, port: Number(new URL(mock).port), protocol: 'http' } : {});
-const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { db: { schema: 'timbro' } });
+// The server key: the legacy service_role key, or the newer sb_secret_ key on projects that use it.
+const serverKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || (() => { try { return Object.values(JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') ?? '{}'))[0] as string; } catch { return ''; } })();
+const db = createClient(Deno.env.get('SUPABASE_URL')!, serverKey, { db: { schema: 'timbro' } });
 const SITE = (Deno.env.get('SITE_URL') ?? 'https://timbro.witkowskidesign.com/').replace(/\/?$/, '/');
 const cors = { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'authorization, x-client-info, apikey, content-type' };
 const reply = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { ...cors, 'content-type': 'application/json' } });

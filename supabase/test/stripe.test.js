@@ -18,6 +18,8 @@ let step = 0; const ok = m => console.log(`  ✓ ${++step}. ${m}`);
 const stripe = await fakeStripe(12111);
 const env = { ...process.env, SUPABASE_URL: SUPABASE, SUPABASE_SERVICE_ROLE_KEY: 'test-service-role-key', STRIPE_SECRET_KEY: 'rk_test_local',
   STRIPE_WEBHOOK_SECRET: WHSEC, STRIPE_MOCK_URL: 'http://localhost:12111', SITE_URL: 'https://timbro.example/' };
+// NEW_KEYS=1: a project on Supabase's newer keys passes the server key as SUPABASE_SECRET_KEYS instead.
+if (process.env.NEW_KEYS) { env.SUPABASE_SECRET_KEYS = JSON.stringify({ default: env.SUPABASE_SERVICE_ROLE_KEY }); delete env.SUPABASE_SERVICE_ROLE_KEY; }
 
 // Runs one Edge Function on :8000 for the duration of `use`.
 async function withFunction(name, use) {
