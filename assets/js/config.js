@@ -31,6 +31,19 @@ window.CONFIG = {
     city: 'Milano'
   },
 
+  // Who provides the service, shown on the legal pages (legal/). Fill in the
+  // empty fields once the business is registered; until then the pages show
+  // a highlighted "to be completed".
+  legal: {
+    company: 'Witkowski Design',
+    owner: 'Bartek Witkowski',
+    address: '',          // registered address, e.g. 'ul. ..., 00-000 Warszawa, Polska'
+    vat: '',              // VAT / NIP / partita IVA
+    email: '',            // contact for privacy and legal requests
+    country: '',          // country of registration, e.g. 'Polska' / 'Italia'; sets the applicable law
+    updated: '2026-10-03' // date shown as "last updated"
+  },
+
   currency: '€',
   trialDays: 30,
   yearlyMonths: 10,       // pay 10 months, get 12

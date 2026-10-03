@@ -29,6 +29,7 @@ legend + *{clear:both}
 .msg{font-size:15px;min-height:1.4em;margin:12px 0 0}
 .msg.err{font-weight:600}
 .msg.err:not(:empty)::before{content:"!";display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--ink);color:#fff;font-size:13px;margin-right:8px}
+.agree{font-size:14px;color:var(--muted);margin:0 0 14px}
 .forgot{display:block;margin-top:16px;font-size:14px}
 .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
 </style>
@@ -69,6 +70,7 @@ legend + *{clear:both}
         <label class="field" id="pw-field"><span id="pw-label"></span><span class="pw"><input type="password" name="password" autocomplete="current-password"><button type="button" class="show" data-i18n="l.show"></button></span></label>
         <label class="field" id="pw2-field" hidden><span data-i18n="l.password2"></span><span class="pw"><input type="password" name="password2" autocomplete="new-password"><button type="button" class="show" data-i18n="l.show"></button></span></label>
       </fieldset>
+      <p class="agree" id="agree" hidden data-i18n-html="l.agree"></p>
       <button class="btn pop block" type="submit" id="submit"></button>
       <p class="msg" id="msg" role="status"></p>
     </form>
@@ -84,7 +86,7 @@ legend + *{clear:both}
 I18N.add({
   it: {
     'l.in': 'Accedi', 'l.up': 'Crea account', 'l.email': 'Email', 'l.password': 'Password', 'l.passwordNew': 'Password (almeno 8 caratteri)', 'l.password2': 'Ripeti la password',
-    'l.show': 'Mostra', 'l.hide': 'Nascondi', 'l.forgot': 'Password dimenticata?', 'l.optional': '(facoltativo)',
+    'l.show': 'Mostra', 'l.hide': 'Nascondi', 'l.forgot': 'Password dimenticata?', 'l.optional': '(facoltativo)', 'l.agree': 'Creando l\'account accetti i <a href="../legal/#termini" target="_blank">Termini di servizio</a> e la <a href="../legal/#privacy" target="_blank">Privacy</a>. Il servizio è per attività commerciali.',
     'l.gPlace': 'Il tuo locale', 'l.gYou': 'Chi sei', 'l.gAccess': 'Accesso',
     'l.business': 'Nome del locale', 'l.type': 'Tipo di locale', 'l.city': 'Città', 'l.address': 'Indirizzo', 'l.name': 'Nome e cognome', 'l.phone': 'Telefono o WhatsApp',
     'l.tIn': 'Bentornato', 'l.sIn': 'Accedi all\'area del tuo locale.', 'l.tUp': 'Crea il tuo account', 'l.sUp': 'Due minuti. Con questi dati prepariamo la prima carta del tuo locale.',
@@ -96,7 +98,7 @@ I18N.add({
   },
   en: {
     'l.in': 'Log in', 'l.up': 'Create account', 'l.email': 'Email', 'l.password': 'Password', 'l.passwordNew': 'Password (at least 8 characters)', 'l.password2': 'Repeat the password',
-    'l.show': 'Show', 'l.hide': 'Hide', 'l.forgot': 'Forgot your password?', 'l.optional': '(optional)',
+    'l.show': 'Show', 'l.hide': 'Hide', 'l.forgot': 'Forgot your password?', 'l.optional': '(optional)', 'l.agree': 'By creating an account you accept the <a href="../legal/#terms" target="_blank">Terms of service</a> and the <a href="../legal/#privacy-en" target="_blank">Privacy policy</a>. The service is for businesses.',
     'l.gPlace': 'Your place', 'l.gYou': 'About you', 'l.gAccess': 'Login details',
     'l.business': 'Name of your café or shop', 'l.type': 'Type of business', 'l.city': 'City', 'l.address': 'Address', 'l.name': 'Full name', 'l.phone': 'Phone or WhatsApp',
     'l.tIn': 'Welcome back', 'l.sIn': 'Log in to your café\'s account.', 'l.tUp': 'Create your account', 'l.sUp': 'Two minutes. We use these details to set up your first card.',
@@ -132,6 +134,7 @@ I18N.add({
     $('mode').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === mode)));
     $('main').classList.toggle('wide', mode === 'up');
     $('signup').hidden = mode !== 'up';
+    $('agree').hidden = mode !== 'up';
     $('access-legend').hidden = mode !== 'up';
     $('email-field').hidden = mode === 'reset';
     $('pw-field').hidden = mode === 'forgot';

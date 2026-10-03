@@ -65,10 +65,10 @@ Deno.serve(async req => {
     };
     const configs = (await stripe.billingPortal.configurations.list({ active: true, limit: 20 })).data;
     const config = configs.find(c => c.metadata?.app === 'timbro');
-    if (config) await stripe.billingPortal.configurations.update(config.id, { features });
+    const business_profile = { headline: 'Timbro by Witkowski Design', privacy_policy_url: SITE + 'legal/#privacy', terms_of_service_url: SITE + 'legal/#termini' };
+    if (config) await stripe.billingPortal.configurations.update(config.id, { features, business_profile });
     else await stripe.billingPortal.configurations.create({
-      features, metadata: { app: 'timbro' }, default_return_url: SITE + 'app/dashboard.html#plan',
-      business_profile: { headline: 'Timbro by Witkowski Design' }
+      features, business_profile, metadata: { app: 'timbro' }, default_return_url: SITE + 'app/dashboard.html#plan'
     });
     return reply({ ok: true, changed: done });
   } catch (e) {

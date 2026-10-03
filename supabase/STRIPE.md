@@ -67,7 +67,8 @@ Open the **Studio** → **Prepara i piani su Stripe**. It creates Timbro Start, 
 Log in as a test café → **Abbonamento** → **Scegli Plus**. On Stripe's page use card `4242 4242 4242 4242`, any future date, any CVC. Back in the dashboard the tab shows the trial; the Studio shows "In prova · Plus" next to the café.
 
 ## Before taking real money
-- **Business details:** Stripe → Settings → Business: your registered business, address and VAT number (they appear on invoices).
+- **Business details:** Stripe → Settings → Business: your registered business, address and VAT number (they appear on invoices). Fill the same details into `legal` in `assets/js/config.js` so the legal pages show them.
+- **Legal links:** Stripe → Settings → Business → Public details: Terms of service `https://timbro.witkowskidesign.com/legal/#termini`, Privacy policy `https://timbro.witkowskidesign.com/legal/#privacy`.
 - **Invoices:** Settings → Billing → Subscriptions and emails: turn on emailing finalized invoices and receipts.
 - **Payment methods:** Settings → Payment methods: turn on SEPA Direct Debit, Apple Pay and Google Pay.
 - **Tax:** checkout always asks cafés for their VAT number, so EU businesses get reverse-charge invoices. Stripe only calculates VAT where you have an **active registration** in Stripe Tax (Tax → Registrations); without one it silently charges none. Once your accountant confirms your registration, add it there and set the secret `AUTOMATIC_TAX` = `true`.

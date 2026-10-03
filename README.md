@@ -23,6 +23,7 @@ Digital stamp cards for cafés, bakeries and shops, with help on the design and 
 | **Wallet server**: real Apple Wallet `.pkpass` and Google Wallet passes | Deployed once, used by every card | `wallet/` ([setup](wallet/README.md)) |
 | **Database** (Supabase): tables, security rules, tests | Shared by every page once connected | `supabase/` ([setup](supabase/README.md)) |
 | Login for owners and you | Café owners, Witkowski Design | `app/login.html` |
+| Terms, privacy, cancellation (IT/EN) | Everyone; required by Stripe | `legal/` (your details: `legal` in `assets/js/config.js`) |
 | **Subscriptions** (Stripe Checkout, billing portal, webhook) | Café owners pay; plans switch by themselves | `supabase/functions/` ([setup](supabase/STRIPE.md)) |
 
 ### Print files (`print/`)

@@ -51,7 +51,7 @@ I18N.add({
     'c.broken': 'Questo link non funziona', 'c.brokenP': 'Chiedi alla cassa il QR del locale e inquadralo di nuovo.',
     'c.join': 'Unisciti a {business}', 'c.joinP': 'Un timbro a ogni visita. Dopo {n} timbri: {reward}.',
     'c.name': 'Il tuo nome', 'c.namePh': 'Così il barista sa che sei tu', 'c.get': 'Prendi la mia carta',
-    'c.fine': 'Niente app e niente account. La carta resta salvata su questo telefono.', 'c.ready': 'La tua carta è pronta',
+    'c.fine': 'Niente app e niente account. La carta resta salvata su questo telefono.', 'c.privacy': 'Privacy', 'c.ready': 'La tua carta è pronta',
     'c.left': 'Mostra il codice quando paghi. <b>Ancora {n}</b> per {reward}.', 'c.claim': 'Mostra la carta alla cassa per avere il premio.',
     'c.apple': 'Aggiungi a Apple Wallet', 'c.google': 'Aggiungi a Google Wallet',
     'c.walletNote': 'Il salvataggio nel Wallet arriva presto. Intanto aggiungi questa pagina alla schermata Home.',
@@ -62,7 +62,7 @@ I18N.add({
     'c.broken': 'This link isn\'t working', 'c.brokenP': 'Ask at the till for their QR code and scan it again.',
     'c.join': 'Join {business}', 'c.joinP': 'One stamp every visit. After {n} stamps: {reward}.',
     'c.name': 'Your first name', 'c.namePh': 'So the staff know it\'s you', 'c.get': 'Get my card',
-    'c.fine': 'No app and no account. The card stays saved on this phone.', 'c.ready': 'Your card is ready',
+    'c.fine': 'No app and no account. The card stays saved on this phone.', 'c.privacy': 'Privacy', 'c.ready': 'Your card is ready',
     'c.left': 'Show the code when you pay. <b>{n} more</b> for {reward}.', 'c.claim': 'Show this card at the till to get your reward.',
     'c.apple': 'Add to Apple Wallet', 'c.google': 'Add to Google Wallet',
     'c.walletNote': 'Wallet saving is coming soon. For now, add this page to your home screen.',
@@ -133,7 +133,7 @@ I18N.add({
             </label>
             <button class="btn pop block" type="submit">${t('c.get')}</button>
           </form>
-          <p class="fine">${t('c.fine')}</p>
+          <p class="fine">${t('c.fine')} <a href="../legal/#${I18N.lang === 'en' ? 'privacy-en' : 'privacy'}" target="_blank">${t('c.privacy')}</a></p>
         </div>
         <p class="by">${t('c.by')} <i></i><b>${UI.esc(CONFIG.brand)}</b></p>`;
       document.getElementById('join').addEventListener('submit', async e => {
