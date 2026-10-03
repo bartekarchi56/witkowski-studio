@@ -30,7 +30,9 @@ async function sync(customer: string) {
   const [, plan = '', interval = ''] = (item?.price.lookup_key ?? '').match(/^timbro_(start|plus|pro)_(month|year)$/) ?? [];
   const { error } = await db.rpc('stripe_sync', {
     p_customer: customer, p_subscription: sub?.id ?? null, p_status: sub?.status ?? null,
-    p_plan: plan, p_interval: interval, p_period_end: item?.current_period_end ?? null
+    p_plan: plan, p_interval: interval, p_period_end: item?.current_period_end ?? null,
+    // Cancelled in the portal: it keeps running until the end of the period, then ends.
+    p_canceling: !!sub && LIVE.includes(sub.status) && (sub.cancel_at_period_end || !!sub.cancel_at)
   });
   if (error) throw new Error(error.message);
 }

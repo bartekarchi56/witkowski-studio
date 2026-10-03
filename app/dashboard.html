@@ -395,7 +395,7 @@ I18N.add({
     'd.billNone': 'Scegli un piano: i primi {days} giorni sono gratis, poi paghi con carta o addebito SEPA. Disdici quando vuoi.',
     'd.billNoTrial': 'Scegli un piano. Paghi con carta o addebito SEPA e disdici quando vuoi.',
     'd.billTrial': 'Prova gratuita di {plan} fino al {date}. Poi si rinnova da solo; puoi disdire prima.',
-    'd.billActive': 'Abbonamento {plan} attivo. Prossimo rinnovo: {date}.', 'd.billCanceling': 'Abbonamento {plan} attivo fino al {date}, poi termina.',
+    'd.billActive': 'Abbonamento {plan} attivo. Prossimo rinnovo: {date}.', 'd.billCanceling': 'Hai disdetto: {plan} resta attivo fino al {date}, poi termina. Cambi idea? Riattivalo in "Gestisci o disdici".',
     'd.billPastDue': 'Il pagamento non è riuscito. Aggiorna la carta in "Gestisci o disdici".', 'd.billCanceled': 'Abbonamento disdetto. Puoi riattivarlo quando vuoi.',
     'd.billDemo': 'Questa è la demo: i pagamenti funzionano nell\'area del tuo locale, dopo aver creato l\'account.',
     'd.choose': 'Scegli {plan}', 'd.mine': 'Il tuo piano', 'd.perMonth': '/ mese', 'd.perYear': '/ anno', 'd.vat': 'IVA esclusa',
@@ -460,7 +460,7 @@ I18N.add({
     'd.billNone': 'Pick a plan: the first {days} days are free, then you pay by card or SEPA direct debit. Cancel any time.',
     'd.billNoTrial': 'Pick a plan. You pay by card or SEPA direct debit and can cancel any time.',
     'd.billTrial': 'Free trial of {plan} until {date}. It then renews by itself; you can cancel before.',
-    'd.billActive': '{plan} subscription active. Next renewal: {date}.', 'd.billCanceling': '{plan} subscription active until {date}, then it ends.',
+    'd.billActive': '{plan} subscription active. Next renewal: {date}.', 'd.billCanceling': 'You cancelled: {plan} stays active until {date}, then it ends. Changed your mind? Restart it in "Manage or cancel".',
     'd.billPastDue': 'The payment didn\'t go through. Update your card in "Manage or cancel".', 'd.billCanceled': 'Subscription cancelled. You can restart it any time.',
     'd.billDemo': 'This is the demo: payments work in your café\'s dashboard once you have an account.',
     'd.choose': 'Choose {plan}', 'd.mine': 'Your plan', 'd.perMonth': '/ month', 'd.perYear': '/ year', 'd.vat': 'excluding VAT',
@@ -815,6 +815,7 @@ I18N.add({
     const period = b.interval ? ` (${I18N.t(b.interval === 'year' ? 'd.yearlyShort' : 'd.monthlyShort')})` : '';
     const v = { plan: planName + period, date: b.periodEnd ? fmtDate(b.periodEnd) : '', days: CONFIG.trialDays };
     $('bill-status').textContent = !canPay ? I18N.t('d.billDemo')
+      : live && b.canceling ? I18N.t('d.billCanceling', v)
       : b.status === 'trialing' ? I18N.t('d.billTrial', v) : b.status === 'active' ? I18N.t('d.billActive', v)
       : ['past_due', 'unpaid'].includes(b.status) ? I18N.t('d.billPastDue') : b.status === 'canceled' ? I18N.t('d.billCanceled')
       : I18N.t(b.trialUsed ? 'd.billNoTrial' : 'd.billNone', v);

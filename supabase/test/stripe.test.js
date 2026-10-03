@@ -98,7 +98,17 @@ await withFunction('stripe-portal', async post => {
 });
 ok('a subscribed owner is sent to the billing portal, with Timbro\'s portal settings');
 
-// ---- cancelled: back to checkout, without a second free trial ----
+// ---- cancelled in the portal: runs until the period ends, and says so ----
+sub.cancel_at_period_end = true;
+await withFunction('stripe-webhook', async post => {
+  const payload = event('customer.subscription.updated', sub);
+  assert.equal((await post(payload, null, await signed(payload))).status, 200);
+});
+data = await rpc(owner, 'owner_data', {});
+assert.equal(data.billing.status, 'trialing'); assert.equal(data.billing.canceling, true);
+ok('cancelling in the portal is recorded: still on trial, ends at the end of the period');
+
+// ---- ended: back to checkout, without a second free trial ----
 sub.status = 'canceled';
 await withFunction('stripe-webhook', async post => {
   const payload = event('customer.subscription.deleted', sub);

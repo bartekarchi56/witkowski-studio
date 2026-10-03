@@ -5,8 +5,6 @@ create schema if not exists timbro;
 
 set search_path = timbro, extensions;
 
-alter default privileges in schema timbro revoke execute on functions from public;
-
 create table if not exists businesses (
   id          uuid primary key default gen_random_uuid(),
   owner_id    uuid not null unique,                 -- auth.users.id
@@ -94,3 +92,5 @@ alter table customers  enable row level security;
 alter table devices    enable row level security;
 
 alter table link_codes enable row level security;
+
+alter table events     enable row level security;

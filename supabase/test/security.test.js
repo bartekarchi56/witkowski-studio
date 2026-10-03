@@ -122,5 +122,14 @@ assert.equal((await call(users.ownerA, 'owner_data')).cards[0].plan, 'pro');   /
 assert.equal((await call(users.designer, 'admin_cards')).find(c => c.id === id).billing.status, 'canceled');
 ok('only the Stripe functions change billing; a paid plan reaches the cards; you see the status in the Studio');
 
+// ---- no function is open by accident (Postgres lets PUBLIC run new functions) ----
+const open = async role => (await pool.query(`select coalesce(string_agg(p.proname, ',' order by p.proname), '') as f from pg_proc p
+  join pg_namespace s on s.oid = p.pronamespace where s.nspname = 'timbro' and has_function_privilege($1, p.oid, 'execute')`, [role])).rows[0].f.split(',').filter(Boolean);
+const PUBLIC_FNS = ['device_link', 'get_card', 'get_my_card', 'join_card', 'stamper_lookup', 'stamper_redeem', 'stamper_stamp'];
+assert.deepEqual(await open('anon'), PUBLIC_FNS);
+assert.deepEqual(await open('authenticated'), [...PUBLIC_FNS, 'admin_ask_changes', 'admin_cards', 'admin_publish', 'admin_set_plan',
+  'owner_data', 'owner_link_code', 'owner_remove_device', 'owner_save_card', 'owner_send_design'].sort());
+ok('only the intended functions can be called by visitors and logged-in users');
+
 console.log(`\nAll ${n} checks passed.`);
 await pool.end();

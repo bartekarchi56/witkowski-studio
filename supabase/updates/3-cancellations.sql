@@ -1,5 +1,18 @@
--- Timbro database, part 6 of 6. Run the parts in order.
+-- Timbro update 3 (October 2026): remembers when a café cancels (it runs until the period ends).
+-- Paste in Supabase SQL Editor and Run. Safe to run again.
 set search_path = timbro, extensions;
+
+alter table businesses add column if not exists billing_canceling   boolean not null default false;  -- cancelled, ends at billing_period_end
+
+create or replace function _billing_json(b businesses) returns jsonb
+language sql stable
+as $$
+  select jsonb_build_object('status', b.billing_status, 'plan', b.billing_plan, 'interval', b.billing_interval,
+    'periodEnd', (extract(epoch from b.billing_period_end) * 1000)::bigint, 'trialUsed', b.trial_used,
+    'customer', b.stripe_customer is not null, 'canceling', b.billing_canceling)
+$$;
+
+drop function if exists stripe_sync(text, text, text, text, text, bigint);   -- older version without p_canceling
 
 create or replace function stripe_sync(p_customer text, p_subscription text, p_status text, p_plan text, p_interval text, p_period_end bigint,
   p_canceling boolean default false)

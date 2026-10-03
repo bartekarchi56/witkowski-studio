@@ -106,7 +106,7 @@ I18N.add({
     's.from': 'Messaggio dal locale', 's.pics': 'Immagini e ispirazioni (clicca per scaricare)', 's.links': 'Link di ispirazione', 's.download': 'Scarica', 's.live': 'Ora, per i clienti', 's.new': 'Nuovo design',
     's.approve': 'Approva e pubblica', 's.ask': 'Chiedi una modifica', 's.reply': 'Risposta al locale', 's.replyPh': 'Es. Il logo è troppo piccolo, mandacelo in alta risoluzione.',
     's.published': 'Pubblicato. I clienti vedono il nuovo design.', 's.asked': 'Richiesta inviata al locale.', 's.needReply': 'Scrivi cosa cambiare, poi invia.',
-    's.stripeSetup': 'Prepara i piani su Stripe', 's.stripeDone': 'Stripe pronto. Cambiati: {list}', 's.stripeSame': 'Stripe è già aggiornato.',
+    's.ends': 'disdetto, finisce il {date}', 's.stripeSetup': 'Prepara i piani su Stripe', 's.stripeDone': 'Stripe pronto. Cambiati: {list}', 's.stripeSame': 'Stripe è già aggiornato.',
     's.bill': { trialing: 'In prova', active: 'Paga', past_due: 'Pagamento non riuscito', unpaid: 'Non pagato', canceled: 'Disdetto', paused: 'In pausa', '': 'Non abbonato' },
     's.pending': 'Da approvare', 's.changes': 'Modifica chiesta', 's.export': 'Esporta il design', 's.import': 'Importa un design', 's.imported': 'Design importato. Controlla e pubblica.'
   },
@@ -116,7 +116,7 @@ I18N.add({
     's.from': 'Message from the café', 's.pics': 'Images and inspiration (click to download)', 's.links': 'Inspiration links', 's.download': 'Download', 's.live': 'Live now', 's.new': 'New design',
     's.approve': 'Approve and publish', 's.ask': 'Ask for a change', 's.reply': 'Reply to the café', 's.replyPh': 'E.g. The logo is too small, please send it in high resolution.',
     's.published': 'Published. Customers see the new design.', 's.asked': 'Request sent to the café.', 's.needReply': 'Write what to change, then send.',
-    's.stripeSetup': 'Set up plans in Stripe', 's.stripeDone': 'Stripe ready. Changed: {list}', 's.stripeSame': 'Stripe is already up to date.',
+    's.ends': 'cancelled, ends {date}', 's.stripeSetup': 'Set up plans in Stripe', 's.stripeDone': 'Stripe ready. Changed: {list}', 's.stripeSame': 'Stripe is already up to date.',
     's.bill': { trialing: 'On trial', active: 'Paying', past_due: 'Payment failed', unpaid: 'Unpaid', canceled: 'Cancelled', paused: 'Paused', '': 'Not subscribed' },
     's.pending': 'To review', 's.changes': 'Change asked', 's.export': 'Export design', 's.import': 'Import a design', 's.imported': 'Design imported. Check it and publish.'
   }
@@ -207,7 +207,8 @@ I18N.add({
   const withContacts = cards => { cards.forEach(c => { if (c.contact) contacts[c.id] = c.contact; if (c.billing) bills[c.id] = c.billing; }); return cards; };
   const billLabel = b => {
     const names = I18N.t('s.bill'), plan = CONFIG.plans.find(p => p.id === b.plan);
-    return (names[b.status] ?? b.status) + (plan && b.status !== 'canceled' && b.status ? ' · ' + I18N.pick(plan).name + (b.interval === 'year' ? ' / yr' : '') : '');
+    return (names[b.status] ?? b.status) + (plan && b.status !== 'canceled' && b.status ? ' · ' + I18N.pick(plan).name + (b.interval === 'year' ? ' / yr' : '') : '')
+      + (b.canceling && b.periodEnd ? ' · ' + I18N.t('s.ends', { date: new Date(b.periodEnd).toLocaleDateString(I18N.lang === 'it' ? 'it-IT' : 'en-GB') }) : '');
   };
   async function start() {
     if (Remote.enabled) {

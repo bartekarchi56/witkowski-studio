@@ -20,8 +20,8 @@
 create extension if not exists pgcrypto with schema extensions;
 create schema if not exists timbro;
 set search_path = timbro, extensions;
--- New functions here are private until granted below.
-alter default privileges in schema timbro revoke execute on functions from public;
+-- Postgres lets everyone run a new function by default: the permissions
+-- section at the end closes them all again, so every change must end with it.
 
 -- ---------------------------------------------------------------- tables --
 
@@ -455,6 +455,7 @@ alter table businesses add column if not exists billing_plan        text not nul
 alter table businesses add column if not exists billing_interval    text not null default '';  -- month, year
 alter table businesses add column if not exists billing_period_end  timestamptz;
 alter table businesses add column if not exists trial_used          boolean not null default false;
+alter table businesses add column if not exists billing_canceling   boolean not null default false;  -- cancelled, ends at billing_period_end
 create unique index if not exists businesses_stripe_customer on businesses(stripe_customer);
 
 create or replace function _billing_json(b businesses) returns jsonb
@@ -462,7 +463,7 @@ language sql stable
 as $$
   select jsonb_build_object('status', b.billing_status, 'plan', b.billing_plan, 'interval', b.billing_interval,
     'periodEnd', (extract(epoch from b.billing_period_end) * 1000)::bigint, 'trialUsed', b.trial_used,
-    'customer', b.stripe_customer is not null)
+    'customer', b.stripe_customer is not null, 'canceling', b.billing_canceling)
 $$;
 
 -- For the checkout function: the logged-in owner's café and Stripe customer.
@@ -484,7 +485,9 @@ as $$ update businesses set stripe_customer = p_customer where id = p_business a
 
 -- For the webhook: copies a Stripe subscription onto the café. A paid or
 -- trialing plan also becomes the plan of the café's cards.
-create or replace function stripe_sync(p_customer text, p_subscription text, p_status text, p_plan text, p_interval text, p_period_end bigint)
+drop function if exists stripe_sync(text, text, text, text, text, bigint);   -- older version without p_canceling
+create or replace function stripe_sync(p_customer text, p_subscription text, p_status text, p_plan text, p_interval text, p_period_end bigint,
+  p_canceling boolean default false)
 returns uuid
 language plpgsql security definer set search_path = timbro
 as $$
@@ -493,7 +496,7 @@ begin
   update businesses set stripe_subscription = p_subscription, billing_status = coalesce(p_status, ''),
     billing_plan = coalesce(p_plan, ''), billing_interval = coalesce(p_interval, ''),
     billing_period_end = case when p_period_end is null then null else to_timestamp(p_period_end) end,
-    trial_used = trial_used or p_status is not null
+    trial_used = trial_used or p_status is not null, billing_canceling = coalesce(p_canceling, false)
   where stripe_customer = p_customer returning id into v_biz;
   if v_biz is not null and p_status in ('trialing', 'active', 'past_due') and p_plan in ('start', 'plus', 'pro') then
     update cards set plan = p_plan where business_id = v_biz;
@@ -520,7 +523,7 @@ grant execute on function owner_data(), owner_save_card(jsonb), owner_send_desig
 -- The Stripe functions (supabase/functions/) use the service role.
 grant usage on schema timbro to service_role;
 grant execute on function stripe_business(uuid), stripe_set_customer(uuid, text),
-  stripe_sync(text, text, text, text, text, bigint), stripe_is_admin(uuid) to service_role;
+  stripe_sync(text, text, text, text, text, bigint, boolean), stripe_is_admin(uuid) to service_role;
 
 -- ---------------------------------------------------------- after setup --
 -- Make your own account a designer (run once, after signing up on the site):

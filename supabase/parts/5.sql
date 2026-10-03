@@ -66,6 +66,8 @@ alter table businesses add column if not exists billing_period_end  timestamptz;
 
 alter table businesses add column if not exists trial_used          boolean not null default false;
 
+alter table businesses add column if not exists billing_canceling   boolean not null default false;  -- cancelled, ends at billing_period_end
+
 create unique index if not exists businesses_stripe_customer on businesses(stripe_customer);
 
 create or replace function _billing_json(b businesses) returns jsonb
@@ -73,7 +75,7 @@ language sql stable
 as $$
   select jsonb_build_object('status', b.billing_status, 'plan', b.billing_plan, 'interval', b.billing_interval,
     'periodEnd', (extract(epoch from b.billing_period_end) * 1000)::bigint, 'trialUsed', b.trial_used,
-    'customer', b.stripe_customer is not null)
+    'customer', b.stripe_customer is not null, 'canceling', b.billing_canceling)
 $$;
 
 create or replace function stripe_business(p_user uuid) returns jsonb
@@ -91,3 +93,5 @@ as $$ select exists (select 1 from admins where user_id = p_user) $$;
 create or replace function stripe_set_customer(p_business uuid, p_customer text) returns void
 language sql security definer set search_path = timbro
 as $$ update businesses set stripe_customer = p_customer where id = p_business and stripe_customer is null $$;
+
+drop function if exists stripe_sync(text, text, text, text, text, bigint);   -- older version without p_canceling

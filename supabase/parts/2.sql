@@ -1,8 +1,6 @@
 -- Timbro database, part 2 of 6. Run the parts in order.
 set search_path = timbro, extensions;
 
-alter table events     enable row level security;
-
 alter table admins     enable row level security;
 
 create or replace function _hash(t text) returns text
